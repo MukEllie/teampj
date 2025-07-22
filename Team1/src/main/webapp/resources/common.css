@@ -1,0 +1,12 @@
+@charset "UTF-8";
+body{
+	background:pink;
+}
+
+h1{
+	color:red;
+}
+
+tr, td{
+	border:solid 1px green;	
+}
