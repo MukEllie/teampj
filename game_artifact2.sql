@@ -5,7 +5,7 @@ create table artifact (
 	artifact_id INT UNIQUE,
     artifact_name CHAR(50),
     artifact_job INT,			-- 특정 직업용 아티팩트 유무, 0이면 공용, 1이면 전사, 2면 마법사, 3이면 도적
-    artifact_type INT,			-- 아티펙트 출현 계층 타입, 0이면 공용, 1이면 물계층, 2면 불계층, 3이면 풀계층, 4이면 ㅌ특수이벤트
+    artifact_type INT,			-- 아티펙트 출현 계층 타입, 0이면 공용, 1이면 물계층, 2면 불계층, 3이면 풀계층, 4이면 특수이벤트
     artifact_text CHAR(100)		-- 아티펙트 소개문구
 );
 INSERT INTO artifact (artifact_id, artifact_name, artifact_job, artifact_type, artifact_text) VALUES
