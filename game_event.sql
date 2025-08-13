@@ -58,25 +58,25 @@ INSERT INTO rollevent VALUES
 drop table cardevent;
 CREATE TABLE cardevent (
     ce_id INT UNIQUE,
-	ce_name CHAR(50),
-    ce_session VARCHAR(20),
-    ce_cardtype CHAR(50),
-    ce_card1 INT,
-    ce_card2 INT,
-    ce_card3 INT,
-    ce_cdmg INT
+    ce_name CHAR(50),
+    ce_session VARCHAR(20), -- none, water, fire, grass
+    ce_dmg INT -- 0이면 SkillDB에서, 0이 아니면 PlayerDB.Own_Skill에서 뽑음
 );
 
 
 /* artifactevent */
 drop table artifactevent;
+DROP TABLE IF EXISTS artifactevent;
 CREATE TABLE artifactevent (
     ae_id INT UNIQUE,
-	artifact_id INT,
-    artifact_name CHAR(50),
-    FOREIGN KEY (artifact_id) REFERENCES artifact(artifact_id),
-    FOREIGN KEY (artifact_name) REFERENCES artifact(artifact_name)
+    ae_name CHAR(50),
+    ae_session VARCHAR(20) -- none, water, fire, grass
 );
+
+INSERT INTO artifactevent VALUES
+(0, '물의 아티팩트 발견', 'Water'),
+(1, '불의 아티팩트 발견', 'Fire'),
+(2, '풀의 아티팩트 발견', 'Grass');
 
 
 /* selectevent */
