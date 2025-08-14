@@ -15,6 +15,7 @@ CREATE TABLE normalevent (
     e_gold INT,
     e_luck INT
 );
+select * from normalevent;
 INSERT INTO normalevent(e_id, e_name, e_session, e_dice, e_php, e_mhp, e_patk, e_matk, e_gold, e_luck) VALUES
 (0, '신비의 샘', 'none', 0, 30, 0, 0, 0, 0, 0),
 (1, '잊혀진 훈련교본', 'none', 10, 0, 0, 1, 0, 0, 0),
@@ -43,15 +44,16 @@ CREATE TABLE rollevent (
     re_gold INT,
     re_luck INT
 );
+select * from rollevent;
 INSERT INTO rollevent VALUES
 (0, '길 잃은 축복', 'none', 15, 11, 0, 10, 0, 10, 0, 0, 0, 0),
-(0, '고대의 저주', 'none', 15, 11, 0, -10, 0, -10, 0, 0, 0, 0),
-(1, '바다 정령의 시련', 'water', 12, 9, 0, 0, 0, 0, 0, 5, 0, 1),
-(2, '수상한 보물상자', 'water', 15, 10, -10, 0, 0, 0, 0, 0, 100, 0),
-(3, '용암 강 레이스', 'fire', 20, 12, -40, 0, -40, 0, 0, 0, 0, 0),
-(4, '불타는 정수', 'fire', 15, 10, 0, 0, 0, 0, 5, 5, 0, 0),
-(5, '나무 밑 무덤', 'grass', 10, 6, 0, 0, 0, 10, 0, 0, 50, 0),
-(6, '성스런 숲의 의식', 'grass', 15, 10, -20, 20, 0, 0, 0, 0, 0, 0);
+(1, '고대의 저주', 'none', 15, 11, 0, -10, 0, -10, 0, 0, 0, 0),
+(2, '바다 정령의 시련', 'water', 12, 9, 0, 0, 0, 0, 0, 5, 0, 1),
+(3, '수상한 보물상자', 'water', 15, 10, -10, 0, 0, 0, 0, 0, 100, 0),
+(4, '용암 강 레이스', 'fire', 20, 12, -40, 0, -40, 0, 0, 0, 0, 0),
+(5, '불타는 정수', 'fire', 15, 10, 0, 0, 0, 0, 5, 5, 0, 0),
+(6, '나무 밑 무덤', 'grass', 10, 6, 0, 0, 0, 10, 0, 0, 50, 0),
+(7, '성스런 숲의 의식', 'grass', 15, 10, -20, 20, 0, 0, 0, 0, 0, 0);
 
 
 /* cardevent */
@@ -62,17 +64,24 @@ CREATE TABLE cardevent (
     ce_session VARCHAR(20), -- none, water, fire, grass
     ce_dmg INT -- 0이면 SkillDB에서, 0이 아니면 PlayerDB.Own_Skill에서 뽑음
 );
+select * from cardevent;
+INSERT INTO cardevent VALUES
+(0, '바다의 선물', 'Water', 0),
+(1, '화산의 선물', 'Fire', 0),
+(2, '세계수의 선물', 'Grass', 0),
+(3, '파도 강화', 'Water', 2),
+(4, '화력 강화', 'Fire', 2),
+(5, '뿌리 강화', 'Grass', 2);
 
 
 /* artifactevent */
 drop table artifactevent;
-DROP TABLE IF EXISTS artifactevent;
 CREATE TABLE artifactevent (
     ae_id INT UNIQUE,
     ae_name CHAR(50),
     ae_session VARCHAR(20) -- none, water, fire, grass
 );
-
+select * from artifactevent;
 INSERT INTO artifactevent VALUES
 (0, '물의 아티팩트 발견', 'Water'),
 (1, '불의 아티팩트 발견', 'Fire'),
@@ -86,6 +95,7 @@ CREATE TABLE selectevent (
     se_name CHAR(50),
     se_session VARCHAR(20)
 );
+select * from selectevent;
 INSERT INTO selectevent VALUES
 (0, '영혼의 거래소', 'none'),
 (1, '대해적의 보물상자', 'water'),
@@ -110,6 +120,7 @@ CREATE TABLE selectevent_choice (
     sec_text CHAR(100),
     FOREIGN KEY (se_id) REFERENCES selectevent(se_id)
 );
+select * from selectevent_choice;
 INSERT INTO selectevent_choice VALUES
 (0, 0, 1, 0, -20, 0, 0, 5, 0, 0, 0,'힘의 영혼'),
 (1, 0, 2, 0, 10, 0, 0, 0, 0, 0, -1, '체력의 영혼'),
@@ -142,6 +153,7 @@ CREATE TABLE trapevent (
     te_gold INT,
     te_luck INT
 );
+select * from trapevent;
 INSERT INTO trapevent VALUES
 (0, '저주받은 함정', 'none', 12, 7, -20, 0, 0, 0, 0, 0, 0, 0),
 (1, '세이렌의 노래', 'water', 16, 9, 0, 0, 0, 0, 0, 0, 0, -2),
@@ -158,6 +170,7 @@ create table bossevent (
     MonsterID INT,
     FOREIGN KEY (MonsterID) REFERENCES MonsterDB(MonsterID)
 );
+select * from bossevent;
 insert into bossevent values
 (0, '혼령의 인도', 'None', 51);
 
@@ -173,3 +186,4 @@ CREATE TABLE used_events (
     used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_event (player_id, layer, event_type, event_id)
 );
+select * from used_events;
