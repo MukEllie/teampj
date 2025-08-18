@@ -4,19 +4,19 @@ use team1;
 /* normalevent */
 drop table normalevent;
 CREATE TABLE normalevent (
-    e_id INT UNIQUE,
-    e_name CHAR(50),
-    e_session VARCHAR(20),	-- none, water, fire, grass
-    e_dice INT,
-    e_php INT,
-    e_mhp INT,
-    e_patk INT,
-    e_matk INT,
-    e_gold INT,
-    e_luck INT
+    ne_id INT UNIQUE,
+    ne_name CHAR(50),
+    ne_session VARCHAR(20),	-- none, water, fire, grass
+    ne_dice INT,
+    ne_php INT,
+    ne_mhp INT,
+    ne_patk INT,
+    ne_matk INT,
+    ne_gold INT,
+    ne_luck INT
 );
 select * from normalevent;
-INSERT INTO normalevent(e_id, e_name, e_session, e_dice, e_php, e_mhp, e_patk, e_matk, e_gold, e_luck) VALUES
+INSERT INTO normalevent VALUES
 (0, '신비의 샘', 'none', 0, 30, 0, 0, 0, 0, 0),
 (1, '잊혀진 훈련교본', 'none', 10, 0, 0, 1, 0, 0, 0),
 (3, '쓰나미 예언', 'water', 0, 0, -15, 0, 0, 0, 0),
