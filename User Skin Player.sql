@@ -22,11 +22,15 @@ atk int,
 luck int,
 WhereSession varchar(20),
 WhereStage int,
+EventAtk int,
+EventCurrHp int,
+EventMaxHp int,
 Using_Skill json,
-Own_Skill json
+Own_Skill json,
+Own_Artifact json
 );
 select * from PlayerDB;
-insert into PlayerDB(Player_ID, Using_Character, curr_hp, max_hp ,atk, luck, WhereSession, WhereStage) values
-('test01', 'Warrior', 100, 100, 10, 5, 'Water', 1),
-('test02', 'Mage', 80, 80, 15, 4, 'Fire', 6),
-('test03', 'Thief', 90, 90, 5, 6, 'Grass', 8);
+insert into PlayerDB(Player_ID, Using_Character, curr_hp, max_hp ,atk, luck, WhereSession, WhereStage, EventAtk, EventCurrHp, EventMaxHp) values
+('test01', 'Warrior', 100, 100, 10, 5, 'Water', 1, 0, 0, 0),
+('test02', 'Mage', 80, 80, 15, 4, 'Fire', 6, 0, 0, 0),
+('test03', 'Thief', 90, 90, 5, 6, 'Grass', 8, 0, 0, 0);

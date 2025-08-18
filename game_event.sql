@@ -141,24 +141,20 @@ drop table trapevent;
 CREATE TABLE trapevent (
     te_id INT UNIQUE,
     te_name CHAR(50),
-    te_session VARCHAR(20),
-    te_dice INT,
-    te_dicelimit INT,
-    te_php INT,
-    te_pmaxhp INT,
-    te_mhp INT,
-    te_mmaxhp INT,
-    te_patk INT,
-    te_matk INT,
-    te_gold INT,
-    te_luck INT
+    te_session VARCHAR(20), -- none, water, fire, grass
+    te_dice INT,            -- 주사위 눈금
+    te_dicelimit INT,       -- 성공 기준
+    te_php INT,             -- 플레이어 현재 체력 변화
+    te_maxhp INT,           -- 플레이어 최대 체력 변화
+    te_patk INT,            -- 플레이어 공격력 변화
+    te_luck INT             -- 플레이어 운 변화
 );
 select * from trapevent;
 INSERT INTO trapevent VALUES
-(0, '저주받은 함정', 'none', 12, 7, -20, 0, 0, 0, 0, 0, 0, 0),
-(1, '세이렌의 노래', 'water', 16, 9, 0, 0, 0, 0, 0, 0, 0, -2),
-(2, '화산재 폭풍', 'fire', 18, 10, 0, 0, 0, 0, -10, 0, 0, 0),
-(3, '식인식물의 독가시 공격', 'grass', 20, 11, 0, -15, 0, 0, 0, 0, 0, 0);
+(0, '저주받은 함정', 'none', 12, 7, -20, 0, 0, 0),
+(1, '세이렌의 노래', 'water', 16, 9, 0, 0, 0, -2),
+(2, '화산재 폭풍', 'fire', 18, 10, 0, 0, -10, 0),
+(3, '식인식물의 독가시 공격', 'grass', 20, 11, 0, -10, 0, 0);
 
 
 
