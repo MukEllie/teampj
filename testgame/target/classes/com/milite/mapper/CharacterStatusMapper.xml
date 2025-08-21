@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.milite.mapper.CharacterStatusMapper">
+
+  <select id="getPlayerInfo" resultType="com.milite.dto.PlayerDto">
+    SELECT
+	  Player_ID AS PlayerID,
+	  Using_Character AS Using_Character,
+	  curr_hp AS curr_hp,
+	  max_hp AS max_hp,
+	  atk AS atk,
+	  luck AS luck,
+	  WhereSession AS WhereSession,
+	  WhereStage AS WhereStage,
+	  EventAtk AS EventAtk,
+	  EventCurrHp AS EventCurrHp,
+	  EventMaxHp AS EventMaxHp,
+	  Using_Skill AS Using_Skill,
+	  Own_Skill AS Own_Skill,
+	  Own_Artifact AS Own_Artifact
+	FROM PlayerDB
+	WHERE Player_ID = #{PlayerID}
+  </select>
+
+  <update id="updateStatus" parameterType="com.milite.dto.PlayerDto">
+    UPDATE PlayerDB
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="curr_hp != null"> curr_hp = #{curr_hp}, </if>
+      <if test="max_hp  != null"> max_hp  = #{max_hp},  </if>
+      <if test="atk     != null"> atk     = #{atk},     </if>
+      <if test="luck    != null"> luck    = #{luck},    </if>
+
+      <if test="EventAtk    != null"> EventAtk    = #{EventAtk},    </if>
+      <if test="EventCurrHp != null"> EventCurrHp = #{EventCurrHp}, </if>
+      <if test="EventMaxHp  != null"> EventMaxHp  = #{EventMaxHp},  </if>
+
+      <if test="Using_Skill   != null"> Using_Skill   = #{Using_Skill},   </if>
+      <if test="Own_Skill     != null"> Own_Skill     = #{Own_Skill},     </if>
+      <if test="Own_Artifact  != null"> Own_Artifact  = #{Own_Artifact},  </if>
+    </trim>
+    WHERE Player_ID = #{PlayerID}
+  </update>
+
+  <select id="getPlayerOwnSkillJson" resultType="string">
+    SELECT Own_Skill FROM PlayerDB WHERE Player_ID = #{PlayerID}
+  </select>
+
+  <select id="getPlayerOwnArtifactJson" resultType="string">
+    SELECT Own_Artifact FROM PlayerDB WHERE Player_ID = #{PlayerID}
+  </select>
+  
+    <update id="addSkillToPlayer">
+    UPDATE PlayerDB
+    SET Own_Skill =
+      CASE
+        WHEN Own_Skill IS NULL OR JSON_TYPE(Own_Skill) = 'NULL'
+          THEN JSON_ARRAY(CAST(#{skillId} AS UNSIGNED))
+        ELSE JSON_ARRAY_APPEND(Own_Skill, '$', CAST(#{skillId} AS UNSIGNED))
+      END
+    WHERE Player_ID = #{PlayerId}
+  </update>
+
+  <update id="addArtifactToPlayer">
+    UPDATE PlayerDB
+    SET Own_Artifact =
+      CASE
+        WHEN Own_Artifact IS NULL OR JSON_TYPE(Own_Artifact) = 'NULL'
+          THEN JSON_ARRAY(CAST(#{artifactId} AS UNSIGNED))
+        ELSE JSON_ARRAY_APPEND(Own_Artifact, '$', CAST(#{artifactId} AS UNSIGNED))
+      END
+    WHERE Player_ID = #{PlayerId}
+  </update>
+  
+</mapper>

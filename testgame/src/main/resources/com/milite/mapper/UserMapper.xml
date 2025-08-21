@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.milite.mapper.UserMapper">
+
+  <!-- 단건 조회 -->
+  <select id="getUserById" parameterType="string" resultType="com.milite.dto.UserDto">
+    SELECT `ID`, `Password`, `gold`, `Owned_SkinID`
+    FROM `UserDB`
+    WHERE `ID` = #{id}
+    LIMIT 1
+  </select>
+
+  <!-- 골드 증가 (감소 로직 없음) -->
+  <update id="addGold">
+    UPDATE `UserDB`
+    SET `gold` = `gold` + #{amount}
+    WHERE `ID` = #{id}
+  </update>
+
+</mapper>
