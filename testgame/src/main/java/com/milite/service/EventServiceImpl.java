@@ -452,10 +452,16 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public String applyArtifactGain(String playerId, int ae_id, int artifactId) {
+		// 플레이어에게 아티팩트 추가
 		characterStatusMapper.addArtifactToPlayer(playerId, artifactId);
 		PlayerDto p = characterStatusMapper.getPlayerInfo(playerId);
 		eventMapper.markEventUsed(playerId, p.getWhereSession(), "artifact", ae_id);
-		return "아티팩트 획득 완료: artifactId=" + artifactId;
+
+		// 여기서 artifactId로 실제 아티팩트 조회
+		ArtifactDto artifact = eventMapper.getArtifactById(artifactId);
+
+		// ID 대신 이름과 효과를 메시지로 반환
+		return "아티팩트 획득 완료: " + artifact.getArtifactName() + " (" + artifact.getArtifactEffect() + ")";
 	}
 
 	/* ===================== Boss ===================== */

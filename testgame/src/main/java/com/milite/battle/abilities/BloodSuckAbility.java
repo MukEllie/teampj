@@ -2,11 +2,10 @@ package com.milite.battle.abilities;
 
 import com.milite.battle.BattleContext;
 import com.milite.battle.BattleUnit;
+import com.milite.constants.BattleConstants;
 import com.milite.util.KoreanUtil;
 
 public class BloodSuckAbility implements SpecialAbility {
-	private static final double HEAL_RATIO = 0.5;
-	
 	@Override
 	public void onAttack(BattleUnit attacker, BattleUnit target, BattleContext context) {
 
@@ -14,17 +13,16 @@ public class BloodSuckAbility implements SpecialAbility {
 
 	@Override
 	public void onHit(BattleUnit attacker, BattleUnit target, int damageDealt, BattleContext context) {
-		if(damageDealt <= 0) {
+		if (damageDealt <= 0) {
 			return;
 		}
-		
-		int healAmount = (int) Math.ceil(damageDealt*HEAL_RATIO);
-		
+
+		int healAmount = (int) Math.ceil(damageDealt * BattleConstants.getBloodSuckRatio());
+
 		if (healAmount > 0) {
 			int actualHealed = context.healUnit(attacker, healAmount);
-			context.addLogEntry(attacker.getName(), "blood_suck",
-					attacker.getName() + KoreanUtil.getJosa(attacker.getName(), "이 ", "가 ") +
-					"흡혈로 " + actualHealed + "만큼 체력을 회복했습니다.");
+			context.addLogEntry(attacker.getName(), "blood_suck", attacker.getName()
+					+ KoreanUtil.getJosa(attacker.getName(), "이 ", "가 ") + "흡혈로 " + actualHealed + "만큼 체력을 회복했습니다.");
 		}
 	}
 

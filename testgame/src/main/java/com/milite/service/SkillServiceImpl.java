@@ -20,13 +20,13 @@ public class SkillServiceImpl implements SkillService {
 	private SkillMapper mapper;
 
 	@Override
-	public SkillDto getSkillInfo(String SkillID) {
-		return mapper.getSkillInfo(SkillID);
+	public SkillDto getSkillInfo(Integer skillID) {
+		return mapper.getSkillInfo(skillID);
 	}
 	
 	@Override
-	public List<SkillDto> getSkillReward(String job, String Rarity){
-		return mapper.getSkillReward(job, Rarity);
+	public List<SkillDto> getSkillReward(String job, String rarity){
+		return mapper.getSkillReward(job, rarity);
 	}
 	
 	public SkillDto getRewardSkill(List<SkillDto> SkillList) {

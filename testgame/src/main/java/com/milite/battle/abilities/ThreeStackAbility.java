@@ -3,11 +3,10 @@ package com.milite.battle.abilities;
 import com.milite.battle.BattleContext;
 import com.milite.battle.BattleMonsterUnit;
 import com.milite.battle.BattleUnit;
+import com.milite.constants.BattleConstants;
 import com.milite.util.KoreanUtil;
 
 public class ThreeStackAbility implements SpecialAbility {
-	private static final double DAMAGE_MULTIPLIER = 1.333;
-	
 	@Override
 	public void onAttack(BattleUnit attacker, BattleUnit target, BattleContext context) {
 		if (isThreeMultipleTurn(context.getCurrentTurn())) {
@@ -53,7 +52,7 @@ public class ThreeStackAbility implements SpecialAbility {
 		if (unit instanceof BattleMonsterUnit) {
 			BattleMonsterUnit monster = (BattleMonsterUnit) unit;
 			if ("ThreeStack".equals(monster.getSpecial()) && isThreeMultipleTurn(currentTurn)) {
-				return DAMAGE_MULTIPLIER;
+				return BattleConstants.getThreeStackMultiplier();
 			}
 		}
 		return 1.0;

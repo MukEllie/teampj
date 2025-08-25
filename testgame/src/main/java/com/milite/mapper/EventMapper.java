@@ -59,6 +59,9 @@ public interface EventMapper {
 	List<ArtifactDto> getArtifactsBySession(@Param("session") String session, @Param("job") String job,
 			@Param("limit") int limit);
 
+	// ★ 추가: artifact 단건 조회
+	ArtifactDto getArtifactById(@Param("id") int id);
+
 	/* ===== Boss ===== */
 	BossEventDto pickOneUnusedBoss(@Param("session") String session, @Param("playerId") String playerId);
 

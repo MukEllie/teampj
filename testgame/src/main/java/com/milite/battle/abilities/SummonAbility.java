@@ -5,13 +5,11 @@ import java.util.List;
 import com.milite.battle.BattleContext;
 import com.milite.battle.BattleMonsterUnit;
 import com.milite.battle.BattleUnit;
-import static com.milite.constants.BattleConstants.*;
+import com.milite.constants.BattleConstants;
+
 import com.milite.util.KoreanUtil;
 
 public class SummonAbility implements SpecialAbility {
-	private static final int MAX_SERVANTS = 2;
-	private static final int SUMMON_CHANCE = 25;
-
 	@Override
 	public void onAttack(BattleUnit attacker, BattleUnit target, BattleContext context) {
 
@@ -44,15 +42,15 @@ public class SummonAbility implements SpecialAbility {
 
 	@Override
 	public String getName() {
-		return "servat";
+		return "Summon";
 	}
 
 	public boolean shouldSummon(List<BattleUnit> allUnits) {
 		int servantCount = countServants(allUnits);
 
-		if (servantCount < MAX_SERVANTS) {
+		if (servantCount < BattleConstants.getSummonMaxServants()) {
 			int roll = (int) (Math.random() * 100) + 1;
-			return roll <= SUMMON_CHANCE;
+			return roll <= BattleConstants.getSummonChance();
 		}
 		return false;
 	}
@@ -62,7 +60,8 @@ public class SummonAbility implements SpecialAbility {
 		for (BattleUnit unit : allUnits) {
 			if (unit instanceof BattleMonsterUnit) {
 				BattleMonsterUnit monster = (BattleMonsterUnit) unit;
-				if (monster.getID() != null && monster.getID() == SERVANT_MONSTER_ID && unit.isAlive()) {
+				if (monster.getID() != null && monster.getID() == BattleConstants.getSummonMasterId()
+						&& unit.isAlive()) {
 					count++;
 				}
 			}

@@ -3,14 +3,10 @@ package com.milite.battle.abilities;
 import com.milite.battle.BattleContext;
 import com.milite.battle.BattleMonsterUnit;
 import com.milite.battle.BattleUnit;
+import com.milite.constants.BattleConstants;
 import com.milite.util.KoreanUtil;
 
 public class FormChangeAbility implements SpecialAbility {
-	private static final double OFFENSE_ATK_MULTIPLIER = 1.3;
-	private static final double OFFENSE_DEF_MULTIPLIER = 1.3;
-	private static final double DEFENSE_ATK_MULTIPLIER = 1.3;
-	private static final double DEFENSE_DEF_MULTIPLIER = 1.3;
-
 	@Override
 	public void onAttack(BattleUnit attacker, BattleUnit target, BattleContext context) {
 
@@ -90,7 +86,7 @@ public class FormChangeAbility implements SpecialAbility {
 		int formCount = getFormCount(monster);
 		boolean isOffensive = shouldUseOffensiveStance(formCount, currentTurn);
 		
-		return isOffensive ? OFFENSE_ATK_MULTIPLIER : DEFENSE_ATK_MULTIPLIER;
+		return isOffensive ? BattleConstants.getFormChangeOffenseAtk() : BattleConstants.getFormChangeDefenseAtk();
 	}
 	
 	public static double getDefenseMultiplier(BattleUnit unit, int currentTurn) {
@@ -106,6 +102,6 @@ public class FormChangeAbility implements SpecialAbility {
 		int formCount = getFormCount(monster);
 		boolean isOffensive = shouldUseOffensiveStance(formCount, currentTurn);
 		
-		return isOffensive ? OFFENSE_DEF_MULTIPLIER : DEFENSE_DEF_MULTIPLIER;
+		return isOffensive ? BattleConstants.getFormChangeOffenseDef() : BattleConstants.getFormChangeDefenseDef();
 	}
 }

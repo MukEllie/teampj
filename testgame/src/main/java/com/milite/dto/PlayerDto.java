@@ -1,17 +1,13 @@
 package com.milite.dto;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.*;
 
 import com.milite.battle.BattleContext;
 import com.milite.battle.BattleUnit;
 import com.milite.battle.artifacts.PlayerArtifact;
+import com.milite.util.StringUtil;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -26,21 +22,17 @@ public class PlayerDto implements BattleUnit {
 	String WhereSession;
 	int WhereStage;
 
-	// --- 이벤트 전용 필드 ---
-	int EventAtk; // 몬스터 공격력 변화값
-	int EventCurrHp; // 몬스터 현재 체력 변화값
-	int EventMaxHp; // 몬스터 최대 체력 변화값
+	int EventAtk;
+	int EventCurrHp;
+	int EventMaxHp;
 
-	// --- JSON 컬럼 매핑 ---
-	String Using_Skill; // 사용중인 스킬
-	String Own_Skill; // 보유중인 스킬
-	String Own_Artifact; // 보유중인 아티팩트
+	String Using_Skill;
+	String Own_Skill;
+	String Own_Artifact;
 
-	// --- 전투 상태 관리 ---
 	Map<String, Integer> statusEffects = new HashMap<>();
 	private List<PlayerArtifact> artifacts = new ArrayList<>();
 
-	// --- BattleUnit 인터페이스 구현 ---
 	@Override
 	public String getName() {
 		return this.Using_Character;
@@ -76,7 +68,6 @@ public class PlayerDto implements BattleUnit {
 		this.statusEffects = statusEffects;
 	}
 
-	// --- 아티팩트 실행 로직 ---
 	public void executeArtifactsOnAttack(BattleUnit target, BattleContext context) {
 		for (PlayerArtifact artifact : artifacts) {
 			if (artifact != null) {
@@ -125,9 +116,8 @@ public class PlayerDto implements BattleUnit {
 		}
 	}
 
-	// --- 아티팩트 관리 ---
 	public void addArtifact(PlayerArtifact artifact) {
-		if (artifact != null) {
+		if (artifact != null) {// 해당 아티팩트가 이미 보유 중인지는 전 단계에서 검사하는 걸로 결정
 			artifacts.add(artifact);
 		}
 	}
@@ -146,5 +136,29 @@ public class PlayerDto implements BattleUnit {
 
 	public int getArtifactCount() {
 		return artifacts.size();
+	}
+
+	public List<String> getOwnSkillList(){
+		return StringUtil.splitCommaString(this.Own_Skill);
+	}
+	
+	public List<String> getUsingSkillList(){
+		return StringUtil.splitCommaString(this.Using_Skill);
+	}
+	
+	public List<String> getOwnArtifactList(){
+		return StringUtil.splitCommaString(this.Own_Artifact);
+	}
+	
+	public boolean hasArtifactByID(String artifactID) {
+		return StringUtil.containsInCommaString(this.Own_Artifact, artifactID);
+	}
+	
+	public void addSkill(String skillID) {
+		this.Own_Skill = StringUtil.addToCommaString(this.Own_Skill, skillID);
+	}
+	
+	public void addArtifactByID(String artifactID) {
+		this.Own_Artifact = StringUtil.addToCommaString(this.Own_Artifact, artifactID);
 	}
 }

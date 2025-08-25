@@ -1,12 +1,17 @@
 package com.milite.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ArtifactDto {
-	private int artifact_id;
-	private String artifact_name;
-	private String artifact_job; // none / warrior / mage / thief
-	private String artifact_session; // none / water / fire / grass / event
-	private String artifact_text;
+	private int ArtifactID;
+	private String ArtifactName;
+	private String ArtifactJob; // common / warrior / mage / thief
+	private String ArtifactSession; // none / event / unique
+	private String ArtifactEffect;
+	private String ArtifactText;
 }

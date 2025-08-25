@@ -19,11 +19,7 @@ public interface PlayerArtifact {
 	String getArtifactName();
 
 	String getArtifactDescription();
-
-	default String getArtifactRarity() {
-		return "Common";
-	}
-
+	
 	default boolean isActive() {
 		return true;
 	}

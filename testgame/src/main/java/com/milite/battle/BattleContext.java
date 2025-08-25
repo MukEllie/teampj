@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.milite.battle.abilities.FormChangeAbility;
 import com.milite.battle.abilities.ModeSwitchAbility;
+import com.milite.battle.artifacts.*;
+import com.milite.constants.BattleConstants;
 import com.milite.dto.PlayerDto;
 import com.milite.util.KoreanUtil;
 
@@ -25,18 +27,17 @@ public class BattleContext {
 		this.delayedActions = new ArrayList<>();
 	}
 
-	public void addExtraAttack(BattleUnit attacker, BattleUnit target) {
-		delayedActions.add(new ExtraAttackAction(attacker, target));
-		log.debug(attacker.getName() + "의 추가 공격이 예약되었습ㄴ니다.");
-	}
-
 	public void addReflectDamage(BattleUnit target, int damage) {
 		delayedActions.add(new ReflectDamageAction(target, damage));
 		log.debug(target.getName() + "에게 " + damage + "의 반사 피해가 예약되었습니다.");
 	}
 
 	public void addStatusEffect(BattleUnit target, String statusType, int turns) {
-		delayedActions.add(new StatusEffectAction(target, statusType, turns));
+		addStatusEffect(target, statusType, turns, null);
+	}
+
+	public void addStatusEffect(BattleUnit target, String statusType, int turns, BattleUnit caster) {
+		delayedActions.add(new StatusEffectAction(target, statusType, turns, caster));
 		log.debug(target.getName() + "에게 " + statusType + " 상태이상(" + turns + " 턴)이 예약되었습니다.");
 	}
 
@@ -83,14 +84,39 @@ public class BattleContext {
 
 	public void damageUnit(BattleUnit unit, int damage) {
 		int finalDamage = damage;
-		if(unit.getUnitType().equals("Monster")) {
+
+		if (unit.getUnitType().equals("Player") && damage > 0) {
+			PlayerDto player = (PlayerDto) unit;
+			for (PlayerArtifact artifact : player.getArtifacts()) {
+				if (artifact instanceof SlipperyLeatherArtifact) {
+					SlipperyLeatherArtifact leather = (SlipperyLeatherArtifact) artifact;
+					if (leather.canUse()) {
+						leather.useEffect();
+						finalDamage = 0;
+
+						addLogEntry(unit.getName() + "의 미끄러운 가죽 보호대가 " + damage + " 피해를 완전히 무효화했습니다!");
+						break;
+					}
+				}
+			}
+		}
+
+		if (unit.getUnitType().equals("Monster")) {
 			finalDamage = applyDefenseReduction(unit, damage);
 		}
-		
+
 		if (unit.getUnitType().equals("Player")) {
 			PlayerDto player = (PlayerDto) unit;
 			int currentHp = player.getCurr_hp();
 			int newHp = Math.max(currentHp - finalDamage, 0);
+
+			if (newHp <= 0 && currentHp > 0) {
+				boolean revived = checkAndExecuteRevival(player);
+				if (revived) {
+					return;
+				}
+			}
+
 			player.setCurr_hp(newHp);
 
 			addLogEntry(unit.getName() + KoreanUtil.getJosa(unit.getName(), "이 ", "가 ") + finalDamage + "의 피해를 받았습니다");
@@ -103,8 +129,8 @@ public class BattleContext {
 
 			if (newHp <= 0) {
 				monster.setAlive(false);
-				addLogEntry(
-						unit.getName() + KoreanUtil.getJosa(unit.getName(), "이 ", "가 ") + finalDamage + "의 피해를 입고 쓰러졌습니다.");
+				addLogEntry(unit.getName() + KoreanUtil.getJosa(unit.getName(), "이 ", "가 ") + finalDamage
+						+ "의 피해를 입고 쓰러졌습니다.");
 				log.info(unit.getName() + " 사망 : " + finalDamage + " 피해");
 			} else {
 				addLogEntry(unit.getName() + KoreanUtil.getJosa(unit.getName(), "이 ", "가 ") + finalDamage
@@ -114,24 +140,36 @@ public class BattleContext {
 		}
 	}
 
+	private boolean checkAndExecuteRevival(PlayerDto player) {
+		for (PlayerArtifact artifact : player.getArtifacts()) {
+			if (artifact instanceof PhoenixFeatherArtifact) {
+				PhoenixFeatherArtifact feather = (PhoenixFeatherArtifact) artifact;
+				if (feather.canRevive()) {
+					return feather.executeRevival(player, this);
+				}
+			}
+		}
+		return false;
+	}
+
 	private int applyDefenseReduction(BattleUnit unit, int damage) {
-		if(!(unit instanceof BattleMonsterUnit)) {
+		if (!(unit instanceof BattleMonsterUnit)) {
 			return damage;
 		}
-		
+
 		BattleMonsterUnit monster = (BattleMonsterUnit) unit;
 		double defenseMultiplier = 1.0;
-		
-		if("FormChange".equals(monster.getSpecial())) {
+
+		if ("FormChange".equals(monster.getSpecial())) {
 			defenseMultiplier = FormChangeAbility.getDefenseMultiplier(monster, getCurrentTurn());
-		}else if("ModeSwitch".equals(monster.getSpecial())) {
+		} else if ("ModeSwitch".equals(monster.getSpecial())) {
 			defenseMultiplier = ModeSwitchAbility.getDefenseMulitplier(monster, getCurrentTurn());
 		}
-		
+
 		int finalDamage = (int) Math.round(damage / defenseMultiplier);
 		return Math.max(finalDamage, 1);
 	}
-	
+
 	public void addLogEntry(String message) {
 		BattleLogEntry logEntry = new BattleLogEntry("System", "special", message, currentTurn);
 		logs.add(logEntry);
@@ -213,68 +251,129 @@ public class BattleContext {
 	public int getDelayedActionCount() {
 		return delayedActions.size();
 	}
-}
 
-interface DelayedAction {
-	void execute(BattleContext context);
-}
-
-class ExtraAttackAction implements DelayedAction {
-	private final BattleUnit attacker;
-	private final BattleUnit target;
-
-	public ExtraAttackAction(BattleUnit attacker, BattleUnit target) {
-		this.attacker = attacker;
-		this.target = target;
-	}
-
-	@Override
-	public void execute(BattleContext context) {
-		if (!attacker.isAlive() || !target.isAlive()) {
-			context.addLogEntry(attacker.getName() + "의 추가 공격이 취소되었습니다.");
+	public void processAllStatusEffects(BattleUnit unit) {
+		Map<String, Integer> statusMap = unit.getStatusEffects();
+		if (statusMap == null || statusMap.isEmpty()) {
 			return;
 		}
 
-		if (attacker instanceof BattleMonsterUnit) {
-			BattleMonsterUnit monster = (BattleMonsterUnit) attacker;
-			int damage = calcMonsterAttack(monster);
+		if (statusMap.containsKey(BattleConstants.STATUS_BURN) && statusMap.get(BattleConstants.STATUS_BURN) > 0) {
+			int burnDamage = calculateBurnDamage(unit);
+			applyStatusDamage(unit, BattleConstants.STATUS_BURN, burnDamage);
+			decreaseStatusTurns(unit, BattleConstants.STATUS_BURN);
+		}
 
-			int targetLuck = getTargetLuck(target);
-			boolean isHit = isAttackHit(targetLuck);
+		if (statusMap.containsKey(BattleConstants.STATUS_POISON) && statusMap.get(BattleConstants.STATUS_POISON) > 0) {
+			int poisonDamage = statusMap.get(BattleConstants.STATUS_POISON);
+			applyStatusDamage(unit, BattleConstants.STATUS_POISON, poisonDamage);
+			decreaseStatusTurns(unit, BattleConstants.STATUS_POISON);
+		}
 
-			if (isHit) {
-				context.damageUnit(target, damage);
-				context.addLogEntry(attacker.getName(), "extra_attack",
-						attacker.getName() + KoreanUtil.getJosa(attacker.getName(), "이 ", "가 ") + target.getName()
-								+ "에게 추가 공격으로 " + damage + "의 피해를 입혔습니다.");
+		decreaseStatusTurns(unit, BattleConstants.STATUS_BLIND);
+		decreaseStatusTurns(unit, BattleConstants.STATUS_FREEZE);
+		decreaseStatusTurns(unit, BattleConstants.STATUS_STUN);
+	}
+
+	public void decreaseStatusTurns(BattleUnit unit, String statusType) {
+		Map<String, Integer> statusMap = unit.getStatusEffects();
+		if (statusMap == null) {
+			return;
+		}
+
+		int currentTurns = statusMap.getOrDefault(statusType, 0);
+		if (currentTurns > 0) {
+			currentTurns--;
+			if (currentTurns <= 0) {
+				statusMap.remove(statusType);
+				addLogEntry(unit.getName(), "status_clear", unit.getName()
+						+ KoreanUtil.getJosa(unit.getName(), "의 ", "의 ") + getStatusName(statusType) + "이 해제되었습니다.");
 			} else {
-				context.addLogEntry(attacker.getName(), "extra_attack", attacker.getName() + "의 추가 공격을 "
-						+ target.getName() + KoreanUtil.getJosa(target.getName(), "이 ", "가 ") + "회피하였습니다.");
+				statusMap.put(statusType, currentTurns);
 			}
 		}
 	}
 
-	private int calcMonsterAttack(BattleMonsterUnit monster) {
-		int min_atk = monster.getMin_atk();
-		int max_atk = monster.getMax_atk();
-		return (int) (Math.random() * (max_atk + min_atk + 1)) + min_atk;
-	}
-
-	private int getTargetLuck(BattleUnit target) {
-		if (target.getUnitType().equals("Player")) {
-			return ((PlayerDto) target).getLuck();
-		} else if (target.getUnitType().equals("Monster")) {
-			return ((BattleMonsterUnit) target).getLuck();
+	public void applyStatusDamage(BattleUnit unit, String statusType, int damage) {
+		if (damage > 0) {
+			damageUnit(unit, damage);
+			addLogEntry(unit.getName(), statusType + "_damage",
+					unit.getName() + KoreanUtil.getJosa(unit.getName(), "이 ", "가 ") + getStatusName(statusType) + "으로 "
+							+ damage + "의 피해를 받았습니다.");
 		}
-		return 0;
 	}
 
-	private boolean isAttackHit(int luck) {
-		int n = (int) (Math.random() * 15) + 1;
-		int dodgeChance = n * 2 + luck;
-		int roll = (int) (Math.random() * 100) + 1;
-		return roll > dodgeChance;
+	public int calculateBurnDamage(BattleUnit unit) {
+		int baseBurnDamage = BattleConstants.getBurnDamage();
+
+		if (unit.getUnitType().equals("Player")) {
+			PlayerDto player = (PlayerDto) unit;
+
+			for (PlayerArtifact artifact : player.getArtifacts()) {
+				if (artifact instanceof DryWoodArtifact) {
+					DryWoodArtifact dryWood = (DryWoodArtifact) artifact;
+					baseBurnDamage += dryWood.getBurnDamageBonus();
+				}
+			}
+		}
+
+		return baseBurnDamage;
 	}
+
+	public String getStatusName(String statusType) {
+		switch (statusType) {
+		case BattleConstants.STATUS_BURN:
+			return "화상";
+		case BattleConstants.STATUS_POISON:
+			return "중독";
+		case BattleConstants.STATUS_FREEZE:
+			return "빙결";
+		case BattleConstants.STATUS_STUN:
+			return "기절";
+		case BattleConstants.STATUS_BLIND:
+			return "실명";
+		default:
+			return statusType;
+		}
+	}
+
+	void applyPoisonArtifactEffects(BattleUnit caster, BattleUnit target) {
+		if (caster == null || !caster.getUnitType().equals("Player")) {
+			return;
+		}
+
+		PlayerDto player = (PlayerDto) caster;
+		Map<String, Integer> targetStatusEffects = target.getStatusEffects();
+
+		if (targetStatusEffects == null) {
+			return;
+		}
+
+		int existingPoisonTurns = targetStatusEffects.getOrDefault(BattleConstants.STATUS_POISON, 0);
+
+		for (PlayerArtifact artifact : player.getArtifacts()) {
+			if (artifact instanceof PoisonNeedleArtifact) {
+				PoisonNeedleArtifact needleArtifact = (PoisonNeedleArtifact) artifact;
+
+				if (existingPoisonTurns > 0) {
+					int additionalDamage = needleArtifact.calculateStackDamage(existingPoisonTurns);
+
+					if (additionalDamage > 0) {
+						damageUnit(target, additionalDamage);
+						addLogEntry(caster.getName(), "poison_needle_effect",
+								caster.getName() + KoreanUtil.getJosa(caster.getName(), "의 ", "의 ") + "바늘 달린 독 장치가 "
+										+ target.getName() + "에게 추가로 " + additionalDamage + "의 중독 피해를 가했습니다! (기존 "
+										+ existingPoisonTurns + " 스택)");
+					}
+				}
+				break; // 하나만 적용
+			}
+		}
+	}
+}
+
+interface DelayedAction {
+	void execute(BattleContext context);
 }
 
 class ReflectDamageAction implements DelayedAction {
@@ -303,11 +402,17 @@ class StatusEffectAction implements DelayedAction {
 	private final BattleUnit target;
 	private final String statusType;
 	private final int turns;
+	private final BattleUnit caster;
 
 	public StatusEffectAction(BattleUnit target, String statusType, int turns) {
+		this(target, statusType, turns, null);
+	}
+
+	public StatusEffectAction(BattleUnit target, String statusType, int turns, BattleUnit caster) {
 		this.target = target;
 		this.statusType = statusType;
 		this.turns = turns;
+		this.caster = caster;
 	}
 
 	@Override
@@ -323,6 +428,10 @@ class StatusEffectAction implements DelayedAction {
 			target.setStatusEffects(statusEffects);
 		}
 
+		if (BattleConstants.STATUS_POISON.equals(statusType)) {
+			context.applyPoisonArtifactEffects(caster, target);
+		}
+
 		int currentTurns = statusEffects.getOrDefault(statusType, 0);
 		int newTurns = Math.max(currentTurns, turns);
 
@@ -332,8 +441,9 @@ class StatusEffectAction implements DelayedAction {
 			context.addLogEntry("System", "status_refresh",
 					target.getName() + "의 " + statusType + " 상태 지속시간이 " + newTurns + "턴으로 갱신되었습니다.");
 		} else {
-			context.addLogEntry("System", "ststus_effect", target.getName()
-					+ KoreanUtil.getJosa(target.getName(), "이 ", "가 ") + statusType + " 상태에 걸렸습니다. (" + newTurns + "턴)");
+			context.addLogEntry("System", "status_effect",
+					target.getName() + KoreanUtil.getJosa(target.getName(), "이 ", "가 ") + statusType + " 상태에 걸렸습니다. ("
+							+ newTurns + "턴)");
 		}
 	}
 }

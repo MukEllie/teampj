@@ -8,7 +8,7 @@
     <form action="/event/card/apply" method="post" style="margin-bottom:8px;">
       <input type="hidden" name="playerId" value="${playerId}">
       <input type="hidden" name="ce_id" value="${event.ce_id}">
-      <input type="hidden" name="skillId" value="${s.skill_ID}">
+      <input type="hidden" name="skillId" value="${s.skill_id}">
       <button type="submit">
         ${s.skill_name} (${s.rarity})
       </button>

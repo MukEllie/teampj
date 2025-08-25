@@ -130,7 +130,7 @@
 	    s.skill_text  AS skill_text
 	  FROM `SkillDB` s
 	  WHERE LOWER(s.skill_type) = 'event'
-	    AND (LOWER(s.element) = 'none' OR LOWER(s.element) = LOWER(#{session}))
+	    AND (LOWER(s.element) = 'none' OR LOWER(s.element) = LOWER(#{session})) <!-- 여기서 (LOWER(*))는 대소문자 영향 제거용 -->
 	    AND (LOWER(s.skill_job) = 'common' OR LOWER(s.skill_job) = LOWER(#{job}))
 	  ORDER BY RAND()
 	  LIMIT #{limit}
@@ -170,19 +170,33 @@
       )
     ORDER BY RAND() LIMIT 1
   </select>
-
+	
   <select id="getArtifactsBySession" resultType="com.milite.dto.ArtifactDto">
   	SELECT
-    	a.artifact_id       AS artifact_id,
-    	a.artifact_name     AS artifact_name,
-	    a.artifact_job      AS artifact_job,
-	    a.artifact_session  AS artifact_session,
-	    a.artifact_text     AS artifact_text
-	  FROM `ArtifactDB` a
-	  WHERE (LOWER(a.artifact_session) = 'none' OR LOWER(a.artifact_session) = LOWER(#{session}))
-	    AND (LOWER(a.artifact_job) = 'common' OR LOWER(a.artifact_job) = LOWER(#{job}))
+    	  a.ID           AS ArtifactID,
+	      a.Name         AS ArtifactName,
+	      a.Job          AS ArtifactJob,
+	      a.Session      AS ArtifactSession,
+	      a.Effect       AS ArtifactEffect,
+	      a.Description  AS ArtifactDescription
+	  FROM ArtifactDB a
+	  WHERE (LOWER(a.Session) = 'none' OR LOWER(a.Session) = 'event')
+	    AND (LOWER(a.Job) = 'common' OR LOWER(a.Job) = LOWER(#{job}))
 	  ORDER BY RAND()
 	  LIMIT #{limit}
+  </select>
+  
+  <select id="getArtifactById" parameterType="int" resultType="com.milite.dto.ArtifactDto">
+	  SELECT
+	      a.ID           AS ArtifactID,
+	      a.Name         AS ArtifactName,
+	      a.Job          AS ArtifactJob,
+	      a.Session      AS ArtifactSession,
+	      a.Effect       AS ArtifactEffect,
+	      a.Description  AS ArtifactDescription
+	  FROM ArtifactDB a
+	  WHERE a.ID = #{id}
+	  LIMIT 1
   </select>
 
   <!-- ======= Boss ======= -->

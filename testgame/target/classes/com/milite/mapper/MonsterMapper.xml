@@ -4,12 +4,44 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.milite.mapper.MonsterMapper">
 	<select id="MonsterList" resultType="com.milite.dto.MonsterDto">
-		select * from MonsterDB
-		where session = #{session} and type = #{type}
+		select
+		MonsterID as
+		monsterID,
+		Name as name,
+		Session as session,
+		Type as type,
+		Element as
+		element,
+		min_hp,
+		max_hp,
+		min_atk,
+		max_atk,
+		luck,
+		Special as special,
+		Description as description
+		from MonsterDB
+		where session = #{session} and
+		type = #{type}
 	</select>
 
 	<select id="SummonServant"
 		resultType="com.milite.dto.MonsterDto">
-		select * from MonsterDB where MonsterID = 52
+		select MonsterID as monsterID,
+		Name as name,
+		Session as
+		session,
+		Type as type,
+		Element as
+		element,
+		min_hp,
+		max_hp,
+		min_atk,
+		max_atk,
+		luck,
+		Special as special,
+		Description as description
+		from
+		MonsterDB where
+		MonsterID = 52
 	</select>
 </mapper>

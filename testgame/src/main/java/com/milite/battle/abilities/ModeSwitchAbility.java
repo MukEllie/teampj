@@ -3,14 +3,10 @@ package com.milite.battle.abilities;
 import com.milite.battle.BattleContext;
 import com.milite.battle.BattleMonsterUnit;
 import com.milite.battle.BattleUnit;
+import com.milite.constants.BattleConstants;
 import com.milite.util.KoreanUtil;
 
 public class ModeSwitchAbility implements SpecialAbility {
-	private static final double OFFENSE_ATK_MULTIPLIER = 1.2;
-	private static final double OFFENSE_DEF_MULTIPLIER = 0.8;
-	private static final double DEFENSE_ATK_MULTIPLIER = 1.2;
-	private static final double DEFENSE_DEF_MULTIPLIER = 0.8;
-
 	@Override
 	public void onAttack(BattleUnit attacker, BattleUnit target, BattleContext context) {
 
@@ -87,22 +83,22 @@ public class ModeSwitchAbility implements SpecialAbility {
 		int formCount = getFormCount(monster);
 		boolean isOffensive = shouldUseOffensiveStance(formCount, currentTurn);
 
-		return isOffensive ? OFFENSE_ATK_MULTIPLIER : DEFENSE_ATK_MULTIPLIER;
+		return isOffensive ? BattleConstants.getModeSwitchOffenseAtk() : BattleConstants.getModeSwitchDefenseAtk();
 	}
-	
+
 	public static double getDefenseMulitplier(BattleUnit unit, int currentTurn) {
-		if(!(unit instanceof BattleMonsterUnit)) {
+		if (!(unit instanceof BattleMonsterUnit)) {
 			return 1.0;
 		}
-		
+
 		BattleMonsterUnit monster = (BattleMonsterUnit) unit;
-		if(!"ModeSwitch".equals(monster.getSpecial())) {
+		if (!"ModeSwitch".equals(monster.getSpecial())) {
 			return 1.0;
 		}
-		
+
 		int formCount = getFormCount(monster);
 		boolean isOffensive = shouldUseOffensiveStance(formCount, currentTurn);
-		
-		return isOffensive ? OFFENSE_DEF_MULTIPLIER : DEFENSE_DEF_MULTIPLIER;
+
+		return isOffensive ? BattleConstants.getModeSwitchOffenseDef() : BattleConstants.getModeSwitchDefenseDef();
 	}
 }
