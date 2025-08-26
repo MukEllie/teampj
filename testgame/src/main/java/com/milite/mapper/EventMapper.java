@@ -47,10 +47,11 @@ public interface EventMapper {
 	CardEventDto pickOneUnusedCard(@Param("session") String session, @Param("playerId") String playerId,
 			@Param("layer") String layer);
 
-	List<SkillDto> getEventSkillsFromDB(@Param("job") String job, @Param("session") String session,
-			@Param("limit") int limit);
+// 교체된 시그니처 (playerId, limit)
+	List<SkillDto> getEventSkillsFromDB(@Param("playerId") String playerId, @Param("limit") int limit);
 
-	List<SkillDto> getOwnedSkillsRandom(@Param("playerId") String playerId, @Param("limit") int limit);
+// 삭제: getOwnedSkillsRandom(...)
+// List<SkillDto> getOwnedSkillsRandom(@Param("playerId") String playerId, @Param("limit") int limit);
 
 	/* ===== Artifact ===== */
 	ArtifactEventDto pickOneUnusedArtifactEvent(@Param("session") String session, @Param("playerId") String playerId,

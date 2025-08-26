@@ -10,6 +10,20 @@
 
 	<select id="getSkillReward" resultType="com.milite.dto.SkillDto">
 		select * from skills
-		where skill_job = #{job} and rarity = #{rarity}
+		<where>
+			<if test="job != null">
+				and (skill_job = #{job} or skill_job = 'Common')
+			</if>
+			<if test="rarity != null">
+				and rarity = #{rarity}
+			</if>
+			<if test="type != null">
+				and (skill_type = #{type} or skill_type = 'Basic')
+			</if>
+			<if test="element != null">
+				and (element = #{element} or element = 'None')
+			</if>
+		</where>
+		order by RAND()
 	</select>
 </mapper>

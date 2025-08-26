@@ -30,7 +30,7 @@
 		from PlayerDB
 		where Player_ID = #{PlayerID}
 	</select>
-
+	
 	<!-- PlayerDB에 전투관련 스탯의 변경점을 업데이트하기 -->
 	<update id="updateStatus" parameterType="com.milite.dto.PlayerDto">
   		UPDATE PlayerDB
@@ -59,13 +59,13 @@
 	  	SELECT Own_Artifact FROM PlayerDB WHERE Player_ID = #{PlayerID}
 	</select>
 
-	  <update id="addSkillToPlayer">
+	<update id="addSkillToPlayer">
 	  UPDATE PlayerDB
 	  SET Own_Skill =
 	    CASE
-	      WHEN Own_Skill IS NULL OR JSON_TYPE(Own_Skill) = 'NULL'
-	        THEN JSON_ARRAY(CAST(#{skillId} AS UNSIGNED))
-	      ELSE JSON_ARRAY_APPEND(Own_Skill, '$', CAST(#{skillId} AS UNSIGNED))
+	      WHEN Own_Skill IS NULL OR Own_Skill = '' THEN CAST(#{skillId} AS CHAR)
+	      WHEN FIND_IN_SET(#{skillId}, Own_Skill) = 0 THEN CONCAT(Own_Skill, ',', #{skillId})
+	      ELSE Own_Skill
 	    END
 	  WHERE Player_ID = #{playerId}
 	</update>

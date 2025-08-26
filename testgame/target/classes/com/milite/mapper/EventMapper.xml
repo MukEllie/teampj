@@ -106,56 +106,47 @@
 
   <!-- ======= Card ======= -->
   <select id="pickOneUnusedCard" resultType="com.milite.dto.CardEventDto">
-    SELECT ce_id, ce_name, ce_session, ce_dmg
-    FROM cardevent
-    WHERE (LOWER(ce_session)='none' OR LOWER(ce_session)=LOWER(#{session}))
-      AND ce_id NOT IN (
-        SELECT event_id FROM used_events
-        WHERE player_id = #{playerId}
-          AND layer = #{layer}
-          AND event_type = 'card'
-      )
-    ORDER BY RAND() LIMIT 1
+	  SELECT
+	    ce_id,
+	    ce_name,
+	    ce_session
+	  FROM cardevent
+	  WHERE (LOWER(ce_session)='none' OR LOWER(ce_session)=LOWER(#{session}))
+	    AND ce_id NOT IN (
+	      SELECT event_id FROM used_events
+	      WHERE player_id = #{playerId}
+	        AND layer     = #{layer}
+	        AND event_type = 'card'
+	    )
+	  ORDER BY RAND()
+	  LIMIT 1
   </select>
 
   <!-- SkillDB에서 skill_type='event' 카드 3장 -->
   <select id="getEventSkillsFromDB" resultType="com.milite.dto.SkillDto">
 	  SELECT
-	    s.skill_id    AS skill_ID,
-	    s.skill_job   AS skill_Job,     -- Warrior/Thief/Mage/Common
-	    s.skill_type  AS skill_Type,    -- Event
-	    s.rarity      AS rarity,        -- N/R/SR
-	    s.element     AS element,       -- Water/Fire/Grass/None
-	    s.skill_name  AS skill_name,
-	    s.skill_text  AS skill_text
-	  FROM `SkillDB` s
-	  WHERE LOWER(s.skill_type) = 'event'
-	    AND (LOWER(s.element) = 'none' OR LOWER(s.element) = LOWER(#{session})) <!-- 여기서 (LOWER(*))는 대소문자 영향 제거용 -->
-	    AND (LOWER(s.skill_job) = 'common' OR LOWER(s.skill_job) = LOWER(#{job}))
+	    s.skill_id,
+	    s.skill_name,
+	    s.skill_job,
+	    s.element,
+	    s.rarity,
+	    s.skill_type,
+	    s.skill_text
+	  FROM PlayerDB p
+	  JOIN SkillDB s
+	       ON TRUE
+	  WHERE p.Player_ID = #{playerId}
+	    -- 보유(Own_Skill)에는 없는 카드만 (CSV: "11,12,13")
+	    AND (p.Own_Skill IS NULL OR p.Own_Skill = '' OR FIND_IN_SET(s.skill_id, p.Own_Skill) = 0)
+	    -- 카드 이벤트 스킬만 필요하면 유지(원본에 있었다면 유지; 필요 없으면 이 줄 지워도 무방)
+	    AND LOWER(s.skill_type) = 'event'
+	    -- 직업/세션만 반영 (희귀도 제외)
+	    AND (LOWER(s.skill_job) = 'common' OR LOWER(s.skill_job) = LOWER(p.Using_Character))
+	    AND (LOWER(s.element)   = 'none'   OR LOWER(s.element)   = LOWER(p.WhereSession))
 	  ORDER BY RAND()
 	  LIMIT #{limit}
   </select>
 
-  <!-- 보유 스킬에서 랜덤 3장 (구현체에 따라 JSON_EXTRACT 사용) -->
-  <select id="getOwnedSkillsRandom" resultType="com.milite.dto.SkillDto">
-	  SELECT
-	    s.skill_id    AS skill_ID,
-	    s.skill_job   AS skill_Job,
-	    s.skill_type  AS skill_Type,
-	    s.rarity      AS rarity,
-	    s.element     AS element,
-	    s.skill_name  AS skill_name,
-	    s.skill_text  AS skill_text
-	  FROM `PlayerDB` p
-	  JOIN JSON_TABLE(p.`Own_Skill`, '$[*]' COLUMNS (skill_id INT PATH '$')) j
-	        ON TRUE
-	  JOIN `SkillDB` s
-	        ON s.skill_id = j.skill_id
-	  WHERE p.`Player_ID` = #{playerId}
-	    AND LOWER(s.skill_type) = 'event'
-	  ORDER BY RAND()
-	  LIMIT #{limit}
-  </select>
 
   <!-- ======= Artifact ======= -->
   <select id="pickOneUnusedArtifactEvent" resultType="com.milite.dto.ArtifactEventDto">

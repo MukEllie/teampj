@@ -7,5 +7,5 @@ import com.milite.dto.SkillDto;
 public interface SkillService {
 	public SkillDto getSkillInfo(Integer skillID);
 
-	public List<SkillDto> getSkillReward(String job, String rarity);
+	public List<SkillDto> getSkillReward(String job, String rarity, String type, String element);
 }

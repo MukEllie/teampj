@@ -137,8 +137,10 @@ public class EventController {
 			model.addAttribute("playerId", playerId);
 			return "event/card_result";
 		}
-		List<SkillDto> candidates = (ce.getCe_dmg() == 0) ? eventService.getCardChoicesFromSkillDB(playerId)
-				: eventService.getCardChoicesFromOwned(playerId);
+
+		// 변경: 항상 SkillDB에서 보유 제외 3장
+		List<SkillDto> candidates = eventService.getCardChoicesFromSkillDB(playerId);
+
 		model.addAttribute("playerId", playerId);
 		model.addAttribute("event", ce);
 		model.addAttribute("skills", candidates);

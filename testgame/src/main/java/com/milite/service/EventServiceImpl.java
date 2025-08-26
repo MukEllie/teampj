@@ -416,22 +416,23 @@ public class EventServiceImpl implements EventService {
 
 	@Override
 	public List<SkillDto> getCardChoicesFromSkillDB(String playerId) {
-		PlayerDto p = characterStatusMapper.getPlayerInfo(playerId);
-		// SkillDB에서 skill_type='event' + 세션 필터, 랜덤 3장
-		return eventMapper.getEventSkillsFromDB(p.getWhereSession(), p.getUsing_Character(), 3);
+		// 보유(Own_Skill) 제외 + 직업/세션 반영 + 랜덤 3장
+		return eventMapper.getEventSkillsFromDB(playerId, 3);
 	}
 
-	@Override
-	public List<SkillDto> getCardChoicesFromOwned(String playerId) {
-		// 보유 스킬 JSON에서 랜덤 3장 (환경별 구현)
-		return eventMapper.getOwnedSkillsRandom(playerId, 3);
-	}
+	// 삭제:
+	// @Override
+	// public List<SkillDto> getCardChoicesFromOwned(String playerId) { ... }
 
 	@Override
 	public String applyCardGain(String playerId, int ce_id, int skillId) {
+		// 선택한 카드ID를 Own_Skill(CSV)에 저장
 		characterStatusMapper.addSkillToPlayer(playerId, skillId);
+
+		// 사용 이력 기록
 		PlayerDto p = characterStatusMapper.getPlayerInfo(playerId);
 		eventMapper.markEventUsed(playerId, p.getWhereSession(), "card", ce_id);
+
 		return "카드 획득 완료: skillId=" + skillId;
 	}
 

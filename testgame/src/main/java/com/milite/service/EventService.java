@@ -45,9 +45,10 @@ public interface EventService {
 	/* Card */
 	CardEventDto prepareCard(String playerId);
 
+	// 보유 제외 + 직업/세션 반영 3장
 	List<SkillDto> getCardChoicesFromSkillDB(String playerId);
 
-	List<SkillDto> getCardChoicesFromOwned(String playerId);
+	// 삭제: List<SkillDto> getCardChoicesFromOwned(String playerId);
 
 	String applyCardGain(String playerId, int ce_id, int skillId);
 

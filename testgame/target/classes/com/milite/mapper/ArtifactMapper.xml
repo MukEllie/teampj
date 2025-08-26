@@ -3,11 +3,51 @@
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.milite.mapper.ArtifactMapper">
+
+	<!-- 모든 아티팩트의 정보를 가져오기 -->
 	<select id="getArtifactInfo"
 		resultType="com.milite.dto.ArtifactDto">
-		select * from ArtifactDB
+		select
+		ID as ArtifactID,
+		Name as AritfactName,
+		Job as
+		ArtifactJob,
+		Session as ArtifactSession,
+		Effect as ArtifactEffect,
+		Description as ArtifactDescription
+		from ArtifactDB
 	</select>
-	
-	<select id="getArtifactByID"></select>
+
+	<!-- ID를 입력받아 해당 아티팩트의 정보를 가져오기 -->
+	<select id="getArtifactByID"
+		resultType="com.milite.dto.ArtifactDto">
+		select
+		ID as ArtifactID,
+		Name as AritfactName,
+		Job as
+		ArtifactJob,
+		Session as
+		ArtifactSession,
+		Effect as ArtifactEffect,
+		Description as
+		ArtifactDescription
+		from ArtifactDB
+		where Name =
+		#{ArtifactName}
+	</select>
+
+	<!-- 전투 보상용 구문, 특정 직업과 드랍처를 따져서 획득 가능한 아티팩트의 정보를 가져오기 -->
+	<select id="getAvailableArtifacts"
+		resultType="com.milite.dto.ArtifactDto">
+		select ID as ArtifactName, Name as ArtifactName, Job as
+		ArtifactJob, Session
+		as ArtifactSession, Effect as ArtifactEffect,
+		Description as
+		ArtifactDescription from ArtifactDB where (Job = #{Job}
+		or Job = 'Common')
+		and (Session = #{session} or Session = 'None') and
+		Session != 'Event' and
+		Session != 'Unique'
+	</select>
 </mapper>
 	

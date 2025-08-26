@@ -239,4 +239,43 @@ public class BattleConstants {
 	public static Map<String, Map<String, Double>> getElementEffectiveness() {
 		throw new UnsupportedOperationException("Use getElementMultiplier() instead");
 	}
+	
+	
+	// ========== 보상 관련 상수들 ===========
+	// ========== 스킬 등급별 드랍률 ===========
+	public static int getRewardSkillSRChance() {
+		return service.getIntConstant("reward_skill_sr_chance");
+	}
+	
+	public static int getRewardSkillRChance() {
+		return service.getIntConstant("reward_skill_r_chance");
+	}
+	
+	public static int getRewardSkillNChance() {
+		return service.getIntConstant("reward_skill_n_chance");
+	}
+
+	// ========== 아티팩트 드랍률 ============
+	public static int getRewardArtifactDropChance() {
+		return service.getIntConstant("reward_artifact_drop_chance");
+	}
+	
+	// ========== 스킬 선택지 개수 ===========
+	public static int getRewardSkillChoiceCount() {
+		return service.getIntConstant("reward_skill_choice_count");
+	}
+	
+	// ========== 스킬 및 아티팩트 중복 방지 횟수 ===========
+	public static int getRewardMaxSkillAttempts() {
+		return service.getIntConstant("reward_max_skill_attempts");
+	}
+	
+	public static int getRewardMaxArtifactAttempts() {
+		return service.getIntConstant("reward_max_artifact_attempts");
+	}
+	
+	// ========== 골드 보상 ============
+	public static int getRewardGoldBossClear() {
+		return service.getIntConstant("reward_gold_boss_clear");
+	}
 }

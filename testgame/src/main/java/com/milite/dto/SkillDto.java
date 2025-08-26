@@ -7,22 +7,22 @@ import lombok.*;
 @AllArgsConstructor
 public class SkillDto {
 	Integer skill_id; 
-	String skill_job; // 전사 도적 마법사 공용
-	String skill_type; // BattleCard, EventCard
-	String rarity;
-	String element;
+	String skill_job; // Warrior, Thief, Mage, Common
+	String skill_type; // Basic, Battle, Event
+	String rarity; // N, R, SR
+	String element; // Fire, Water, Grass, None
 	
 	Integer min_damage;
 	Integer max_damage;
 	Integer hit_time;
 	String hit_target;
 	
-	String statusEffect_name;
+	String statusEffect_name; // Burn, Poison, Freeze, Stun
 	Integer statusEffect_rate;
 	Integer statusEffect_turn;
 	
 	String skill_name;
 	String skill_text;
 	
-	//int image_ID;
+	//int image_ID; 현재 DB에 구현되어있지 않음
 }
