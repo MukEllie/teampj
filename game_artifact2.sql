@@ -1,76 +1,41 @@
 use team1;
+use testgame;
 
-drop table artifact;
-create table artifact (
-	artifact_id INT UNIQUE,
-    artifact_name CHAR(50),
-    artifact_job INT,			-- 특정 직업용 아티팩트 유무, 0이면 공용, 1이면 전사, 2면 마법사, 3이면 도적
-    artifact_type INT,			-- 아티펙트 출현 계층 타입, 0이면 공용, 1이면 물계층, 2면 불계층, 3이면 풀계층, 4이면 특수이벤트
-    artifact_text CHAR(100)		-- 아티펙트 소개문구
-);
-INSERT INTO artifact (artifact_id, artifact_name, artifact_job, artifact_type, artifact_text) VALUES
-(0, '황금 문명의 부적', 0, 0, '신에게 거역했다 황금으로 변해버린 고대 문명의 부적이다.'),
-(1, '파이터 길드의 메달', 1, 0, '전투능력을 증명한 자에게 주어지는 메달이다.'),
-(2, '엄청 커다란 토끼발', 3, 0, '던전 내 토끼몬스터로 만든 것 같은 커다란 토끼발이다.'),
-(3, '바다의 심장', 0, 1, '심해 깊숙한 곳에서 가끔 발견되는 보물이다.'),
-(4, '부른 빛의 삼지창', 0, 1, '해신에게 인정받은 자만이 취할 수 있다는 성물이다.'),
-(5, '심해의 진주', 3, 1, '깊은 바다의 기운이 무기를 타고 내게 흘러들어오는 느낌이다.'),
-(6, '불사조의 흰색 깃털', 0, 2, '불사조의 심장 부근에서 자라 강한 생명력이 담긴 깃털이다.'),
-(7, '작열하는 용암석', 0, 2, '타오르는 열기가 모두 불살라버릴 것 같다.'),
-(9, '세계수의 뿌리', 0, 3, '생명의 근원이 담겨있다고 알려진 성물이다.'),
-(10, '드루이드의 벨트', 0, 3, '착용하면 숲의 정령과 대화가 가능하다고 알려져있다.');
-
-
-
-create table heal_artifact (
-artifact_id INT UNIQUE,
-heal_hitrate INT,			-- 타수당 힐량
-heal_turn INT,				-- 턴당 힐량
-heal_deal INT,				-- 피해량당 힐량(피흡)
-artifact_power CHAR(100),	-- 아티펙트 효과 설명
-FOREIGN KEY (artifact_id) REFERENCES artifact(artifact_id)
-);
-INSERT INTO heal_artifact (artifact_id, heal_hitrate, heal_turn, heal_deal, artifact_power) VALUES
-(3, 0, 10, 0, '매 턴마다 10 치유'),
-(5, 5, 0, 0, '타격당 5 치유');
-
-
-
-create table defence_artifact (
-artifact_id INT UNIQUE,
-defence_shield INT,			-- 매 전투당 1회용 실드 유무, 0이면 없음 1이면 부여
-dodge_rate INT,				-- 회피율 계수(수정 가능)
-reflect_dmg INT,			-- 데미지 반사수치
-artifact_power CHAR(100),	-- 아티펙트 효과 설명
-FOREIGN KEY (artifact_id) REFERENCES artifact(artifact_id)
+drop table ArtifactDB;
+CREATE TABLE ArtifactDB (
+    ID INT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Job VARCHAR(20) NOT NULL, -- Common, Warrior, Mage, Thief
+    Session VARCHAR(20) NOT NULL, -- None, Event, Unique
+    Effect TEXT NOT NULL,
+    Description TEXT NOT NULL
 );
 
-
-
-create table attack_artifact (
-artifact_id INT UNIQUE,
-element_none INT,
-element_water INT,			-- 물속성카드 데미지 증가
-element_fire INT,			-- 불속성카드 데미지 증가
-element_grass INT,			-- 풀속성카드 데미지 증가
-artifact_power CHAR(100),	-- 아티펙트 효과 설명
-FOREIGN KEY (artifact_id) REFERENCES artifact(artifact_id)
-);
-INSERT INTO attack_artifact (artifact_id, element_none, element_water, element_fire, element_grass, artifact_power) VALUES
-(1, 2, 0, 0, 0, '일반카드 공격력 2 증가'),
-(4, 0, 2, 0, 0, '물속성카드 공격력 2 증가'),
-(7, 0, 0, 2, 0, '불속성카드 공격력 2 증가'),
-(10, 0, 0, 0, 2, '풀속성카드 공격력 2 증가');
-
-
-
-create table extra_artifact (
-artifact_id INT UNIQUE,
-gold_stage INT,				-- 매 스테이지마다 골드획득량
-extra_life INT,				-- 추가생명 스택
-artifact_power CHAR(100),	-- 아티펙트 효과 설명
-FOREIGN KEY (artifact_id) REFERENCES artifact(artifact_id)
-);
-INSERT INTO extra_artifact (artifact_id, gold_stage, extra_life, artifact_power) VALUES
-(0, 10, 0, '매 스테이지마다 골드 10 획득'),
-(6, 0, 1, '체력 50%로 1회 부활');
+INSERT INTO ArtifactDB (ID, Name, Job, Session, Effect, Description) VALUES
+(101, '파이터 길드 메달', 'Common', 'None', '무속성 스킬 카드의 데미지 2 증가', '격투 길드의 싸움에서 이긴자에게 주어지는 증표'),
+(102, '작열하는 용암석', 'Common', 'None', '불속성 스킬 카드의 데미지 2 증가', '아직 식지 않은 용암'),
+(103, '푸른 빛의 삼지창', 'Common', 'None', '물속성 스킬 카드의 데미지 2 증가', '뾰족하진 않지만 아프긴 할 것 같은 삼지창'),
+(104, '드루이드의 벨트', 'Common', 'None', '풀속성 스킬 카드의 데미지 2 증가', '풀과 나뭇가지로 엮어만든 벨트. 중간 중간 꽃이 있다'),
+(105, '원소의 돌', 'Common', 'None', '우세 상성 공격 시 배율 10% 증가', '잡을 때마다 다른 느낌이 드는 신비한 돌'),
+(106, '마법사의 부적', 'Mage', 'None', '약세 상성 공격 시 배율 10% 증가', '마법사는 자신의 제자가 떠나기 전에 스스로 만든 부적을 건네주는 전통이 있다'),
+(107, '금단의 주문서', 'Mage', 'Event', '우세 상성 공격 시 배율 20% 증가/약세 상성 공격 시 배율 20% 감소', '오래 전 분실되었다고 알려진 금단서'),
+(108, '잘 마른 나무', 'Common', 'None', '화상 데미지 1 증가', '아주 잘 말랐고, 아주 잘 탈 것 같다'),
+(109, '바늘 달린 독 장치', 'Thief', 'Event', '중독 상태이상 적용 시, 기존에 적용된 중독 스택의 절반만큼 피해를 가함', '누가봐도 독이 발려있다'),
+(110, '어두운 망치', 'Thief', 'None', '기절 상태이상 지속 시간 1턴 증가', '왜 망치를 잘 안보이게 검게 칠한거지? 아'),
+(111, '부서진 칼날', 'Common', 'None', '피격 시, 공격자에게 2의 피해를 가함', '"이거 그래도 날카롭지 않아?"'),
+(112, '회색 망토', 'Common', 'None', '회피율 5% 증가', '별 거 아닌 망토지만 적의 시야를 혼란스럽게 만드는데는 충분하다'),
+(113, '흐릿한 렌즈', 'Common', 'None', '적의 회피율 5% 감소', '없는 것보다는 나은 렌즈'),
+(114, '과부하 결정', 'Common', 'None', '첫 턴에 하는 공격은 확정 명중', '적의 위치 이동을 방해할 수 있는 결정. 다만 한 번 쓰면 꽤 오래 충전해야할 거 같다'),
+(115, '미끄러운 가죽 보호대', 'Common', 'None', '전투마다 처음에 받는 피해를 무효화함', '미끌미끌해!!'),
+(116, '바다의 심장', 'Warrior', 'Event', '매 턴 5 회복', '시원한 기운이 흘러나오는 돌'),
+(117, '심해의 진주', 'Common', 'None', '공격 적중 시 2 회복', '바다 깊은 곳에서 발견되는 진주. 반짝거린다'),
+(118, '검은 산고', 'Warrior', 'None', '공격 시 3 회복', '그 산호 안에는 다양한 것들이 있다. 가령 흡혈하는 벌레라던가'),
+(119, '불사조의 하얀 깃털', 'Common', 'None', '1회에 한하여, 죽음에 이르는 피해를 받았을 때, 체력 50% 회복하며 부활', '"불사조의 깃털이라고? 에이~ 그런게 어디있나~"'),
+(120, '불사조의 빛바랜 깃털', 'Common', 'Unique', '그 힘을 잃은 불사조의 깃털', '"세상에 내가 살아있잖아?"'),
+(121, '그림자 생성 장치', 'Common', 'Unique', '공격 횟수가 1회 증가', '행동을 어설프게 따라하는 그림자를 발생시키는 장치'),
+(201, '날카로운 연마석', 'Common', 'Event', '플레이어 공격력 10 증가', '그 어떤 무기든 날카롭게 연마해준다.'),
+(202, '녹슨 덤벨', 'Common', 'Event', '최대체력 15 증가', '체력단련은 꾸준히'),
+(203, '무지개색 네잎클로버', 'Common', 'Event', '행운 3 증가', '던전에 의해 변형된 네잎클로버다'),
+(204, '전투의 정석', 'Common', 'Event', '공격력 5 증가, 최대체력 10 증가', '전투할 때 효율적으로 싸우는 법이 적혀있는 책이다'),
+(205, '성기사의 판금갑옷', 'Common', 'Event', '최대체력 10 증가, 행운 1 증가', '교황에게 직접 축복받은 성물이다'),
+(206, '치명타 장갑', 'Common', 'Event', '공격력 5 증가, 행운 1 증가', '착용하면 무기의 손맛이 좋아진다');

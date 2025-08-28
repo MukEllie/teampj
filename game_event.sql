@@ -1,5 +1,7 @@
 CREATE DATABASE team1 default CHARACTER SET UTF8MB4;
+CREATE DATABASE testgame default CHARACTER SET UTF8MB4;
 use team1;
+use testgame;
 
 /* normalevent */
 drop table normalevent;
@@ -61,18 +63,16 @@ drop table cardevent;
 CREATE TABLE cardevent (
     ce_id INT UNIQUE,
     ce_name CHAR(50),
-    ce_session VARCHAR(20), -- none, water, fire, grass
-    ce_dmg INT -- 0이면 SkillDB에서, 0이 아니면 PlayerDB.Own_Skill에서 뽑음
+    ce_session VARCHAR(20)  -- none, water, fire, grass
 );
 select * from cardevent;
 INSERT INTO cardevent VALUES
-(0, '바다의 선물', 'Water', 0),
-(1, '화산의 선물', 'Fire', 0),
-(2, '세계수의 선물', 'Grass', 0),
-(3, '파도 강화', 'Water', 2),
-(4, '화력 강화', 'Fire', 2),
-(5, '뿌리 강화', 'Grass', 2);
-
+(0, '바다의 선물', 'Water'),
+(1, '바다의 선물', 'Water'),
+(2, '화산의 선물', 'Fire'),
+(3, '화산의 선물', 'Fire'),
+(4, '세계수의 선물', 'Grass'),
+(5, '세계수의 선물', 'Grass');
 
 /* artifactevent */
 drop table artifactevent;
@@ -183,3 +183,4 @@ CREATE TABLE used_events (
     UNIQUE KEY unique_event (player_id, layer, event_type, event_id)
 );
 select * from used_events;
+TRUNCATE TABLE used_events;
