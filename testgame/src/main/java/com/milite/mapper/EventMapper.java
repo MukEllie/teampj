@@ -47,21 +47,17 @@ public interface EventMapper {
 	CardEventDto pickOneUnusedCard(@Param("session") String session, @Param("playerId") String playerId,
 			@Param("layer") String layer);
 
-// 교체된 시그니처 (playerId, limit)
 	List<SkillDto> getEventSkillsFromDB(@Param("playerId") String playerId, @Param("limit") int limit);
 
-// 삭제: getOwnedSkillsRandom(...)
-// List<SkillDto> getOwnedSkillsRandom(@Param("playerId") String playerId, @Param("limit") int limit);
-
 	/* ===== Artifact ===== */
-	ArtifactEventDto pickOneUnusedArtifactEvent(@Param("session") String session, @Param("playerId") String playerId,
-			@Param("layer") String layer);
+	ArtifactEventDto pickOneUnusedArtifactEvent(@Param("layer") String layer, @Param("playerId") String playerId,
+			@Param("session") String session);
 
 	List<ArtifactDto> getArtifactsBySession(@Param("session") String session, @Param("job") String job,
 			@Param("limit") int limit);
 
-	// ★ 추가: artifact 단건 조회
-	ArtifactDto getArtifactById(@Param("id") int id);
+	/** 아티팩트 단건 조회 (이름/효과 메시지용) */
+	ArtifactDto getArtifactById(@Param("artifactId") int artifactId);
 
 	/* ===== Boss ===== */
 	BossEventDto pickOneUnusedBoss(@Param("session") String session, @Param("playerId") String playerId);

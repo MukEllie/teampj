@@ -70,16 +70,18 @@
 	  WHERE Player_ID = #{playerId}
 	</update>
 
-	<update id="addArtifactToPlayer">
-	  UPDATE PlayerDB
-	  SET Own_Artifact =
-	    CASE
-	      WHEN Own_Artifact IS NULL OR JSON_TYPE(Own_Artifact) = 'NULL'
-	        THEN JSON_ARRAY(CAST(#{artifactId} AS UNSIGNED))
-	      ELSE JSON_ARRAY_APPEND(Own_Artifact, '$', CAST(#{artifactId} AS UNSIGNED))
-	    END
-	  WHERE Player_ID = #{playerId}
-	</update>
+	<!-- 카드 addSkill과 동일: 단일 UPDATE로 중복가드 -->
+    <update id="addArtifactToPlayer">
+      UPDATE PlayerDB
+      SET Own_Artifact =
+        CASE
+          WHEN Own_Artifact IS NULL OR Own_Artifact = '' THEN CAST(#{artifactId} AS CHAR)
+          WHEN FIND_IN_SET(CAST(#{artifactId} AS CHAR), Own_Artifact) = 0
+            THEN CONCAT_WS(',', Own_Artifact, CAST(#{artifactId} AS CHAR))
+          ELSE Own_Artifact
+        END
+      WHERE Player_ID = #{playerId}
+    </update>
 
 	<update id="replacePhoenixFeathers" parameterType="String">
 		update

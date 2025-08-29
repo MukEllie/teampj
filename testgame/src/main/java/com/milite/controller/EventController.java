@@ -157,7 +157,7 @@ public class EventController {
 	}
 
 	/* ===== Artifact ===== */
-	@GetMapping("/artifact")
+	@GetMapping("/artifact") // 최종 경로: /event/artifact
 	public String showArtifact(@RequestParam String playerId, Model model) {
 		ArtifactEventDto e = eventService.prepareArtifact(playerId);
 		if (e == null) {
@@ -172,7 +172,7 @@ public class EventController {
 		return "event/artifact";
 	}
 
-	@PostMapping("/artifact/apply")
+	@PostMapping("/artifact/apply") // 최종 경로: /event/artifact/apply
 	public String applyArtifact(@RequestParam String playerId, @RequestParam int ae_id, @RequestParam int artifactId,
 			Model model) {
 		String msg = eventService.applyArtifactGain(playerId, ae_id, artifactId);

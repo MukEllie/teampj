@@ -149,45 +149,48 @@
 
 
   <!-- ======= Artifact ======= -->
+  <!-- 미사용 아티팩트 인트로 1개 -->
   <select id="pickOneUnusedArtifactEvent" resultType="com.milite.dto.ArtifactEventDto">
-    SELECT ae_id, ae_name, ae_session
-    FROM artifactevent
-    WHERE (LOWER(ae_session)='none' OR LOWER(ae_session)=LOWER(#{session}))
-      AND ae_id NOT IN (
-        SELECT event_id FROM used_events
-        WHERE player_id = #{playerId}
-          AND layer = #{layer}
-          AND event_type = 'artifact'
-      )
-    ORDER BY RAND() LIMIT 1
+    SELECT ae.*
+    FROM artifactevent ae
+    LEFT JOIN used_events ue
+      ON ue.player_id = #{playerId}
+     AND ue.layer     = #{layer}
+     AND ue.event_type= 'artifact'
+     AND ue.event_id  = ae.ae_id
+    WHERE ue.id IS NULL
+    ORDER BY RAND()
+    LIMIT 1
   </select>
-	
+
+  <!-- 세션/직업 기준 후보 3개 (원본 함수 유지) -->
   <select id="getArtifactsBySession" resultType="com.milite.dto.ArtifactDto">
-  	SELECT
-    	  a.ID           AS ArtifactID,
-	      a.Name         AS ArtifactName,
-	      a.Job          AS ArtifactJob,
-	      a.Session      AS ArtifactSession,
-	      a.Effect       AS ArtifactEffect,
-	      a.Description  AS ArtifactDescription
-	  FROM ArtifactDB a
-	  WHERE (LOWER(a.Session) = 'none' OR LOWER(a.Session) = 'event')
-	    AND (LOWER(a.Job) = 'common' OR LOWER(a.Job) = LOWER(#{job}))
-	  ORDER BY RAND()
-	  LIMIT #{limit}
+    SELECT
+      a.ID          AS artifactId,
+      a.Name        AS artifactName,
+      a.Job         AS artifactJob,
+      a.Session     AS artifactSession,
+      a.Effect      AS artifactEffect,
+      a.Description AS artifactText
+    FROM ArtifactDB a
+    WHERE (LOWER(a.Session) = 'none' OR LOWER(a.Session) = LOWER(#{session}))
+      AND (LOWER(a.Job)     = 'common' OR LOWER(a.Job)     = LOWER(#{job}))
+    ORDER BY RAND()
+    LIMIT #{limit}
   </select>
-  
-  <select id="getArtifactById" parameterType="int" resultType="com.milite.dto.ArtifactDto">
-	  SELECT
-	      a.ID           AS ArtifactID,
-	      a.Name         AS ArtifactName,
-	      a.Job          AS ArtifactJob,
-	      a.Session      AS ArtifactSession,
-	      a.Effect       AS ArtifactEffect,
-	      a.Description  AS ArtifactDescription
-	  FROM ArtifactDB a
-	  WHERE a.ID = #{id}
-	  LIMIT 1
+
+  <!-- 단건 조회 (원본 함수 유지) -->
+  <select id="getArtifactById" resultType="com.milite.dto.ArtifactDto">
+    SELECT
+      a.ID          AS artifactId,
+      a.Name        AS artifactName,
+      a.Job         AS artifactJob,
+      a.Session     AS artifactSession,
+      a.Effect      AS artifactEffect,
+      a.Description AS artifactText
+    FROM ArtifactDB a
+    WHERE a.ID = #{artifactId}
+    LIMIT 1
   </select>
 
   <!-- ======= Boss ======= -->
