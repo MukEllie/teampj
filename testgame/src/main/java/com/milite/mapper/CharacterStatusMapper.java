@@ -14,4 +14,9 @@ public interface CharacterStatusMapper {
 	void addArtifactToPlayer(@Param("playerId") String playerId, @Param("artifactId") int artifactId);
 
 	public int replacePhoenixFeathers(String PlayerID);
+
+	void addSkillToPlayerByString(@Param("playerId") String playerId, @Param("skillId") String skillId);
+
+	void updatePlayerSkills(@Param("playerId") String playerId, @Param("usingSkills") String usingSkills,
+			@Param("ownedSkills") String ownedSkills);
 }
