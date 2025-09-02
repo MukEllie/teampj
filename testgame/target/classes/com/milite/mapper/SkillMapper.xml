@@ -8,6 +8,11 @@
 		skill_id = #{skillID}
 	</select>
 
+	<select id="getSkillInfoByString"
+		resultType="com.milite.dto.SkillDto">
+		select * from skills where skill_id = #{skillID}
+	</select>
+
 	<select id="getSkillReward" resultType="com.milite.dto.SkillDto">
 		select * from skills
 		<where>

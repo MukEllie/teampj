@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.milite.constants.BattleConstants;
 import com.milite.dto.ArtifactDto;
@@ -15,6 +16,7 @@ import com.milite.dto.RewardDto;
 import com.milite.dto.SkillDto;
 import com.milite.mapper.ArtifactMapper;
 import com.milite.mapper.CharacterStatusMapper;
+import com.milite.util.CommonUtil;
 import com.milite.util.RewardUtil;
 
 import lombok.Setter;
@@ -22,6 +24,7 @@ import lombok.extern.log4j.Log4j;
 
 @Log4j
 @Service
+@Transactional
 public class RewardServiceImpl implements RewardService {
 	@Setter(onMethod_ = @Autowired)
 	private CharacterStatusMapper characterMapper;
@@ -53,7 +56,7 @@ public class RewardServiceImpl implements RewardService {
 
 			if (RewardUtil.shouldDropArtifact()) {
 				log.info("아티팩트 보상 추가 생성");
-				ArtifactDto artifact = generateArtifactReward(playerJob);
+				ArtifactDto artifact = generateArtifactReward(playerJob, player);
 				if (artifact != null) {
 					return new RewardDto(skillChoices, artifact, goldAmount);
 				}
@@ -67,6 +70,39 @@ public class RewardServiceImpl implements RewardService {
 		}
 	}
 
+	public RewardDto generateSpecialBattleReward(String playerID, int defeatedMonsterID) {
+		log.info("특수 보상 생성");
+
+		try {
+			PlayerDto player = characterMapper.getPlayerInfo(playerID);
+			if (player == null) {
+				return new RewardDto("플레이어 정보 찾기 실패", false);
+			}
+
+			String playerJob = player.getUsing_Character();
+			int currentStage = player.getWhereStage();
+			int goldAmount = RewardUtil.getBossClearGoldAmount(currentStage);
+
+			List<SkillDto> skillChoices = generateSkillChoices(playerJob);
+			if (skillChoices.isEmpty()) {
+				return new RewardDto("스킬 보상 생성에 실패", false);
+			}
+
+			if (defeatedMonsterID == BattleConstants.getSummonMasterId()) {
+				log.info("혼령의 인도인 처치 - 특수 보상 드랍");
+				ArtifactDto shadowDevice = artifactMapper.getArtifactByID(121);
+				if (shadowDevice != null) {
+					return new RewardDto(skillChoices, shadowDevice, goldAmount);
+				}
+			}
+
+			return generateBattleReward(playerID);
+		} catch (Exception e) {
+			log.error("특수 보상 생성 실패 : " + e.getMessage(), e);
+			return new RewardDto("특수 보상 생성 오류 : " + e.getMessage(), false);
+		}
+	}
+
 	private List<SkillDto> generateSkillChoices(String playerJob) {
 		List<SkillDto> skillChoices = new ArrayList<>();
 		int choiceCount = RewardUtil.getSkillChoiceCount(); // 기본값 3개
@@ -77,12 +113,14 @@ public class RewardServiceImpl implements RewardService {
 		for (int i = 0; i < choiceCount; i++) {
 			SkillDto selectedSkill = null;
 			int attempts = 0;
+
 			while (selectedSkill == null && attempts < maxAttempts) {
 				String rarity = RewardUtil.determineSkillRarity();
 				List<SkillDto> availableSkills = skillService.getSkillReward(playerJob, rarity, "Battle", null);
 
 				if (availableSkills != null && !availableSkills.isEmpty()) {
-					SkillDto candidate = availableSkills.get(0);
+					int randomIndex = CommonUtil.Dice(availableSkills.size()) - 1;
+					SkillDto candidate = availableSkills.get(randomIndex);
 
 					if (!usedSkillIDs.contains(candidate.getSkill_id())) {
 						selectedSkill = candidate;
@@ -92,41 +130,50 @@ public class RewardServiceImpl implements RewardService {
 				}
 				attempts++;
 			}
-<<<<<<< HEAD
 
 			if (selectedSkill == null) {
 				selectedSkill = getDefaultSkill(playerJob);
 			}
 
 			if (selectedSkill != null) {
-=======
-			
-			if(selectedSkill == null) {
-				selectedSkill=getDefaultSkill(playerJob);
-			}
-			
-			if(selectedSkill != null) {
->>>>>>> 4297196a91675f2bffe8a201f698102660a03142
 				skillChoices.add(selectedSkill);
 			}
 		}
 		return skillChoices;
-<<<<<<< HEAD
-=======
 	}
-	
-	private ArtifactDto generateArtifactReward(String playerJob) {
+
+	private ArtifactDto generateArtifactReward(String playerJob, PlayerDto player) {
 		try {
 			List<ArtifactDto> availableArtifacts = artifactMapper.getAvailableArtifacts(playerJob, "None");
+
+			if (availableArtifacts == null || availableArtifacts.isEmpty()) {
+				log.warn("사용 가능 아티팩트 없음");
+				return null;
+			}
+
+			List<ArtifactDto> filteredArtifacts = new ArrayList<>();
+			List<String> ownedArtifacts = player.getOwnArtifactList();
+
+			for (ArtifactDto artifact : availableArtifacts) {
+				String artifactIDStr = String.valueOf(artifact.getArtifactID());
+				if (!ownedArtifacts.contains(artifactIDStr)) {
+					filteredArtifacts.add(artifact);
+				}
+			}
+
+			if (filteredArtifacts.isEmpty()) {
+				log.info("모든 아티팩트를 보유 중");
+				return null;
+			}
+
+			int randomIndex = CommonUtil.Dice(filteredArtifacts.size()) - 1;
+			ArtifactDto selectedArtifact = filteredArtifacts.get(randomIndex);
+			log.info("선택된 아티팩트 : " + selectedArtifact.getArtifactName());
 			
-			 if(availableArtifacts == null || availableArtifacts.isEmpty()) {
-				 log.warn("사용 가능 아티팩트 없음");
-				 return null;
-			 }
-		}catch(Exception e) {
-			
+			return selectedArtifact;
+		} catch (Exception e) {
+
 		}
->>>>>>> 4297196a91675f2bffe8a201f698102660a03142
 	}
 
 	private ArtifactDto generateArtifactReward(String playerJob) {

@@ -30,44 +30,51 @@
 		from PlayerDB
 		where Player_ID = #{PlayerID}
 	</select>
-	
+
 	<!-- PlayerDB에 전투관련 스탯의 변경점을 업데이트하기 -->
-	<update id="updateStatus" parameterType="com.milite.dto.PlayerDto">
-  		UPDATE PlayerDB
-  		<trim prefix="SET" suffixOverrides=",">
-    		<if test="curr_hp != null"> curr_hp = #{curr_hp}, </if>
-    		<if test="max_hp  != null"> max_hp  = #{max_hp},  </if>
-    		<if test="atk     != null"> atk     = #{atk},     </if>
-    		<if test="luck    != null"> luck    = #{luck},    </if>
+	<update id="updateStatus"
+		parameterType="com.milite.dto.PlayerDto">
+		UPDATE PlayerDB
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="curr_hp != null"> curr_hp = #{curr_hp}, </if>
+			<if test="max_hp  != null"> max_hp = #{max_hp},  </if>
+			<if test="atk     != null"> atk = #{atk},     </if>
+			<if test="luck    != null"> luck = #{luck},    </if>
 
-    		<if test="EventAtk    != null"> EventAtk    = #{EventAtk},    </if>
-    		<if test="EventCurrHp != null"> EventCurrHp = #{EventCurrHp}, </if>
-    		<if test="EventMaxHp  != null"> EventMaxHp  = #{EventMaxHp},  </if>
+			<if test="EventAtk    != null"> EventAtk = #{EventAtk},    </if>
+			<if test="EventCurrHp != null"> EventCurrHp = #{EventCurrHp}, </if>
+			<if test="EventMaxHp  != null"> EventMaxHp = #{EventMaxHp},  </if>
 
-    		<if test="Using_Skill   != null"> Using_Skill   = #{Using_Skill},   </if>
-    		<if test="Own_Skill     != null"> Own_Skill     = #{Own_Skill},     </if>
-    		<if test="Own_Artifact  != null"> Own_Artifact  = #{Own_Artifact},  </if>
-  		</trim>
-  		WHERE Player_ID = #{PlayerID}
+			<if test="Using_Skill   != null"> Using_Skill = #{Using_Skill},   </if>
+			<if test="Own_Skill     != null"> Own_Skill = #{Own_Skill},     </if>
+			<if test="Own_Artifact  != null"> Own_Artifact = #{Own_Artifact},  </if>
+		</trim>
+		WHERE Player_ID = #{PlayerID}
 	</update>
-		
+
 	<select id="getPlayerOwnSkill" resultType="string">
-  		SELECT Own_Skill FROM PlayerDB WHERE Player_ID = #{PlayerID}
+		SELECT Own_Skill FROM
+		PlayerDB WHERE Player_ID = #{PlayerID}
 	</select>
 
 	<select id="getPlayerOwnArtifact" resultType="string">
-	  	SELECT Own_Artifact FROM PlayerDB WHERE Player_ID = #{PlayerID}
+		SELECT Own_Artifact
+		FROM PlayerDB WHERE Player_ID = #{PlayerID}
 	</select>
 
 	<update id="addSkillToPlayer">
-	  UPDATE PlayerDB
-	  SET Own_Skill =
-	    CASE
-	      WHEN Own_Skill IS NULL OR Own_Skill = '' THEN CAST(#{skillId} AS CHAR)
-	      WHEN FIND_IN_SET(#{skillId}, Own_Skill) = 0 THEN CONCAT(Own_Skill, ',', #{skillId})
-	      ELSE Own_Skill
-	    END
-	  WHERE Player_ID = #{playerId}
+		UPDATE PlayerDB
+		SET Own_Skill =
+		CASE
+		WHEN Own_Skill IS
+		NULL OR Own_Skill = '' THEN CAST(#{skillId} AS CHAR)
+		WHEN
+		FIND_IN_SET(#{skillId}, Own_Skill) = 0 THEN CONCAT(Own_Skill,
+		',',
+		#{skillId})
+		ELSE Own_Skill
+		END
+		WHERE Player_ID = #{playerId}
 	</update>
 
 	<!-- 카드 addSkill과 동일: 단일 UPDATE로 중복가드 -->
@@ -93,6 +100,19 @@
 		#{playerID}
 		and
 		find_in_set('119', Own_Artifact) > 0
+	</update>
+
+	<update id="addSkillToPlayerByString" parameterType="map">
+		update
+		PlayerDB set Own_Skill = case when Own_Skill is null or Own_Skill =
+		''
+		then #{skillId} else CONCAT(Own_Skill, ',', #{skillId} end where
+		Player_ID = #{playerId})
+	</update>
+
+	<update id="updatePlayerSkills" parameterType="map">
+		update PlayerDB set Using_Skill = #{usingSkills}, Own_Skill = #{ownedSkills}
+		where Player_ID = #{playerId}
 	</update>
 </mapper>
 	

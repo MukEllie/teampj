@@ -1,0 +1,21 @@
+엔드포인트 요약
+
+HTTP			URL							요청 파라미터/바디			응답 data
+GET			/api/event/trigger/{playerId}			-						{next: "forward:/event/..."}
+GET			/api/event/trigger/non-boss/{id}			-						{next: "forward:/event/..."}
+GET			/api/event/normal					playerId(query)				NormalEventDto
+POST			/api/event/normal/apply				{playerId, ne_id}				String(메시지)
+GET			/api/event/roll					playerId					RollEventDto
+POST			/api/event/roll/apply				{playerId, re_id}				String(Luck 보정 포함 메시지)
+GET			/api/event/trap					playerId					TrapEventDto
+POST			/api/event/trap/apply				{playerId, te_id}				String(Luck 보정 포함 메시지)
+GET			/api/event/select					playerId					SelectEventDto
+GET			/api/event/select/choices				se_id						List<SelectChoiceDto>
+POST			/api/event/select/apply				{playerId, sec_id}				String
+GET			/api/event/card					playerId					CardEventDto
+GET			/api/event/card/skills				playerId					List<SkillDto>
+POST			/api/event/card/apply				{playerId, ce_id, skillId}			String
+GET			/api/event/artifact					playerId					List<ArtifactDto>
+POST			/api/event/artifact/apply				{playerId, ae_id, artifactId}			String(200번대 즉시효과 메시지 포함)
+GET			/api/event/boss					playerId					BossEventDto or fail+reroute hint
+POST			/api/event/boss/fight				{playerId, be_id}				String
