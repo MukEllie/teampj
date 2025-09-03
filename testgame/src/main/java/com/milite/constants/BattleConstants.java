@@ -260,6 +260,10 @@ public class BattleConstants {
 		return service.getIntConstant("reward_artifact_drop_chance");
 	}
 	
+	public static int getShadowDeviceID() {
+		return service.getIntConstant("artifact_shadow_device_id");
+	}
+	
 	// ========== 스킬 선택지 개수 ===========
 	public static int getRewardSkillChoiceCount() {
 		return service.getIntConstant("reward_skill_choice_count");
@@ -273,6 +277,12 @@ public class BattleConstants {
 	public static int getRewardMaxArtifactAttempts() {
 		return service.getIntConstant("reward_max_artifact_attempts");
 	}
+	
+	// 동일한게 위에 있음
+	public static int getSummonMasterID() {
+		return service.getIntConstant("system_summon_master_id");
+	}
+
 	
 	// ========== 골드 보상 ============
 	public static int getRewardGoldBossClear() {

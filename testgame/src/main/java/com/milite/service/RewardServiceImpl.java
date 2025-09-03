@@ -16,6 +16,7 @@ import com.milite.dto.RewardDto;
 import com.milite.dto.SkillDto;
 import com.milite.mapper.ArtifactMapper;
 import com.milite.mapper.CharacterStatusMapper;
+import com.milite.mapper.UserMapper;
 import com.milite.util.CommonUtil;
 import com.milite.util.RewardUtil;
 
@@ -35,6 +36,9 @@ public class RewardServiceImpl implements RewardService {
 	@Setter(onMethod_ = @Autowired)
 	private ArtifactMapper artifactMapper;
 
+	@Setter(onMethod_ = @Autowired)
+	private UserMapper userMapper;
+
 	@Override
 	public RewardDto generateBattleReward(String playerID) {
 		log.info("보상 생성 시작 : " + playerID);
@@ -49,7 +53,7 @@ public class RewardServiceImpl implements RewardService {
 			int currentStage = player.getWhereStage();
 			int goldAmount = RewardUtil.getBossClearGoldAmount(currentStage);
 
-			List<SkillDto> skillChoices = generateSkillChoices(playerJob);
+			List<SkillDto> skillChoices = generateSkillChoices(playerID, playerJob);
 			if (skillChoices.isEmpty()) {
 				return new RewardDto("스킬 보상 생성에 실패했습니다", false);
 			}
@@ -83,7 +87,7 @@ public class RewardServiceImpl implements RewardService {
 			int currentStage = player.getWhereStage();
 			int goldAmount = RewardUtil.getBossClearGoldAmount(currentStage);
 
-			List<SkillDto> skillChoices = generateSkillChoices(playerJob);
+			List<SkillDto> skillChoices = generateSkillChoices(playerID, playerJob);
 			if (skillChoices.isEmpty()) {
 				return new RewardDto("스킬 보상 생성에 실패", false);
 			}
@@ -103,41 +107,86 @@ public class RewardServiceImpl implements RewardService {
 		}
 	}
 
-	private List<SkillDto> generateSkillChoices(String playerJob) {
+	private List<SkillDto> generateSkillChoices(String playerID, String playerJob) {
 		List<SkillDto> skillChoices = new ArrayList<>();
 		int choiceCount = RewardUtil.getSkillChoiceCount(); // 기본값 3개
-		int maxAttempts = BattleConstants.getRewardMaxSkillAttempts();
 
-		Set<Integer> usedSkillIDs = new HashSet<>();
+		try {
+			PlayerDto player = characterMapper.getPlayerInfo(playerID);
+			Set<Integer> ownedSkillIDs = new HashSet<>();
+			if (player != null) {
+				List<String> ownSkills = player.getOwnSkillList();
 
-		for (int i = 0; i < choiceCount; i++) {
-			SkillDto selectedSkill = null;
-			int attempts = 0;
+				for (String skillID : ownSkills) {
+					ownedSkillIDs.add(Integer.parseInt(skillID));
+				}
+				log.info("플레이어 보유 스킬 개수 : " + ownSkills.size());
+			}
 
-			while (selectedSkill == null && attempts < maxAttempts) {
+			List<SkillDto> srSkills = skillService.getSkillReward(playerJob, "SR", "Battle", null);
+			List<SkillDto> rSkills = skillService.getSkillReward(playerJob, "R", "Battle", null);
+			List<SkillDto> nSkills = skillService.getSkillReward(playerJob, "N", "Battle", null);
+
+			if (srSkills != null) {
+				srSkills.removeIf(skill -> ownedSkillIDs.contains(skill.getSkill_id()));
+			} else {
+				srSkills = new ArrayList<>();
+			}
+
+			if (rSkills != null) {
+				rSkills.removeIf(skill -> ownedSkillIDs.contains(skill.getSkill_id()));
+			} else {
+				rSkills = new ArrayList<>();
+			}
+
+			if (nSkills != null) {
+				nSkills.removeIf(skill -> ownedSkillIDs.contains(skill.getSkill_id()));
+			} else {
+				nSkills = new ArrayList<>();
+			}
+
+			for (int i = 0; i < choiceCount; i++) {
 				String rarity = RewardUtil.determineSkillRarity();
-				List<SkillDto> availableSkills = skillService.getSkillReward(playerJob, rarity, "Battle", null);
+				SkillDto selectedSkill = null;
 
-				if (availableSkills != null && !availableSkills.isEmpty()) {
-					int randomIndex = CommonUtil.Dice(availableSkills.size()) - 1;
-					SkillDto candidate = availableSkills.get(randomIndex);
+				switch (rarity) {
+				case "SR":
+					if (!srSkills.isEmpty()) {
+						selectedSkill = srSkills.remove(0);
+					}
+					break;
+				case "R":
+					if (!rSkills.isEmpty()) {
+						selectedSkill = rSkills.remove(0);
+					}
+					break;
+				case "N":
+					if (!nSkills.isEmpty()) {
+						selectedSkill = nSkills.remove(0);
+					}
+					break;
+				}
 
-					if (!usedSkillIDs.contains(candidate.getSkill_id())) {
-						selectedSkill = candidate;
-						usedSkillIDs.add(candidate.getSkill_id());
-						log.info("스킬" + (i + 1) + " : " + candidate.getSkill_name());
+				if (selectedSkill == null) {
+					if (!srSkills.isEmpty()) {
+						selectedSkill = srSkills.remove(0);
+					} else if (!rSkills.isEmpty()) {
+						selectedSkill = rSkills.remove(0);
+
+					} else if (!nSkills.isEmpty()) {
+						selectedSkill = nSkills.remove(0);
 					}
 				}
-				attempts++;
-			}
 
-			if (selectedSkill == null) {
-				selectedSkill = getDefaultSkill(playerJob);
+				if (selectedSkill != null) {
+					skillChoices.add(selectedSkill);
+					log.info("스킬 " + (i + 1) + " : " + selectedSkill.getSkill_name());
+				} else {
+					log.warn("사용 가능 스킬이 없음");
+				}
 			}
-
-			if (selectedSkill != null) {
-				skillChoices.add(selectedSkill);
-			}
+		} catch (Exception e) {
+			log.error("스킬 선택지 생성 오류");
 		}
 		return skillChoices;
 	}
@@ -169,23 +218,74 @@ public class RewardServiceImpl implements RewardService {
 			int randomIndex = CommonUtil.Dice(filteredArtifacts.size()) - 1;
 			ArtifactDto selectedArtifact = filteredArtifacts.get(randomIndex);
 			log.info("선택된 아티팩트 : " + selectedArtifact.getArtifactName());
-			
+
 			return selectedArtifact;
 		} catch (Exception e) {
-
+			log.error("아티팩트 보상 생성 실패");
+			return null;
 		}
 	}
 
-	private ArtifactDto generateArtifactReward(String playerJob) {
-		try {
-			List<ArtifactDto> availableArtifacts = artifactMapper.getAvailableArtifacts(playerJob, "None");
+	@Override
+	public String applySkillReward(String playerID, int selectedSkillID) {
+		log.info("스킬 보상 적용");
 
-			if (availableArtifacts == null || availableArtifacts.isEmpty()) {
-				log.warn("사용 가능 아티팩트 없음");
-				return null;
+		try {
+			String skillIDStr = String.valueOf(selectedSkillID);
+			return skillService.managePlayerSkill(playerID, skillIDStr);
+		} catch (Exception e) {
+			log.error("스킬 보상 적용 실패 : " + e.getMessage(), e);
+			return "스킬 보상 적용 중 오류 발생 : " + e.getMessage();
+		}
+	}
+
+	@Override
+	public String applyArtifactReward(String playerID, int artifactID) {
+		log.info(playerID);
+
+		try {
+			PlayerDto player = characterMapper.getPlayerInfo(playerID);
+			if (player == null) {
+				return "플레이어 정보 찾기 실패";
+			}
+
+			if (player.hasArtifact(String.valueOf(artifactID))) {
+				return "이미 보유한 아티팩트입니다";
+			}
+
+			characterMapper.addArtifactToPlayer(playerID, artifactID);
+
+			ArtifactDto artifact = artifactMapper.getArtifactByID(artifactID);
+			String artifactName = (artifact != null) ? artifact.getArtifactName() : "아티팩트가 없음";
+
+			log.info("아티팩트 보상 적용 완료");
+			return "아티팩트 획득 완료 : " + artifactName;
+		} catch (Exception e) {
+			log.error("아티팩트 보상 적용 실패 : " + e.getMessage(), e);
+			return "아티팩트 보상 적용 중 오류 : " + e.getMessage();
+		}
+	}
+
+	@Override
+	public String applyGoldReward(String playerID, int goldAmount) {
+		log.info("골드 보상 적용 시작");
+		try {
+			if (goldAmount <= 0) {
+				return "골드 보상이 없습니다.";
+			}
+
+			int updateResult = userMapper.addGold(playerID, goldAmount);
+
+			if (updateResult > 0) {
+				log.info("골드 보상 적용 완료");
+				return goldAmount + " 골드를 획득하였습니다";
+			} else {
+				log.warn("골드 보상 적용 실패");
+				return "플레이어 정보 찾기 실패";
 			}
 		} catch (Exception e) {
-
+			log.error("골드 보상 적용 실패 : " + e.getMessage(), e);
+			return "골드 보상 적용 중 오류 발생 : " + e.getMessage();
 		}
 	}
 }

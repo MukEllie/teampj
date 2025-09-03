@@ -32,14 +32,14 @@
 		Description as
 		ArtifactDescription
 		from ArtifactDB
-		where Name =
-		#{ArtifactName}
+		where ID =
+		#{ArtifactID}
 	</select>
 
 	<!-- 전투 보상용 구문, 특정 직업과 드랍처를 따져서 획득 가능한 아티팩트의 정보를 가져오기 -->
 	<select id="getAvailableArtifacts"
 		resultType="com.milite.dto.ArtifactDto">
-		select ID as ArtifactName, Name as ArtifactName, Job as
+		select ID as ArtifactID, Name as ArtifactName, Job as
 		ArtifactJob, Session
 		as ArtifactSession, Effect as ArtifactEffect,
 		Description as
@@ -47,7 +47,7 @@
 		or Job = 'Common')
 		and (Session = #{session} or Session = 'None') and
 		Session != 'Event' and
-		Session != 'Unique'
+		Session != 'Unique' order by RAND()
 	</select>
 </mapper>
 	
