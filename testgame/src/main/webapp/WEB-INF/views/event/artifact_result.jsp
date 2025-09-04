@@ -8,4 +8,11 @@
     &nbsp;|&nbsp;
     <a href="/">홈으로</a>
   </div>
+  
+  <hr>
+  <form method="get" action="${pageContext.request.contextPath}/camp">
+    <input type="hidden" name="playerId" value="${playerId}" />
+    <button type="submit">정비하기로 이동</button>
+  </form>
+  
 </body></html>

@@ -78,17 +78,20 @@
 	</update>
 
 	<!-- 카드 addSkill과 동일: 단일 UPDATE로 중복가드 -->
-    <update id="addArtifactToPlayer">
-      UPDATE PlayerDB
-      SET Own_Artifact =
-        CASE
-          WHEN Own_Artifact IS NULL OR Own_Artifact = '' THEN CAST(#{artifactId} AS CHAR)
-          WHEN FIND_IN_SET(CAST(#{artifactId} AS CHAR), Own_Artifact) = 0
-            THEN CONCAT_WS(',', Own_Artifact, CAST(#{artifactId} AS CHAR))
-          ELSE Own_Artifact
-        END
-      WHERE Player_ID = #{playerId}
-    </update>
+	<update id="addArtifactToPlayer">
+		UPDATE PlayerDB
+		SET Own_Artifact =
+		CASE
+		WHEN
+		Own_Artifact IS NULL OR Own_Artifact = '' THEN CAST(#{artifactId} AS
+		CHAR)
+		WHEN FIND_IN_SET(CAST(#{artifactId} AS CHAR), Own_Artifact) = 0
+		THEN CONCAT_WS(',', Own_Artifact, CAST(#{artifactId} AS CHAR))
+		ELSE
+		Own_Artifact
+		END
+		WHERE Player_ID = #{playerId}
+	</update>
 
 	<update id="replacePhoenixFeathers" parameterType="String">
 		update
@@ -104,15 +107,20 @@
 
 	<update id="addSkillToPlayerByString" parameterType="map">
 		update
-		PlayerDB set Own_Skill = case when Own_Skill is null or Own_Skill =
-		''
-		then #{skillId} else CONCAT(Own_Skill, ',', #{skillId} end where
-		Player_ID = #{playerId})
+		PlayerDB
+		set Own_Skill =
+		case
+		when Own_Skill is null or Own_Skill = '' then #{skillId}
+		else CONCAT(Own_Skill, ',', #{skillId})
+		END
+		where Player_ID = #{playerId}
 	</update>
 
 	<update id="updatePlayerSkills" parameterType="map">
-		update PlayerDB set Using_Skill = #{usingSkills}, Own_Skill = #{ownedSkills}
-		where Player_ID = #{playerId}
+		update PlayerDB
+		set Using_Skill = #{usingSkills}, Own_Skill = #{ownedSkills}
+		where
+		Player_ID = #{playerId}
 	</update>
 </mapper>
 	
