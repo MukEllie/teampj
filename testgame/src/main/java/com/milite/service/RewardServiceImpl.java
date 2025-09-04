@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.milite.constants.BattleConstants;
+import com.milite.dto.ActiveRewardDto;
 import com.milite.dto.ArtifactDto;
 import com.milite.dto.PlayerDto;
 import com.milite.dto.RewardDto;
@@ -27,6 +29,9 @@ import lombok.extern.log4j.Log4j;
 @Service
 @Transactional
 public class RewardServiceImpl implements RewardService {
+
+	private static final ConcurrentHashMap<String, ActiveRewardDto> activeRewards = new ConcurrentHashMap<>();
+
 	@Setter(onMethod_ = @Autowired)
 	private CharacterStatusMapper characterMapper;
 
@@ -288,4 +293,194 @@ public class RewardServiceImpl implements RewardService {
 			return "골드 보상 적용 중 오류 발생 : " + e.getMessage();
 		}
 	}
+
+	@Override
+	public ActiveRewardDto createActiveReward(String playerID, RewardDto reward) {
+		log.info("활성 보상 생성 시작");
+
+		try {
+			if (reward == null || !reward.isSuccess()) {
+				log.warn("유효하지 않은 보상");
+				return null;
+			}
+
+			ActiveRewardDto activeReward = new ActiveRewardDto(playerID, reward);
+			activeRewards.put(playerID, activeReward);
+
+			log.info("활성 보상 저장 완료");
+
+			return activeReward;
+		} catch (Exception e) {
+			log.error("활성 보상 생성 실패 : " + e.getMessage(), e);
+			return null;
+		}
+	}
+
+	@Override
+	public ActiveRewardDto getCurrentRewards(String playerID) {
+		return activeRewards.get(playerID);
+	}
+
+	@Override
+	public String claimSkillReward(String playerID, int selectedSkillID) {
+		log.info("스킬 보상 개별 적용 시작");
+
+		try {
+			ActiveRewardDto activeReward = getCurrentRewards(playerID);
+			if (activeReward == null) {
+				return "활성 보상이 없습니다";
+			}
+
+			if (!activeReward.hasAvailableSkills()) {
+				return "선택 가능한 스킬 보상이 없습니다";
+			}
+
+			SkillDto selectedSkill = activeReward.claimSkill(selectedSkillID);
+			if (selectedSkill == null) {
+				return "해당 스킬을 찾을 수 없습니다";
+			}
+
+			String result = applySkillReward(playerID, selectedSkillID);
+			if (result.contains("실패") || result.contains("오류")) {
+				return result;
+			}
+
+			log.info("스킬 보상 개별 적용 완료");
+			return "스킬 " + selectedSkill.getSkill_name() + "을 획득하였습니다";
+		} catch (Exception e) {
+			log.error("스킬 보상 개별 적용 실패 : " + e.getMessage(), e);
+			return "스킬 보상 적용 중 오류 발생 : " + e.getMessage();
+		}
+	}
+
+	@Override
+	public String claimArtifactReward(String playerID) {
+		log.info("아티팩트 보상 개별 적용 시작");
+
+		try {
+			ActiveRewardDto activeReward = getCurrentRewards(playerID);
+			if (activeReward == null) {
+				return "활성 보상이 없습니다";
+			}
+
+			if (!activeReward.hasAvailableArtifact()) {
+				return "선택 가능한 아티팩트 보상이 없습니다";
+			}
+
+			ArtifactDto artifact = activeReward.claimArtifact();
+			String result = applyArtifactReward(playerID, artifact.getArtifactID());
+
+			if (result.contains("획득 완료")) {
+				log.info("아티팩트 보상 적용 완료");
+				return result;
+			} else {
+				return result;
+			}
+		} catch (Exception e) {
+			log.error("아티팩트 보상 적용 실패 : " + e.getMessage(), e);
+			return "아티팩트 보상 적용 오류 발생 : " + e.getMessage();
+		}
+	}
+
+	@Override
+	public String claimHealReward(String playerID) {
+		log.info("회복 보상 개별 적용 시작");
+
+		try {
+			ActiveRewardDto activeReward = getCurrentRewards(playerID);
+			if (activeReward == null) {
+				return "활성 보상이 없습니다";
+			}
+
+			if (!activeReward.hasAvailableHeal()) {
+				return "사용 가능한 회복 보상이 없습니다";
+			}
+
+			boolean claimed = activeReward.claimHeal();
+			if (!claimed) {
+				return "회복 보상 적용에 실패했습니다";
+			}
+
+			PlayerDto player = characterMapper.getPlayerInfo(playerID);
+			if (player == null) {
+				return "플레이어 정보 찾기 실패";
+			}
+
+			int maxHp = player.getMax_hp();
+			int healAmount = Math.max(1, (int) (maxHp * 0.1));
+			int newHp = Math.min(maxHp, player.getCurr_hp() + healAmount);
+
+			player.setCurr_hp(newHp);
+			characterMapper.updateStatus(player);
+
+			log.info("회복 보상 적용 완료");
+			return healAmount + "를 회복하였습니다";
+		} catch (Exception e) {
+			log.error("회복 보상 개별 적용 실패 : " + e.getMessage(), e);
+			return "회복 보상 개별 적용 중 오류 발생 : " + e.getMessage();
+		}
+	}
+
+	@Override
+	public String claimGoldReward(String playerID) {
+		log.info("골드 보상 개별 적용 시작");
+		
+		try {
+			ActiveRewardDto activeReward = getCurrentRewards(playerID);
+			if (activeReward == null) {
+				return "활성 보상이 없습니다";
+			}
+
+			if(!activeReward.hasAvailableGold()) {
+				return "획득 가능한 골드 보상이 없습니다";
+			}
+			
+			int goldAmount = activeReward.claimGold();
+			String result = applyGoldReward(playerID, goldAmount);
+			
+			log.info("골드 보상 개별 적용 완료 : " + goldAmount);
+			return result;
+		}catch(Exception e) {
+			log.error("골드 보상 개별 적용 실패 : " + e.getMessage(),e);
+			return "골드 보상 개별 적용 중 오류 발생 : " + e.getMessage();
+		}
+	}
+	
+	@Override
+	public String proceedToCamp(String playerID) {
+		log.info("캠프로 이동");
+		
+		try {
+			ActiveRewardDto activeReward = activeRewards.remove(playerID);
+			if(activeReward == null) {
+				return "처리할 보상이 없습니다";
+			}
+			
+			List<String> remainingRewards = new ArrayList<>();
+			if(activeReward.hasAvailableSkills()) {
+				remainingRewards.add("스킬 " + activeReward.getAvailableSkills().size());
+			}
+			if(activeReward.hasAvailableArtifact()) {
+				remainingRewards.add("아티팩트");
+			}
+			if(activeReward.hasAvailableHeal()) {
+				remainingRewards.add("회복");
+			}
+			if(activeReward.hasAvailableGold() ) {
+				remainingRewards.add("골드 " + activeReward.getGoldAmount());
+			}
+			
+			if(!remainingRewards.isEmpty()) {
+				log.info("포기한 보상 : " + String.join(", ", remainingRewards));
+				return "캠프로 이동합니다. 두고가는 것들 : " + String.join(", ", remainingRewards);
+			}else {
+				return "모든 것을 챙기고 캠프로 이동합니다";
+			}
+		}catch(Exception e) {
+			log.error("캠프 이동 실패: " + e.getMessage(), e);
+			return "캠프 이동 중 오류 발생: " + e.getMessage();
+		}
+	}
+	
+	
 }
