@@ -8,12 +8,13 @@
     <form action="/event/artifact/apply" method="post" style="margin-bottom:10px;">
       <input type="hidden" name="playerId" value="${playerId}">
       <input type="hidden" name="ae_id" value="${event.ae_id}">
-      <input type="hidden" name="artifactId" value="${a.artifact_id}">
+      <!-- ✨ 여기 세 줄이 핵심 수정 -->
+      <input type="hidden" name="artifactId" value="${a.artifactID}">
       <button type="submit">
-        ${a.artifact_name}
+        ${a.artifactName}
       </button>
       <div style="font-size:12px;color:#666;margin-top:4px;">
-        ${a.artifact_text}
+        ${a.artifactText}
       </div>
     </form>
   </c:forEach>
