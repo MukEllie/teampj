@@ -34,13 +34,12 @@ public class CampController {
 	 */
 	@PostMapping("/nextstage")
 	public String nextStage(@RequestParam String playerId, Model model) {
-		boolean goBattle = campService.decideBattleOrEvent(); // true=전투, false=이벤트
+		// decideBattleOrEvent 내부에서 WhereStage 를 +1 하고 전투/이벤트를 결정함
+		boolean goBattle = campService.decideBattleOrEvent(playerId);
 		if (goBattle) {
-			// battle/start는 POST, 파라미터명은 PlayerID 이므로 중간 페이지에서 자동 submit
 			model.addAttribute("playerId", playerId);
-			return "camp/battle_start";
+			return "camp/battle_start"; // 자동 POST → /battle/start (PlayerID 사용)
 		} else {
-			// 이벤트는 기존 로직 재사용 (비보스 랜덤)
 			return eventService.triggerRandomNonBoss(playerId);
 		}
 	}

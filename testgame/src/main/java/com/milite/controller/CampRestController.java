@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.milite.dto.PlayerDto;
+import com.milite.mapper.CharacterStatusMapper;
 import com.milite.service.CampService;
-import com.milite.service.EventService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,40 +24,49 @@ import lombok.RequiredArgsConstructor;
 public class CampRestController {
 
 	private final CampService campService;
-	private final EventService eventService;
+	private final CharacterStatusMapper characterStatusMapper;
 
-	/** 정비소 화면 초기 데이터 (필요 시 확장) */
+	/** 정비소 화면 초기 데이터 */
 	@GetMapping
 	public ResponseEntity<Map<String, Object>> getCamp(@RequestParam String playerId) {
+		PlayerDto p = characterStatusMapper.getPlayerInfo(playerId);
 		Map<String, Object> body = new HashMap<>();
 		body.put("playerId", playerId);
-		// TODO: 현재 카드/골드/아티팩트 요약 등 필요하면 채워넣기
+		body.put("whereStage", p != null ? p.getWhereStage() : null);
+		body.put("whereSession", p != null ? p.getWhereSession() : null);
+		// TODO: 카드/아티팩트/골드 등 필요시 추가
 		return ResponseEntity.ok(body);
 	}
 
-	/** 다음 스테이지: 70% 전투 / 30% 이벤트 */
+	/** 다음 스테이지로 (스테이지 +1 및 보스층 강제 전투 포함) */
 	@PostMapping("/nextstage")
 	public ResponseEntity<Map<String, Object>> nextStage(@RequestParam String playerId) {
-		boolean goBattle = campService.decideBattleOrEvent(); // true=전투(70), false=이벤트(30)
+		boolean goBattle = campService.decideBattleOrEvent(playerId);
+
+		// +1 반영 후 최신 상태 재조회
+		PlayerDto p = characterStatusMapper.getPlayerInfo(playerId);
+
 		Map<String, Object> body = new HashMap<>();
 		body.put("playerId", playerId);
+		body.put("whereStage", p != null ? p.getWhereStage() : null);
+		body.put("whereSession", p != null ? p.getWhereSession() : null);
+
 		if (goBattle) {
-			// React가 직접 /battle/start 로 POST하기 위한 명세 제공
+			body.put("decision", "battle");
+			// BattleController는 PlayerID(대소문자 주의)로 POST /battle/start
 			Map<String, Object> battle = new HashMap<>();
 			battle.put("url", "/battle/start");
 			battle.put("method", "POST");
-			// BattleController 요구 파라미터명은 PlayerID (대소문자 주의)
 			Map<String, String> form = new HashMap<>();
 			form.put("PlayerID", playerId);
 			battle.put("form", form);
-
-			body.put("decision", "battle");
 			body.put("battleStart", battle);
 		} else {
 			body.put("decision", "event");
-			// 이벤트는 EventRestController를 활용해서 클라이언트가 이어가도록
-			// 즉시 특정 타입을 정하고 싶다면 여기서 eventService.prepare*() 결과를 내려도 됨.
+			// 이벤트는 클라이언트에서 /api/event/triggerNonBoss 등을 호출해 다음 타입 결정
+			body.put("eventRouter", "/api/event/triggerNonBoss");
 		}
+
 		return ResponseEntity.ok(body);
 	}
 }
