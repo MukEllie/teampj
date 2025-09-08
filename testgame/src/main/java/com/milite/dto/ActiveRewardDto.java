@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ActiveRewardDto {
 	private String playerID;
+	private String rewardType;
 	
 	private List<SkillDto> availableSkills;
 	private ArtifactDto availableArtifact;
@@ -18,6 +19,7 @@ public class ActiveRewardDto {
 	
 	public ActiveRewardDto(String playerID, RewardDto reward) {
 		this.playerID = playerID;
+		this.rewardType = reward.getRewardType();
 		
 		this.availableSkills = new ArrayList<>(reward.getSkillChoices());
 		this.availableArtifact = reward.getArtifact();

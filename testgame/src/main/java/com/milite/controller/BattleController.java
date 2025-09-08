@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.milite.battle.BattleLogEntry;
 import com.milite.battle.BattleSession;
 import com.milite.battle.artifacts.PhoenixFeatherArtifact;
 import com.milite.battle.artifacts.PlayerArtifact;
+import com.milite.constants.BattleConstants;
 import com.milite.dto.*;
 import com.milite.mapper.CharacterStatusMapper;
 import com.milite.service.BattleService;
+import com.milite.service.RewardService;
 import com.milite.service.SkillService;
 
 import lombok.*;
@@ -29,6 +32,9 @@ public class BattleController {
 
 	@Setter(onMethod_ = @Autowired)
 	private SkillService skillservice;
+
+	@Setter(onMethod_ = @Autowired)
+	private RewardService rewardService;
 
 	@Setter(onMethod_ = @Autowired)
 	private CharacterStatusMapper mapper;
@@ -124,12 +130,47 @@ public class BattleController {
 			boolean hasAliveMonsters = !((List<?>) finalStatus.get("aliveMonsters")).isEmpty();
 
 			String battleResult;
-			Map<String, Object> rewards = Map.of();// 보상 설정 관련용
+			Map<String, Object> rewards = new HashMap<>();// 보상 설정 관련용
 
 			if (playerAlive && !hasAliveMonsters) {
 				battleResult = "Victory";
 				// 보상관련 메서드 삽입
+
 				System.out.println("플레이어 승리!");
+
+				try {
+					boolean defeatedSummonMaster = checkSummonMasterDefeated(PlayerID);
+
+					RewardDto reward;
+					if (defeatedSummonMaster) {
+						log.info("혼령의 인도인 처치 완료 - 특수 보상 생성");
+						reward = rewardService.generateSpecialBattleReward(PlayerID, 51);
+					} else {
+						log.info("일반 전투 승리 - 보상 생성");
+						reward = rewardService.generateBattleReward(PlayerID);
+					}
+
+					if (reward != null && reward.isSuccess()) {
+						ActiveRewardDto activeReward = rewardService.createActiveReward(PlayerID, reward);
+
+						if (activeReward != null) {
+							rewards = buildVictoryRewardResponse(activeReward);
+							System.out.println("보상 생성 완료 : " + reward.getRewardType());
+						} else {
+							rewards.put("error", "보상 활성화 실패");
+							System.err.println("ActiveReward 생성 실패");
+						}
+					} else {
+						rewards.put("error", "보상 생성 실패");
+						rewards.put("message", reward != null ? reward.getMessage() : "알 수 없는 오류");
+						System.err.println("보상 생성 실패 : " + (reward != null ? reward.getMessage() : "null"));
+					}
+
+				} catch (Exception rewardException) {
+					System.err.println("보상 처리 중 오류: " + rewardException.getMessage());
+					rewards.put("error", "보상 처리 중 오류 발생");
+					rewards.put("message", rewardException.getMessage());
+				}
 			} else if (!playerAlive) {
 				battleResult = "Defeat";
 
@@ -251,5 +292,205 @@ public class BattleController {
 		} catch (Exception e) {
 			System.err.println("DB 아티팩트 교체 중 오류: " + playerID + " - " + e.getMessage());
 		}
+	}
+
+	private boolean checkSummonMasterDefeated(String PlayerID) {
+		try {
+			BattleSession session = service.getCurrentBattleSession(PlayerID);
+			if (session == null) {
+				return false;
+			}
+
+			List<BattleLogEntry> battleLog = session.getBattleLog();
+			// final int SUMMON_MASTER_ID = BattleConstants.getSummonMasterId();
+
+			// 이부분은 실제 배틀로그 쪽에 저 문구를 썼는지 확인할 것
+			return battleLog.stream().anyMatch(
+					log -> log.getActionType().equals("monster_defeat") && log.getActorName().contains("혼령의 인도인"));
+		} catch (Exception e) {
+			System.err.println("혼령의 인도인 처치 확인 중 오류 : " + e.getMessage());
+			return false;
+		}
+	}
+
+	private Map<String, Object> buildVictoryRewardResponse(ActiveRewardDto activeReward) {
+		Map<String, Object> rewardResponse = new HashMap<>();
+
+		rewardResponse.put("type", activeReward.getRewardType());
+		rewardResponse.put("message", "보상을 획득하세요");
+		rewardResponse.put("nextStep", "claimRewards");
+
+		if (activeReward.hasAvailableSkills()) {
+			List<Map<String, Object>> skillChoices = new ArrayList<>();
+			for (SkillDto skill : activeReward.getAvailableSkills()) {
+				Map<String, Object> skillInfo = new HashMap<>();
+				skillInfo.put("skillID", skill.getSkill_id());
+				skillInfo.put("name", skill.getSkill_name());
+				skillInfo.put("description", skill.getSkill_text());
+				skillInfo.put("damage", skill.getMin_damage() + "~" + skill.getMax_damage());
+				skillInfo.put("element", skill.getElement());
+				skillInfo.put("rarity", skill.getRarity());
+				skillChoices.add(skillInfo);
+			}
+			rewardResponse.put("skillChoices", skillChoices);
+			rewardResponse.put("skillChoicesCount", skillChoices.size());
+		}
+
+		if (activeReward.hasAvailableArtifact()) {
+			ArtifactDto artifact = activeReward.getAvailableArtifact();
+			Map<String, Object> artifactInfo = new HashMap<>();
+			artifactInfo.put("ArtifactID", artifact.getArtifactID());
+			artifactInfo.put("name", artifact.getArtifactName());
+			artifactInfo.put("description", artifact.getArtifactText());
+			artifactInfo.put("effect", artifact.getArtifactEffect());
+			rewardResponse.put("artifact", artifactInfo);
+		}
+
+		rewardResponse.put("healAvailable", activeReward.hasAvailableHeal());
+		rewardResponse.put("healDescription", "최대 체력의 10% 회복");
+
+		if (activeReward.hasAvailableGold()) {
+			rewardResponse.put("gold", activeReward.getGoldAmount());
+			rewardResponse.put("goldAvailable", true);
+		}
+
+		int totalRewards = 1; // 스킬은 확정 드랍이라 무조건 1 이상
+		if (activeReward.hasAvailableArtifact()) {
+			totalRewards++;
+		}
+		if (activeReward.hasAvailableHeal()) {
+			totalRewards++;
+		}
+		if (activeReward.hasAvailableGold()) {
+			totalRewards++;
+		}
+
+		rewardResponse.put("totalRewardType", totalRewards);
+		rewardResponse.put("rewardSummary", buildRewardSummary(activeReward));
+
+		return rewardResponse;
+	}
+
+	private String buildRewardSummary(ActiveRewardDto activeReward) {
+		StringBuilder summary = new StringBuilder();
+
+		summary.append("스킬 선택 (3개 중 1개)");
+
+		if (activeReward.hasAvailableArtifact()) {
+			summary.append(" + 아티팩트 획득");
+		}
+
+		if (activeReward.hasAvailableHeal()) {
+			summary.append(" + 체력 회복");
+		}
+
+		if (activeReward.hasAvailableGold()) {
+			summary.append(" + ").append(activeReward.getGoldAmount()).append(" 골드");
+		}
+
+		return summary.toString();
+	}
+
+	@PostMapping("/claim/heal")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> claimHealReward(@RequestParam("PlayerID") String PlayerID) {
+		System.out.println("회복 보상 수령 - Player : " + PlayerID);
+
+		try {
+			ActiveRewardDto activeReward = rewardService.getCurrentRewards(PlayerID);
+			if (activeReward == null) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "활성 보상이 없습니다");
+				errorMap.put("message", "전투를 완료해주세요");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			if (!activeReward.hasAvailableHeal()) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "사용 가능한 회복 보상이 없습니다");
+				errorMap.put("message", "이미 수령했거나 회복 보상이 없습니다");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			String healResult = rewardService.claimHealReward(PlayerID);
+
+			boolean success = healResult.contains("회복하였습니다");
+
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("stage", "claimCompleted");
+			responseMap.put("claimType", "heal");
+			responseMap.put("success", success);
+			responseMap.put("message", healResult);
+			if (success) {
+				Map<String, Object> remainingRewards = getRemainingRewardsStatus(activeReward);
+				responseMap.put("remainingRewards", remainingRewards);
+				responseMap.put("nextStep", determineNextStep(activeReward));
+
+				System.out.println("회복 보상 수령 완료 : " + healResult);
+			} else {
+				responseMap.put("error", "회복 보상 적용 실패");
+				System.err.println("회복 보상 적용 실패 : " + healResult);
+			}
+
+			return ResponseEntity.ok(responseMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "회복 보상 수령 중 오류 발생");
+			errorMap.put("message", e.getMessage());
+			return ResponseEntity.badRequest().body(errorMap);
+		}
+	}
+	
+	private Map<String, Object> getRemainingRewardsStatus(ActiveRewardDto activeReward){
+		Map<String, Object> remaining = new HashMap<>();
+		
+		remaining.put("skillAvailable", activeReward.hasAvailableSkills());
+		remaining.put("artifactAvailable", activeReward.hasAvailableArtifact());
+		remaining.put("healAvailable", activeReward.hasAvailableHeal());
+		remaining.put("goldAvailable", activeReward.hasAvailableGold());
+		
+		if(activeReward.hasAvailableSkills()) {
+			remaining.put("skillChoiceCount", activeReward.getAvailableSkills().size());
+			remaining.put("skillRequired", true);
+		}else {
+			remaining.put("skillRequired", false);
+		}
+		
+		int remainingCount = 0;
+		if(activeReward.hasAvailableSkills()) {
+			remainingCount++;
+		}
+		if(activeReward.hasAvailableArtifact()) {
+			remainingCount++;
+		}
+		if(activeReward.hasAvailableHeal()) {
+			remainingCount++;
+		}
+		if(activeReward.hasAvailableGold()) {
+			remainingCount++;
+		}
+		
+		remaining.put("totalRemaining", remainingCount);
+		remaining.put("hasAnyRemaining", remainingCount > 0);
+		
+		return remaining;
+	}
+	
+	private String determineNextStep(ActiveRewardDto activeReward) {
+		if(activeReward.hasAvailableSkills()) {
+			return "claimSkill";
+		}
+		if(activeReward.hasAvailableArtifact()) {
+			return "claimArtifact";
+		}
+		if(activeReward.hasAvailableHeal()) {
+			return "claimHeal";
+		}
+		if(activeReward.hasAvailableGold()) {
+			return "claimGold";
+		}
+		
+		return "proceedToCamp";
 	}
 }
