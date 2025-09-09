@@ -2,44 +2,39 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>정비소</title>
-<style>
-  body { font-family: sans-serif; margin: 24px; }
-  .wrap { max-width: 720px; margin: 0 auto; }
-  .title { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
-  .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-  .btn { padding: 10px 16px; border: 1px solid #333; border-radius: 8px; background:#fafafa; cursor: pointer; }
-  .btn.primary { background:#333; color:#fff; }
-  .row { display:flex; gap:12px; flex-wrap:wrap; }
-</style>
-</head>
+<head> ... 생략 ... </head>
 <body>
 <div class="wrap">
   <div class="title">정비소</div>
   <div class="card">
     <div>플레이어: <b>${playerId}</b></div>
-    <div style="color:#666; font-size:14px; margin-top:4px;">카드 교체, 다음 스테이지 진행을 선택하세요.</div>
+    <div>계층: <b>${whereSession}</b> / 스테이지: <b>${whereStage}</b></div>
   </div>
 
   <div class="card">
-    <div style="margin-bottom:8px; font-weight:600;">카드 관리</div>
-    <!-- TODO: 실제 카드 목록/교체 UI는 추후 연동. 지금은 자리표시자 -->
-    <div class="row">
-      <button class="btn" disabled>카드 교체(준비중)</button>
-    </div>
-  </div>
+    <div style="margin-bottom:8px; font-weight:600;">다음 진행</div>
 
-  <div class="card">
-    <div style="margin-bottom:8px; font-weight:600;">다음 스테이지로</div>
-    <form method="post" action="${pageContext.request.contextPath}/camp/nextstage">
-      <input type="hidden" name="playerId" value="${playerId}"/>
-      <button type="submit" class="btn primary">다음 스테이지 진행</button>
-      <div style="color:#666; font-size:12px; margin-top:6px;">
-        70% 확률로 전투, 30% 확률로 이벤트로 이동합니다.
-      </div>
-    </form>
+    <!-- 10층 보스 격파 후 캠프 도착 → 다음 계층 이동 버튼 -->
+    <c:if test="${canAdvanceLayer}">
+      <form method="post" action="${pageContext.request.contextPath}/camp/nextlayer">
+        <input type="hidden" name="playerId" value="${playerId}"/>
+        <button type="submit" class="btn primary">다음 계층으로 이동</button>
+        <div style="color:#666; font-size:12px; margin-top:6px;">
+          계층이 순환(물→불→풀)하고 스테이지가 1로 초기화됩니다.
+        </div>
+      </form>
+    </c:if>
+
+    <!-- 일반 시나리오 → 다음 스테이지 진행 -->
+    <c:if test="${!canAdvanceLayer}">
+      <form method="post" action="${pageContext.request.contextPath}/camp/nextstage">
+        <input type="hidden" name="playerId" value="${playerId}"/>
+        <button type="submit" class="btn primary">다음 스테이지 진행</button>
+        <div style="color:#666; font-size:12px; margin-top:6px;">
+          70% 전투 / 30% 이벤트 (5/10층은 전투 강제)
+        </div>
+      </form>
+    </c:if>
   </div>
 </div>
 </body>
