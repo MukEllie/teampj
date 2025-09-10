@@ -1,10 +1,8 @@
-use team1;
-use testgame;
+use my_cat;
 
 show tables;
 
-drop table SkillDB;
-create table SkillDB (
+create table skills (
     skill_id int primary key auto_increment,
     skill_job enum('Warrior', 'Thief', 'Mage', 'Common') not null,
     skill_type enum('Basic', 'Battle', 'Event') not null,
@@ -22,10 +20,10 @@ create table SkillDB (
     
     -- 이름&설명 --
 	skill_name varchar(10) not null,
-    skill_text varchar(40) not null
+    skill_text varchar(20) not null
 );
 
-insert into SkillDB (skill_job, skill_type, rarity, element, min_damage, max_damage, hit_time, hit_target,
+insert into skills (skill_job, skill_type, rarity, element, min_damage, max_damage, hit_time, hit_target,
 statusEffect_name, statusEffect_rate, statusEffect_turn,skill_name,skill_text) VALUES
 -- ([아이디-자동] 직업, 스킬타입, 레어도, 속성, 최소데미지, 최대데미지, 공격횟수, 범위, 상태이상, 상태이상 확률, 상태이상 턴수, 스킬명, 스킬설명) --
 
