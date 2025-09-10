@@ -26,4 +26,6 @@ public interface RewardService {
 	public String applyArtifactReward(String playerID, int artifactID);
 	
 	public String applyGoldReward(String playerID, int goldAmount);
+	
+	public boolean isSkillInActiveReward(String playerID, int skillID);
 }

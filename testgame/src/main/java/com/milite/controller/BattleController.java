@@ -69,6 +69,34 @@ public class BattleController {
 	// 혼령의 인도인 전투는 battle/event로 연결하게 만들기. 이 경우 몹 생성까지 전부 여기서 만들고 세션 저장을 시켜야함. 전투의
 	// 경우 이미 battle/battle에서 혼령까지 되어있으니 문제 없을 것으로 보임
 
+	@PostMapping("/event")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> startEventBattle(@RequestParam("PlayerID") String PlayerID){
+		System.out.println("이벤트 전용 배틀 시작 단계 Player : " + PlayerID);
+		try {
+			BattleResultDto initResult = service.battleEvent(PlayerID);
+			
+			Map<String, Object> battleStatus = service.getBattleStatus(PlayerID);
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("stage", "battleReady");
+			responseMap.put("message", "혼령의 인도인과의 전투가 시작되었습니다. 스킬을 선택해주세요");
+			responseMap.put("initResult", initResult);
+			responseMap.put("battleStatus", battleStatus);
+			responseMap.put("needsPlayerInput", battleStatus.get("needsPlayerInput"));
+			responseMap.put("currentUnit", battleStatus.get("currentUnit"));
+			responseMap.put("playerHp", battleStatus.get("playerHp"));
+			responseMap.put("aliveMonsters", battleStatus.get("aliveMonsters"));
+
+			return ResponseEntity.ok(responseMap);
+		}catch(Exception e) {
+			e.printStackTrace();
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "이벤트 전투 시작 중 오류 발생: " + e.getMessage());
+			return ResponseEntity.badRequest().body(errorMap);
+		}
+		
+	} 
+	
 	@PostMapping("/battle")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> executeBattle(@RequestParam("PlayerID") String PlayerID,
@@ -441,56 +469,489 @@ public class BattleController {
 			return ResponseEntity.badRequest().body(errorMap);
 		}
 	}
-	
-	private Map<String, Object> getRemainingRewardsStatus(ActiveRewardDto activeReward){
+
+	private Map<String, Object> getRemainingRewardsStatus(ActiveRewardDto activeReward) {
 		Map<String, Object> remaining = new HashMap<>();
-		
+
 		remaining.put("skillAvailable", activeReward.hasAvailableSkills());
 		remaining.put("artifactAvailable", activeReward.hasAvailableArtifact());
 		remaining.put("healAvailable", activeReward.hasAvailableHeal());
 		remaining.put("goldAvailable", activeReward.hasAvailableGold());
-		
-		if(activeReward.hasAvailableSkills()) {
+
+		if (activeReward.hasAvailableSkills()) {
 			remaining.put("skillChoiceCount", activeReward.getAvailableSkills().size());
 			remaining.put("skillRequired", true);
-		}else {
+		} else {
 			remaining.put("skillRequired", false);
 		}
-		
+
 		int remainingCount = 0;
-		if(activeReward.hasAvailableSkills()) {
+		if (activeReward.hasAvailableSkills()) {
 			remainingCount++;
 		}
-		if(activeReward.hasAvailableArtifact()) {
+		if (activeReward.hasAvailableArtifact()) {
 			remainingCount++;
 		}
-		if(activeReward.hasAvailableHeal()) {
+		if (activeReward.hasAvailableHeal()) {
 			remainingCount++;
 		}
-		if(activeReward.hasAvailableGold()) {
+		if (activeReward.hasAvailableGold()) {
 			remainingCount++;
 		}
-		
+
 		remaining.put("totalRemaining", remainingCount);
 		remaining.put("hasAnyRemaining", remainingCount > 0);
-		
+
 		return remaining;
 	}
-	
+
 	private String determineNextStep(ActiveRewardDto activeReward) {
-		if(activeReward.hasAvailableSkills()) {
+		if (activeReward.hasAvailableSkills()) {
 			return "claimSkill";
 		}
-		if(activeReward.hasAvailableArtifact()) {
+		if (activeReward.hasAvailableArtifact()) {
 			return "claimArtifact";
 		}
-		if(activeReward.hasAvailableHeal()) {
+		if (activeReward.hasAvailableHeal()) {
 			return "claimHeal";
 		}
-		if(activeReward.hasAvailableGold()) {
+		if (activeReward.hasAvailableGold()) {
 			return "claimGold";
 		}
-		
+
 		return "proceedToCamp";
 	}
+
+	@PostMapping("/claim/gold")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> claimGoldReward(@RequestParam("PlayerID") String PlayerID) {
+		System.out.println("골드 보상 수령 - Player : " + PlayerID);
+
+		try {
+			ActiveRewardDto activeReward = rewardService.getCurrentRewards(PlayerID);
+			if (activeReward == null) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "활성 보상이 없습니다");
+				errorMap.put("message", "전투를 완료해주세요");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			if (!activeReward.hasAvailableGold()) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "사용 가능한 골드 보상이 없습니다");
+				errorMap.put("message", "이미 수령했거나 골드 보상이 없습니다");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			int goldAmount = activeReward.getGoldAmount();
+
+			String goldResult = rewardService.claimGoldReward(PlayerID);
+
+			boolean success = goldResult.contains("골드를 획득하였습니다");
+
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("stage", "claimCompleted");
+			responseMap.put("claimType", "gold");
+			responseMap.put("success", success);
+			responseMap.put("message", goldResult);
+
+			if (success) {
+				responseMap.put("goldReceived", goldAmount);
+				responseMap.put("goldMessage", goldAmount + " 골드를 획득했습니다");
+
+				Map<String, Object> remainingRewards = getRemainingRewardsStatus(activeReward);
+				responseMap.put("remainingRewards", remainingRewards);
+				responseMap.put("nextStep", determineNextStep(activeReward));
+
+				System.out.println("골드 보상 수령 완료 : " + goldAmount + " 골드");
+			} else {
+				responseMap.put("error", "골드 보상 적용 실패");
+				System.err.println("골드 보상 적용 실패 : " + goldResult);
+			}
+
+			return ResponseEntity.ok(responseMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "골드 보상 수령 중 오류 발생");
+			errorMap.put("message", e.getMessage());
+			return ResponseEntity.badRequest().body(errorMap);
+		}
+	}
+
+	@PostMapping("/claim/artifact")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> claimArtifactReward(@RequestParam("PlayerID") String PlayerID) {
+		System.out.println("아티팩트 보상 - Player : " + PlayerID);
+
+		try {
+			ActiveRewardDto activeReward = rewardService.getCurrentRewards(PlayerID);
+			if (activeReward == null) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "활성 보상이 없습니다");
+				errorMap.put("message", "전투를 완료해주세요");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			if (!activeReward.hasAvailableArtifact()) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "사용 가능한 아티팩트 보상이 없습니다");
+				errorMap.put("message", "이미 수령했거나 아티팩트 보상이 없습니다");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			ArtifactDto artifact = activeReward.getAvailableArtifact();
+
+			String artifactResult = rewardService.claimArtifactReward(PlayerID);
+
+			boolean success = artifactResult.contains("획득 완료");
+
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("stage", "claimCompleted");
+			responseMap.put("claimType", "artifact");
+			responseMap.put("success", success);
+			responseMap.put("message", artifactResult);
+
+			if (success) {
+				Map<String, Object> artifactInfo = new HashMap<>();
+				artifactInfo.put("artifactID", artifact.getArtifactID());
+				artifactInfo.put("name", artifact.getArtifactName());
+				artifactInfo.put("description", artifact.getArtifactText());
+				artifactInfo.put("effect", artifact.getArtifactEffect());
+
+				responseMap.put("artifactReceived", artifactInfo);
+				responseMap.put("artifactMessage", artifact.getArtifactName() + "을 획득했습니다");
+
+				Map<String, Object> remainingRewards = getRemainingRewardsStatus(activeReward);
+				responseMap.put("remainingRewards", remainingRewards);
+				responseMap.put("nextStep", determineNextStep(activeReward));
+
+				System.out.println("아티팩트 보상 수령 완료 : " + artifact.getArtifactName());
+			} else {
+				responseMap.put("error", "아티팩트 보상 적용 실패");
+				System.err.println("아티팩트 보상 적용 실패 : " + artifactResult);
+			}
+
+			return ResponseEntity.ok(responseMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "아티팩트 보상 수령 중 오류 발생");
+			errorMap.put("message", e.getMessage());
+			return ResponseEntity.badRequest().body(errorMap);
+		}
+	}
+
+	@PostMapping("/claim/skill")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> claimSkillReward(@RequestParam("PlayerID") String PlayerID,
+			@RequestParam("selectedSkillID") int selectedSkillID) {
+		System.out.println("스킬 보상 수령 - Player : " + PlayerID + ", SelectedSkill : " + selectedSkillID);
+
+		try {
+			ActiveRewardDto activeReward = rewardService.getCurrentRewards(PlayerID);
+			if (activeReward == null) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "활성 보상이 없습니다");
+				errorMap.put("message", "전투를 완료해주세요");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			if (!activeReward.hasAvailableSkills()) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "사용 가능한 스킬 보상이 없습니다");
+				errorMap.put("message", "이미 수령했거나 스킬 보상이 없습니다");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			SkillDto selectedSkill = null;
+			for (SkillDto skill : activeReward.getAvailableSkills()) {
+				if (skill.getSkill_id() == selectedSkillID) {
+					selectedSkill = skill;
+					break;
+				}
+			}
+
+			if (selectedSkill == null) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "잘못된 스킬 선택");
+				errorMap.put("message", "선택 가능한 스킬 목록에 없는 스킬입니다");
+				errorMap.put("availableSkillIDs",
+						activeReward.getAvailableSkills().stream().map(SkillDto::getSkill_id).toArray());
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			int currentSkillCount = skillservice.getOwnedSkillCount(PlayerID);
+
+			Map<String, Object> responseMap = new HashMap<>();
+
+			if (currentSkillCount < 10) {
+				String result = rewardService.claimSkillReward(PlayerID, selectedSkillID);
+				boolean success = result.contains("획득하였습니다");
+
+				responseMap.put("stage", "skillAdded");
+				responseMap.put("success", success);
+				responseMap.put("message", result);
+				responseMap.put("action", "added");
+
+				if (success) {
+					Map<String, Object> skillInfo = createSkillInfoMap(selectedSkill);
+
+					responseMap.put("skillReceived", skillInfo);
+				}
+			} else {
+				List<SkillDto> currentSkills = skillservice.getPlayerSkillList(PlayerID);
+
+				responseMap.put("stage", "skillReplaceRequired");
+				responseMap.put("success", false);
+				responseMap.put("message", "보유 스킬이 10개입니다. 교체할 스킬을 선택해주세요");
+				responseMap.put("action", "replace_required");
+				responseMap.put("nextStep", "selectSkill");
+
+				Map<String, Object> selectedSkillInfo = createSkillInfoMap(selectedSkill);
+
+				responseMap.put("selectedSkill", selectedSkillInfo);
+
+				List<Map<String, Object>> currentSkillsList = new ArrayList<>();
+				for (SkillDto skill : currentSkills) {
+					Map<String, Object> skillInfo = createSkillInfoMap(skill);
+					currentSkillsList.add(skillInfo);
+				}
+
+				responseMap.put("currentSkills", currentSkillsList);
+				responseMap.put("currentSkillCount", currentSkills.size());
+			}
+
+			return ResponseEntity.ok(responseMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "스킬 보상 수령 중 오류 발생");
+			errorMap.put("message", e.getMessage());
+			return ResponseEntity.badRequest().body(errorMap);
+		}
+	}
+
+	@PostMapping("/replace/skill")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> replaceSkillReward(@RequestParam("PlayerID") String PlayerID,
+			@RequestParam("newSkillID") int newSkillID, @RequestParam("oldSkillID") int oldSkillID) {
+		System.out.println("스킬 교체 시도 : " + PlayerID);
+
+		try {
+			ActiveRewardDto activeReward = rewardService.getCurrentRewards(PlayerID);
+			if (activeReward == null) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "활성 보상이 없습니다");
+				errorMap.put("message", "전투를 완료해주세요");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			if (!activeReward.hasAvailableSkills()) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "사용 가능한 스킬 보상이 없습니다");
+				errorMap.put("message", "이미 수령했거나 스킬 보상이 없습니다");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			if (!activeReward.isSkillAvailable(newSkillID)) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "유효하지 않은 새 스킬입니다");
+				errorMap.put("message", "선택 가능한 스킬이 아닙니다");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			List<SkillDto> currentSkills = skillservice.getPlayerSkillList(PlayerID);
+			SkillDto oldSkill = null;
+			SkillDto newSkill = null;
+
+			for (SkillDto skill : currentSkills) {
+				if (skill.getSkill_id() == oldSkillID) {
+					oldSkill = skill;
+					break;
+				}
+			}
+
+			for (SkillDto skill : activeReward.getAvailableSkills()) {
+				if (skill.getSkill_id() == newSkillID) {
+					newSkill = skill;
+					break;
+				}
+			}
+
+			if (oldSkill == null) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "교체하려는 스킬을 보유하고 있지 않습니다");
+				errorMap.put("message", "올바른 스킬을 선택해주세요");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			if (newSkill == null) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "새로운 스킬 정보를 찾을 수 없습니다");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			String result = skillservice.replacePlayerSkill(PlayerID, String.valueOf(oldSkillID),
+					String.valueOf(newSkillID));
+
+			boolean success = result.contains("성공");
+
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("stage", "skillReplaced");
+			responseMap.put("success", success);
+			responseMap.put("message", result);
+			responseMap.put("action", "replaced");
+
+			if (success) {
+				activeReward.claimSkill(newSkillID);
+
+				Map<String, Object> newSkillInfo = createSkillInfoMap(newSkill);
+				responseMap.put("newSkill", newSkillInfo);
+
+				Map<String, Object> oldSkillInfo = createSkillInfoMap(oldSkill);
+				responseMap.put("oldSkill", oldSkillInfo);
+			}
+
+			return ResponseEntity.ok(responseMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "스킬 교체 중 오류 발생 : " + e.getMessage());
+			return ResponseEntity.badRequest().body(errorMap);
+		}
+	}
+
+	@GetMapping("/skills/current")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getCurrentSkills(@RequestParam("PlayerID") String PlayerID) {
+		System.out.println("현재 스킬 목록 조회 : " + PlayerID);
+
+		try {
+			List<SkillDto> currentSkills = skillservice.getPlayerSkillList(PlayerID);
+			int skillCount = currentSkills.size();
+
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("success", true);
+			responseMap.put("skillCount", skillCount);
+			responseMap.put("maxSkillCount", 10);
+			responseMap.put("canAddDirectly", skillCount < 10);
+
+			List<Map<String, Object>> skillsList = createSkillListMap(currentSkills);
+
+			responseMap.put("skills", skillsList);
+			responseMap.put("message", "현재 보유 스킬 목록 조회 완료");
+			
+			return ResponseEntity.ok(responseMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "스킬 목록 조회 중 오류 발생 : " + e.getMessage());
+			errorMap.put("success", false);
+			return ResponseEntity.badRequest().body(errorMap);
+		}
+	}
+
+	private SkillDto validateSelectedSkill(ActiveRewardDto activeReward, int skillID) {
+		return activeReward.getAvailableSkills().stream().filter(skill -> skill.getSkill_id() == skillID).findFirst()
+				.orElse(null);
+	}
+
+	private Map<String, Object> createSkillInfoMap(SkillDto skill) {
+		Map<String, Object> skillInfo = new HashMap<>();
+		skillInfo.put("skillID", skill.getSkill_id());
+		skillInfo.put("name", skill.getSkill_name());
+		skillInfo.put("description", skill.getSkill_text());
+		skillInfo.put("damage", skill.getMin_damage() + "~" + skill.getMax_damage());
+		skillInfo.put("element", skill.getElement());
+		skillInfo.put("rarity", skill.getRarity());
+		skillInfo.put("type", skill.getSkill_type());
+		skillInfo.put("target", skill.getHit_target());
+		return skillInfo;
+	}
+
+	private List<Map<String, Object>> createSkillListMap(List<SkillDto> skills) {
+		List<Map<String, Object>> skillList = new ArrayList<>();
+		for (SkillDto skill : skills) {
+			skillList.add(createSkillInfoMap(skill));
+		}
+		return skillList;
+	}
+
+	private Map<String, Object> createErrorResponse(String message) {
+		Map<String, Object> errorMap = new HashMap<>();
+		errorMap.put("success", false);
+		errorMap.put("error", message);
+		return errorMap;
+	}
+
+	@PostMapping("/claim/proceed")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> proceedToCamp(@RequestParam("PlayerID") String PlayerID) {
+		System.out.println("캠프로 이동 - Player : " + PlayerID);
+
+		try {
+			ActiveRewardDto activeReward = rewardService.getCurrentRewards(PlayerID);
+			if (activeReward == null) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "활성 보상이 없습니다");
+				errorMap.put("message", "이미 처리되었거나 전투를 완료하지 않았습니다");
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+
+			List<String> availableRewards = new ArrayList<>();
+			if (activeReward.hasAvailableSkills()) {
+				availableRewards.add("스킬 선택 (" + activeReward.getAvailableSkills().size() + " 개");
+			}
+			if (activeReward.hasAvailableArtifact()) {
+				availableRewards.add("아티팩트: " + activeReward.getAvailableArtifact().getArtifactName());
+			}
+			if (activeReward.hasAvailableHeal()) {
+				availableRewards.add("회복 보상");
+			}
+			if (activeReward.hasAvailableGold()) {
+				availableRewards.add("골드: " + activeReward.getGoldAmount());
+			}
+
+			String proceedResult = rewardService.proceedToCamp(PlayerID);
+
+			processUsedPhoenixFeather(PlayerID);
+			cleanupBattleSession(PlayerID);
+
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("stage", "battlePhaseCompleted");
+			responseMap.put("action", "proceedToCamp");
+			responseMap.put("success", true);
+			responseMap.put("message", proceedResult);
+
+			if (!availableRewards.isEmpty()) {
+				responseMap.put("availableRewards", availableRewards);
+				responseMap.put("availableCount", availableRewards.size());
+				responseMap.put("note", "챙길 것을 챙기고 캠프로 이동했습니다");
+			} else {
+				responseMap.put("note", "모든 것을 챙기고 캠프로 이동했습니다");
+			}
+
+			Map<String, Object> campInfo = new HashMap<>();
+			campInfo.put("nextStageEndpoint", "/api/camp/nextstage"); // 이부분은 나중에 수정
+			campInfo.put("method", "POST");
+			campInfo.put("parameter", Map.of("playerId", "PlayerID"));
+			campInfo.put("description", "다음 여정을 위해 캠프로 이동합니다");
+
+			responseMap.put("camfInfo", campInfo);
+			responseMap.put("nextStep", "camp");
+			responseMap.put("battlePhase", "ended");
+
+			System.out.println("전투 페이즈 종료 - 캠프로 이동 : " + PlayerID);
+
+			return ResponseEntity.ok(responseMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "캠프 이동 중 오류 발생");
+			errorMap.put("message", e.getMessage());
+			return ResponseEntity.badRequest().body(errorMap);
+		}
+	}
+
 }

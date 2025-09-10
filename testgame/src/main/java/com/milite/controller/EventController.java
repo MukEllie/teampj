@@ -25,20 +25,20 @@ import com.milite.service.EventService;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/event")
 @RequiredArgsConstructor
+@RequestMapping("/event")
 public class EventController {
 
 	private final EventService eventService;
 
-	/* 홈 → 랜덤 이벤트 라우팅 */
-	// /event/trigger/test01 형태로 호출
+	/** 랜덤 이벤트 트리거 진입 */
 	@GetMapping("/trigger/{playerId}")
 	public String trigger(@PathVariable String playerId) {
 		return eventService.triggerRandomEvent(playerId);
 	}
 
-	/* ===== Normal ===== */
+	/* Normal */
+	/** 일반 이벤트 화면 */
 	@GetMapping("/normal")
 	public String showNormal(@RequestParam String playerId, Model model) {
 		NormalEventDto e = eventService.prepareNormal(playerId);
@@ -52,6 +52,7 @@ public class EventController {
 		return "event/normal";
 	}
 
+	/** 일반 이벤트 적용 */
 	@PostMapping("/normal/apply")
 	public String applyNormal(@RequestParam String playerId, @RequestParam int ne_id, Model model) {
 		String msg = eventService.applyNormal(playerId, ne_id);
@@ -60,7 +61,8 @@ public class EventController {
 		return "event/normal_result";
 	}
 
-	/* ===== Roll ===== */
+	/* Roll */
+	/** 주사위 이벤트 화면 */
 	@GetMapping("/roll")
 	public String showRoll(@RequestParam String playerId, Model model) {
 		RollEventDto e = eventService.prepareRoll(playerId);
@@ -74,6 +76,7 @@ public class EventController {
 		return "event/roll";
 	}
 
+	/** 주사위 이벤트 적용 */
 	@PostMapping("/roll/apply")
 	public String applyRoll(@RequestParam String playerId, @RequestParam int re_id, Model model) {
 		String msg = eventService.applyRoll(playerId, re_id);
@@ -82,7 +85,8 @@ public class EventController {
 		return "event/roll_result";
 	}
 
-	/* ===== Trap ===== */
+	/* Trap */
+	/** 함정 이벤트 화면 */
 	@GetMapping("/trap")
 	public String showTrap(@RequestParam String playerId, Model model) {
 		TrapEventDto e = eventService.prepareTrap(playerId);
@@ -96,6 +100,7 @@ public class EventController {
 		return "event/trap";
 	}
 
+	/** 함정 이벤트 적용 */
 	@PostMapping("/trap/apply")
 	public String applyTrap(@RequestParam String playerId, @RequestParam int te_id, Model model) {
 		String msg = eventService.applyTrap(playerId, te_id);
@@ -104,7 +109,8 @@ public class EventController {
 		return "event/trap_result";
 	}
 
-	/* ===== Select ===== */
+	/* Select */
+	/** 선택 이벤트 화면 */
 	@GetMapping("/select")
 	public String showSelect(@RequestParam String playerId, Model model) {
 		SelectEventDto e = eventService.prepareSelect(playerId);
@@ -120,6 +126,7 @@ public class EventController {
 		return "event/select";
 	}
 
+	/** 선택 이벤트 적용 */
 	@PostMapping("/select/apply")
 	public String applySelect(@RequestParam String playerId, @RequestParam int sec_id, Model model) {
 		String msg = eventService.applySelect(playerId, sec_id);
@@ -128,25 +135,24 @@ public class EventController {
 		return "event/select_result";
 	}
 
-	/* ===== Card ===== */
+	/* Card */
+	/** 카드 이벤트 화면 */
 	@GetMapping("/card")
 	public String showCard(@RequestParam String playerId, Model model) {
-		CardEventDto ce = eventService.prepareCard(playerId);
-		if (ce == null) {
+		CardEventDto e = eventService.prepareCard(playerId);
+		if (e == null) {
 			model.addAttribute("message", "표시할 카드 이벤트가 없습니다.");
 			model.addAttribute("playerId", playerId);
 			return "event/card_result";
 		}
-
-		// 변경: 항상 SkillDB에서 보유 제외 3장
-		List<SkillDto> candidates = eventService.getCardChoicesFromSkillDB(playerId);
-
+		List<SkillDto> skills = eventService.getCardChoicesFromSkillDB(playerId);
 		model.addAttribute("playerId", playerId);
-		model.addAttribute("event", ce);
-		model.addAttribute("skills", candidates);
+		model.addAttribute("event", e);
+		model.addAttribute("skills", skills);
 		return "event/card";
 	}
 
+	/** 카드 이벤트 적용 */
 	@PostMapping("/card/apply")
 	public String applyCard(@RequestParam String playerId, @RequestParam int ce_id, @RequestParam int skillId,
 			Model model) {
@@ -156,8 +162,9 @@ public class EventController {
 		return "event/card_result";
 	}
 
-	/* ===== Artifact ===== */
-	@GetMapping("/artifact") // 최종 경로: /event/artifact
+	/* Artifact */
+	/** 아티팩트 이벤트 화면 */
+	@GetMapping("/artifact")
 	public String showArtifact(@RequestParam String playerId, Model model) {
 		ArtifactEventDto e = eventService.prepareArtifact(playerId);
 		if (e == null) {
@@ -165,14 +172,15 @@ public class EventController {
 			model.addAttribute("playerId", playerId);
 			return "event/artifact_result";
 		}
-		List<ArtifactDto> list = eventService.getArtifactCandidates(playerId);
+		List<ArtifactDto> items = eventService.getArtifactCandidates(playerId);
 		model.addAttribute("playerId", playerId);
 		model.addAttribute("event", e);
-		model.addAttribute("artifacts", list);
+		model.addAttribute("items", items);
 		return "event/artifact";
 	}
 
-	@PostMapping("/artifact/apply") // 최종 경로: /event/artifact/apply
+	/** 아티팩트 이벤트 적용 */
+	@PostMapping("/artifact/apply")
 	public String applyArtifact(@RequestParam String playerId, @RequestParam int ae_id, @RequestParam int artifactId,
 			Model model) {
 		String msg = eventService.applyArtifactGain(playerId, ae_id, artifactId);
@@ -181,24 +189,25 @@ public class EventController {
 		return "event/artifact_result";
 	}
 
-	/* ===== Boss ===== */
+	/* Boss */
+	/** 보스 이벤트 화면 */
 	@GetMapping("/boss")
 	public String showBoss(@RequestParam String playerId, Model model) {
 		BossEventDto e = eventService.prepareBoss(playerId);
 		if (e == null) {
-			// 보스가 이미 소모되었으면 비보스 랜덤 이벤트로
-			return eventService.triggerRandomNonBoss(playerId);
+			return eventService.triggerRandomEvent(playerId);
 		}
 		model.addAttribute("playerId", playerId);
 		model.addAttribute("event", e);
 		return "event/boss";
 	}
 
+	/** 보스 이벤트 진행(전투 진입) */
 	@PostMapping("/boss/fight")
 	public String bossFight(@RequestParam String playerId, @RequestParam int be_id, Model model) {
 		String msg = eventService.applyBossEnter(playerId, be_id);
 		model.addAttribute("message", msg);
 		model.addAttribute("playerId", playerId);
-		return "event/boss_result";
+		return "forward:/battle/event";
 	}
 }

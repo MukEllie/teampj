@@ -1,6 +1,7 @@
 package com.milite.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.milite.dto.SkillDto;
 
@@ -29,4 +30,14 @@ public interface SkillService {
 	
 	// 보유중인 스킬이 몇 개인지 반환
 	public int getOwnedSkillCount(String playerID);
+	
+	public List<SkillDto> getOwnSkillList(String playerID);
+	
+	public List<SkillDto> getUsingSkillList(String playerID);
+	
+	public boolean isOwnSkill(String playerID, String skillID);
+	
+	public Map<String, Object> setUsingSkill(String playerID, String skillID);
+	
+	public Map<String, Object> validateUsingSkill(String playerID, List<String> skillIDs);
 }

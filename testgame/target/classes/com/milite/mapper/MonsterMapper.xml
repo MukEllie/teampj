@@ -44,4 +44,26 @@
 		MonsterDB where
 		MonsterID = 52
 	</select>
+
+
+	<select id="getMonsterByID"
+		resultType="com.milite.dto.MonsterDto">
+		select MonsterID as monsterID,
+		Name as name,
+		Session as
+		session,
+		Type as type,
+		Element as
+		element,
+		min_hp,
+		max_hp,
+		min_atk,
+		max_atk,
+		luck,
+		Special as special,
+		Description as description
+		from
+		MonsterDB where
+		MonsterID = #{MonsterID}
+	</select>
 </mapper>

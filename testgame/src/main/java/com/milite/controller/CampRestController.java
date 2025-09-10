@@ -26,45 +26,41 @@ public class CampRestController {
 	private final CampService campService;
 	private final CharacterStatusMapper characterStatusMapper;
 
-	/** 정비소 초기 데이터 */
+	/** 정비소 초기 상태 (Battle 스타일: PlayerID 파라미터) */
 	@GetMapping
-	public ResponseEntity<Map<String, Object>> getCamp(@RequestParam String playerId) {
-		PlayerDto p = characterStatusMapper.getPlayerInfo(playerId);
+	public ResponseEntity<Map<String, Object>> getCamp(@RequestParam("PlayerID") String PlayerID) {
+		PlayerDto p = characterStatusMapper.getPlayerInfo(PlayerID);
+
 		Map<String, Object> body = new HashMap<>();
-		body.put("playerId", playerId);
+		body.put("playerId", PlayerID); // 응답 키는 프런트 호환 위해 그대로 소문자 사용
 		body.put("whereStage", p != null ? p.getWhereStage() : null);
 		body.put("whereSession", p != null ? p.getWhereSession() : null);
 		body.put("canAdvanceLayer", p != null && p.getWhereStage() == 10);
 		return ResponseEntity.ok(body);
 	}
 
-	/**
-	 * 다음 스테이지 진행 (스테이지 +1 및 5/10층 전투강제 포함) - 단, 현재 스테이지가 10이면 '전투로 가지 않고' 캠프로 되돌리도록
-	 * 지시(방어 로직)
-	 */
+	/** 다음 스테이지 진행: 5/10층 진입은 전투 강제, 10층에서는 방어(redirectToCamp) */
 	@PostMapping("/nextstage")
-	public ResponseEntity<Map<String, Object>> nextStage(@RequestParam String playerId) {
-		PlayerDto p = characterStatusMapper.getPlayerInfo(playerId);
+	public ResponseEntity<Map<String, Object>> nextStage(@RequestParam("PlayerID") String PlayerID) {
+		PlayerDto p = characterStatusMapper.getPlayerInfo(PlayerID);
 
-		// ★ 방어: 10층에서는 nextstage 금지 → 클라이언트에 캠프로 돌아가라 지시
-		if (p != null && p.getWhereStage() >= 10) {
+		// ★ 10층 방어: nextstage 호출 금지 → 앱 레벨 시그널로 캠프로 리디렉션
+		if (p != null && p.getWhereStage() == 10) {
 			Map<String, Object> guard = new HashMap<>();
 			guard.put("decision", "redirectToCamp");
-			guard.put("redirect", "/camp?playerId=" + playerId);
+			guard.put("redirect", "/camp?PlayerID=" + PlayerID);
 			guard.put("reason", "stage_is_10__nextstage_not_allowed");
-			// 상태코드는 200으로 두고 클라이언트에서 분기 처리(핸들링 쉬움)
 			return ResponseEntity.ok(guard);
-			// 만약 409 등의 에러코드를 쓰고 싶다면:
-			// return ResponseEntity.status(409).body(guard);
 		}
 
-		boolean goBattle = campService.decideBattleOrEvent(playerId);
+		// 서비스에서 whereStage += 1 && 70%/30% && (5/10층 전투강제) 처리
+		boolean goBattle = campService.decideBattleOrEvent(PlayerID);
 
-		// +1 반영 후 최신 상태 재조회
-		p = characterStatusMapper.getPlayerInfo(playerId);
+		// 최신 상태 재조회
+		p = characterStatusMapper.getPlayerInfo(PlayerID);
 
 		Map<String, Object> body = new HashMap<>();
-		body.put("playerId", playerId);
+		body.put("playerId", PlayerID);
 		body.put("whereStage", p != null ? p.getWhereStage() : null);
 		body.put("whereSession", p != null ? p.getWhereSession() : null);
 		body.put("canAdvanceLayer", p != null && p.getWhereStage() == 10);
@@ -75,25 +71,25 @@ public class CampRestController {
 			battle.put("url", "/battle/start");
 			battle.put("method", "POST");
 			Map<String, String> form = new HashMap<>();
-			form.put("PlayerID", playerId); // 대소문자 주의
+			form.put("PlayerID", PlayerID); // Battle과 동일
 			battle.put("form", form);
 			body.put("battleStart", battle);
 		} else {
 			body.put("decision", "event");
-			body.put("eventRouter", "/api/event/triggerNonBoss");
+			body.put("eventRouter", "/api/event/trigger/non-boss");
 		}
 		return ResponseEntity.ok(body);
 	}
 
-	/** 다음 계층으로 이동 (계층 순환 + 스테이지=1) */
+	/** 다음 계층으로 이동: 세션 순환(물→불→풀→물...) + 스테이지 1로 초기화 */
 	@PostMapping("/nextlayer")
-	public ResponseEntity<Map<String, Object>> nextLayer(@RequestParam String playerId) {
-		String nextSession = campService.advanceLayer(playerId);
-		PlayerDto p = characterStatusMapper.getPlayerInfo(playerId);
+	public ResponseEntity<Map<String, Object>> nextLayer(@RequestParam("PlayerID") String PlayerID) {
+		String nextSession = campService.advanceLayer(PlayerID);
+		PlayerDto p = characterStatusMapper.getPlayerInfo(PlayerID);
 
 		Map<String, Object> body = new HashMap<>();
 		body.put("ok", nextSession != null);
-		body.put("playerId", playerId);
+		body.put("playerId", PlayerID);
 		body.put("whereStage", p != null ? p.getWhereStage() : null);
 		body.put("whereSession", p != null ? p.getWhereSession() : null);
 		body.put("canAdvanceLayer", p != null && p.getWhereStage() == 10);

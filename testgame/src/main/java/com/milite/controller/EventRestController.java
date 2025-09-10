@@ -1,14 +1,12 @@
 package com.milite.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,243 +27,177 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/event")
 @RequiredArgsConstructor
+@RequestMapping("/api/event")
 public class EventRestController {
 
 	private final EventService eventService;
 
-	/* ===================== Trigger ===================== */
-
-	/** 랜덤 이벤트 타입 리다이렉션 힌트 제공 (문자열 그대로 반환) */
+	/** 랜덤 이벤트 트리거 진입 */
 	@GetMapping("/trigger/{playerId}")
-	public ResponseEntity<ApiResponse<Map<String, String>>> trigger(@PathVariable String playerId) {
-		String next = eventService.triggerRandomEvent(playerId); // 예: "forward:/event/normal?playerId=xxx"
-		Map<String, String> data = new HashMap<>();
-		data.put("next", next);
-		data.put("playerId", playerId);
-		return ResponseEntity.ok(ApiResponse.ok(data));
+	public ResponseEntity<ApiResponse<String>> trigger(@PathVariable String playerId) {
+		String next = eventService.triggerRandomEvent(playerId);
+		return ResponseEntity.ok(ApiResponse.ok("랜덤 이벤트 트리거 완료", next));
 	}
 
-	/** 보스 제외 랜덤 이벤트 */
+	/** 보스 제외 랜덤 트리거 */
 	@GetMapping("/trigger/non-boss/{playerId}")
-	public ResponseEntity<ApiResponse<Map<String, String>>> triggerNonBoss(@PathVariable String playerId) {
+	public ResponseEntity<ApiResponse<String>> triggerNonBoss(@PathVariable String playerId) {
 		String next = eventService.triggerRandomNonBoss(playerId);
-		Map<String, String> data = new HashMap<>();
-		data.put("next", next);
-		data.put("playerId", playerId);
-		return ResponseEntity.ok(ApiResponse.ok(data));
+		return ResponseEntity.ok(ApiResponse.ok("보스 제외 트리거 완료", next));
 	}
 
-	/* ===================== Normal ===================== */
-
-	/** 일반 이벤트 1건 준비 */
+	/* Normal */
+	/** 일반 이벤트 조회 */
 	@GetMapping("/normal")
-	public ResponseEntity<ApiResponse<NormalEventDto>> showNormal(@RequestParam String playerId) {
+	public ResponseEntity<ApiResponse<NormalEventDto>> normal(@RequestParam String playerId) {
 		NormalEventDto e = eventService.prepareNormal(playerId);
 		if (e == null)
 			return ResponseEntity.ok(ApiResponse.fail("표시할 일반 이벤트가 없습니다."));
-		return ResponseEntity.ok(ApiResponse.ok(e));
+		return ResponseEntity.ok(ApiResponse.ok("일반 이벤트 조회 완료", e));
 	}
 
 	/** 일반 이벤트 적용 */
-	@PostMapping("/normal/apply")
-	public ResponseEntity<ApiResponse<String>> applyNormal(@RequestBody NormalApplyRequest req) {
-		String msg = eventService.applyNormal(req.getPlayerId(), req.getNe_id());
-		return ResponseEntity.ok(ApiResponse.ok(msg));
+	@PostMapping(value = "/normal/apply", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ResponseEntity<ApiResponse<String>> normalApply(@RequestParam String playerId, @RequestParam int ne_id) {
+		return ResponseEntity.ok(ApiResponse.ok("적용 완료", eventService.applyNormal(playerId, ne_id)));
 	}
 
-	/* ===================== Roll ===================== */
-
-	/** 주사위 이벤트 1건 준비 */
+	/* Roll */
+	/** 주사위 이벤트 조회 */
 	@GetMapping("/roll")
-	public ResponseEntity<ApiResponse<RollEventDto>> showRoll(@RequestParam String playerId) {
+	public ResponseEntity<ApiResponse<RollEventDto>> roll(@RequestParam String playerId) {
 		RollEventDto e = eventService.prepareRoll(playerId);
 		if (e == null)
 			return ResponseEntity.ok(ApiResponse.fail("표시할 주사위 이벤트가 없습니다."));
-		return ResponseEntity.ok(ApiResponse.ok(e));
+		return ResponseEntity.ok(ApiResponse.ok("주사위 이벤트 조회 완료", e));
 	}
 
-	/** 주사위 이벤트 적용 (Luck 보정은 ServiceImpl에 이미 반영됨) */
-	@PostMapping("/roll/apply")
-	public ResponseEntity<ApiResponse<String>> applyRoll(@RequestBody RollApplyRequest req) {
-		String msg = eventService.applyRoll(req.getPlayerId(), req.getRe_id());
-		return ResponseEntity.ok(ApiResponse.ok(msg));
+	/** 주사위 이벤트 적용 */
+	@PostMapping(value = "/roll/apply", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ResponseEntity<ApiResponse<String>> rollApply(@RequestParam String playerId, @RequestParam int re_id) {
+		return ResponseEntity.ok(ApiResponse.ok("적용 완료", eventService.applyRoll(playerId, re_id)));
 	}
 
-	/* ===================== Trap ===================== */
-
-	/** 함정 이벤트 1건 준비 */
+	/* Trap */
+	/** 함정 이벤트 조회 */
 	@GetMapping("/trap")
-	public ResponseEntity<ApiResponse<TrapEventDto>> showTrap(@RequestParam String playerId) {
+	public ResponseEntity<ApiResponse<TrapEventDto>> trap(@RequestParam String playerId) {
 		TrapEventDto e = eventService.prepareTrap(playerId);
 		if (e == null)
 			return ResponseEntity.ok(ApiResponse.fail("표시할 함정 이벤트가 없습니다."));
-		return ResponseEntity.ok(ApiResponse.ok(e));
+		return ResponseEntity.ok(ApiResponse.ok("함정 이벤트 조회 완료", e));
 	}
 
-	/** 함정 이벤트 적용 (Luck 보정은 ServiceImpl에 이미 반영됨) */
-	@PostMapping("/trap/apply")
-	public ResponseEntity<ApiResponse<String>> applyTrap(@RequestBody TrapApplyRequest req) {
-		String msg = eventService.applyTrap(req.getPlayerId(), req.getTe_id());
-		return ResponseEntity.ok(ApiResponse.ok(msg));
+	/** 함정 이벤트 적용 */
+	@PostMapping(value = "/trap/apply", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ResponseEntity<ApiResponse<String>> trapApply(@RequestParam String playerId, @RequestParam int te_id) {
+		return ResponseEntity.ok(ApiResponse.ok("적용 완료", eventService.applyTrap(playerId, te_id)));
 	}
 
-	/* ===================== Select ===================== */
-
-	/** 선택 이벤트 본문 준비 */
+	/* Select */
+	/** 선택 이벤트 조회 */
 	@GetMapping("/select")
-	public ResponseEntity<ApiResponse<SelectEventDto>> showSelect(@RequestParam String playerId) {
+	public ResponseEntity<ApiResponse<SelectEventDto>> select(@RequestParam String playerId) {
 		SelectEventDto e = eventService.prepareSelect(playerId);
 		if (e == null)
 			return ResponseEntity.ok(ApiResponse.fail("표시할 선택 이벤트가 없습니다."));
-		return ResponseEntity.ok(ApiResponse.ok(e));
+		return ResponseEntity.ok(ApiResponse.ok("선택 이벤트 조회 완료", e));
 	}
 
 	/** 선택 이벤트 선택지 조회 */
 	@GetMapping("/select/choices")
-	public ResponseEntity<ApiResponse<List<SelectChoiceDto>>> getSelectChoices(@RequestParam int se_id) {
+	public ResponseEntity<ApiResponse<List<SelectChoiceDto>>> selectChoices(@RequestParam int se_id) {
 		List<SelectChoiceDto> choices = eventService.getSelectChoices(se_id);
-		return ResponseEntity.ok(ApiResponse.ok(choices));
+		return ResponseEntity.ok(ApiResponse.ok("선택지 조회 완료", choices));
 	}
 
 	/** 선택 이벤트 적용 */
-	@PostMapping("/select/apply")
-	public ResponseEntity<ApiResponse<String>> applySelect(@RequestBody SelectApplyRequest req) {
-		String msg = eventService.applySelect(req.getPlayerId(), req.getSec_id());
-		return ResponseEntity.ok(ApiResponse.ok(msg));
+	@PostMapping(value = "/select/apply", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ResponseEntity<ApiResponse<String>> selectApply(@RequestParam String playerId, @RequestParam int sec_id) {
+		return ResponseEntity.ok(ApiResponse.ok("적용 완료", eventService.applySelect(playerId, sec_id)));
 	}
 
-	/* ===================== Card ===================== */
-
-	/** 카드 이벤트 인트로 */
+	/* Card */
+	/** 카드 이벤트 조회 */
 	@GetMapping("/card")
-	public ResponseEntity<ApiResponse<CardEventDto>> showCard(@RequestParam String playerId) {
+	public ResponseEntity<ApiResponse<CardEventDto>> card(@RequestParam String playerId) {
 		CardEventDto e = eventService.prepareCard(playerId);
 		if (e == null)
 			return ResponseEntity.ok(ApiResponse.fail("표시할 카드 이벤트가 없습니다."));
-		return ResponseEntity.ok(ApiResponse.ok(e));
+		return ResponseEntity.ok(ApiResponse.ok("카드 이벤트 조회 완료", e));
 	}
 
-	/** 카드 후보 3장 (SkillDB 기준, 보유 제외) */
-	@GetMapping("/card/skills")
-	public ResponseEntity<ApiResponse<List<SkillDto>>> getCardSkills(@RequestParam String playerId) {
+	/** 카드 후보 3장 조회 */
+	@GetMapping("/card/candidates")
+	public ResponseEntity<ApiResponse<List<SkillDto>>> cardCandidates(@RequestParam String playerId) {
 		List<SkillDto> skills = eventService.getCardChoicesFromSkillDB(playerId);
-		return ResponseEntity.ok(ApiResponse.ok(skills));
+		return ResponseEntity.ok(ApiResponse.ok("카드 후보 조회 완료", skills));
 	}
 
 	/** 카드 이벤트 적용 */
-	@PostMapping("/card/apply")
-	public ResponseEntity<ApiResponse<String>> applyCard(@RequestBody CardApplyRequest req) {
-		String msg = eventService.applyCardGain(req.getPlayerId(), req.getCe_id(), req.getSkillId());
-		return ResponseEntity.ok(ApiResponse.ok(msg));
+	@PostMapping(value = "/card/apply", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ResponseEntity<ApiResponse<String>> cardApply(@RequestParam String playerId, @RequestParam int ce_id,
+			@RequestParam int skillId) {
+		return ResponseEntity.ok(ApiResponse.ok("적용 완료", eventService.applyCardGain(playerId, ce_id, skillId)));
 	}
 
-	/* ===================== Artifact ===================== */
-
-	/** 아티팩트 이벤트 인트로 */
+	/* Artifact */
+	/** 아티팩트 이벤트 조회 */
 	@GetMapping("/artifact")
-	public ResponseEntity<ApiResponse<ArtifactEventDto>> showArtifact(@RequestParam String playerId) {
+	public ResponseEntity<ApiResponse<ArtifactEventDto>> artifact(@RequestParam String playerId) {
 		ArtifactEventDto e = eventService.prepareArtifact(playerId);
 		if (e == null)
 			return ResponseEntity.ok(ApiResponse.fail("표시할 아티팩트 이벤트가 없습니다."));
-		return ResponseEntity.ok(ApiResponse.ok(e));
+		return ResponseEntity.ok(ApiResponse.ok("아티팩트 이벤트 조회 완료", e));
 	}
 
-	/** 아티팩트 후보 3개 */
+	/** 아티팩트 후보 3개 조회 */
 	@GetMapping("/artifact/candidates")
-	public ResponseEntity<ApiResponse<List<ArtifactDto>>> getArtifactCandidates(@RequestParam String playerId) {
-		List<ArtifactDto> list = eventService.getArtifactCandidates(playerId);
-		return ResponseEntity.ok(ApiResponse.ok(list));
+	public ResponseEntity<ApiResponse<List<ArtifactDto>>> artifactCandidates(@RequestParam String playerId) {
+		List<ArtifactDto> items = eventService.getArtifactCandidates(playerId);
+		return ResponseEntity.ok(ApiResponse.ok("아티팩트 후보 조회 완료", items));
 	}
 
-	/** 아티팩트 적용 (200번대는 즉시효과 ServiceImpl에서 반영됨) */
-	@PostMapping("/artifact/apply")
-	public ResponseEntity<ApiResponse<String>> applyArtifact(@RequestBody ArtifactApplyRequest req) {
-		String msg = eventService.applyArtifactGain(req.getPlayerId(), req.getAe_id(), req.getArtifactId());
-		return ResponseEntity.ok(ApiResponse.ok(msg));
+	/** 아티팩트 이벤트 적용 */
+	@PostMapping(value = "/artifact/apply", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ResponseEntity<ApiResponse<String>> artifactApply(@RequestParam String playerId, @RequestParam int ae_id,
+			@RequestParam int artifactId) {
+		return ResponseEntity.ok(ApiResponse.ok("적용 완료", eventService.applyArtifactGain(playerId, ae_id, artifactId)));
 	}
 
-	/* ===================== Boss ===================== */
-
-	/** 보스 이벤트 인트로 */
+	/* Boss */
+	/** 보스 이벤트 조회 */
 	@GetMapping("/boss")
-	public ResponseEntity<ApiResponse<Object>> showBoss(@RequestParam String playerId) {
+	public ResponseEntity<ApiResponse<BossEventDto>> boss(@RequestParam String playerId) {
 		BossEventDto e = eventService.prepareBoss(playerId);
-		if (e == null) {
-			Map<String, Object> hint = new HashMap<>();
-			hint.put("reroute", "nonBoss");
-			return ResponseEntity.ok(ApiResponse.fail("보스 이벤트 없음", hint));
-		}
-		return ResponseEntity.ok(ApiResponse.ok(e));
+		if (e == null)
+			return ResponseEntity.ok(ApiResponse.fail("표시할 보스 이벤트가 없습니다."));
+		return ResponseEntity.ok(ApiResponse.ok("보스 이벤트 조회 완료", e));
 	}
 
-	/** 보스 전투 진입 */
-	@PostMapping("/boss/fight")
-	public ResponseEntity<ApiResponse<String>> bossFight(@RequestBody BossFightRequest req) {
-		String msg = eventService.applyBossEnter(req.getPlayerId(), req.getBe_id());
-		return ResponseEntity.ok(ApiResponse.ok(msg));
+	/** 보스 이벤트 진행(전투 진입) */
+	@PostMapping(value = "/boss/fight", consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE })
+	public ResponseEntity<ApiResponse<String>> bossFight(@RequestParam String playerId, @RequestParam int be_id) {
+		String msg = eventService.applyBossEnter(playerId, be_id);
+		// 프론트는 이 응답을 받은 뒤 POST /battle/event 호출로 전투 진입
+		return ResponseEntity.ok(ApiResponse.ok(msg, "/battle/event"));
 	}
 
-	/* ===================== Request DTOs ===================== */
-
-	@Data
-	static class NormalApplyRequest {
-		private String playerId;
-		private int ne_id;
-	}
-
-	@Data
-	static class RollApplyRequest {
-		private String playerId;
-		private int re_id;
-	}
-
-	@Data
-	static class TrapApplyRequest {
-		private String playerId;
-		private int te_id;
-	}
-
-	@Data
-	static class SelectApplyRequest {
-		private String playerId;
-		private int sec_id;
-	}
-
-	@Data
-	static class CardApplyRequest {
-		private String playerId;
-		private int ce_id;
-		private int skillId;
-	}
-
-	@Data
-	static class ArtifactApplyRequest {
-		private String playerId;
-		private int ae_id;
-		private int artifactId;
-	}
-
-	@Data
-	static class BossFightRequest {
-		private String playerId;
-		private int be_id;
-	}
-
-	/* ===================== Response Wrapper ===================== */
-
+	/* 공통 */
+	/** API 응답 래퍼 */
 	@Data
 	static class ApiResponse<T> {
 		private boolean success;
 		private String message;
 		private T data;
 
-		static <T> ApiResponse<T> ok(T data) {
+		static <T> ApiResponse<T> ok(String message, T data) {
 			ApiResponse<T> r = new ApiResponse<>();
 			r.success = true;
+			r.message = message;
 			r.data = data;
-			r.message = "OK";
 			return r;
 		}
 

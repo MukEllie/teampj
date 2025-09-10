@@ -7,7 +7,9 @@ import com.milite.dto.BattleResultDto;
 import com.milite.dto.SkillDto;
 
 public interface BattleService {
-	public BattleResultDto battle(String PlayerId);
+	public BattleResultDto battle(String PlayerID);
+	
+	public BattleResultDto battleEvent(String PlayerID);
 	
 	public BattleResultDto processNextAction(String playerID, SkillDto playerSkill, Integer targetIndex);
 	

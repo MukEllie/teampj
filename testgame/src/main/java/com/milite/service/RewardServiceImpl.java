@@ -424,63 +424,76 @@ public class RewardServiceImpl implements RewardService {
 	@Override
 	public String claimGoldReward(String playerID) {
 		log.info("골드 보상 개별 적용 시작");
-		
+
 		try {
 			ActiveRewardDto activeReward = getCurrentRewards(playerID);
 			if (activeReward == null) {
 				return "활성 보상이 없습니다";
 			}
 
-			if(!activeReward.hasAvailableGold()) {
+			if (!activeReward.hasAvailableGold()) {
 				return "획득 가능한 골드 보상이 없습니다";
 			}
-			
+
 			int goldAmount = activeReward.claimGold();
 			String result = applyGoldReward(playerID, goldAmount);
-			
-			log.info("골드 보상 개별 적용 완료 : " + goldAmount);
+
+			log.info("골드 보상 개별 적용 완료 : " + goldAmount + " 골드를 획득하였습니다");
 			return result;
-		}catch(Exception e) {
-			log.error("골드 보상 개별 적용 실패 : " + e.getMessage(),e);
+		} catch (Exception e) {
+			log.error("골드 보상 개별 적용 실패 : " + e.getMessage(), e);
 			return "골드 보상 개별 적용 중 오류 발생 : " + e.getMessage();
 		}
 	}
-	
+
 	@Override
 	public String proceedToCamp(String playerID) {
 		log.info("캠프로 이동");
-		
+
 		try {
 			ActiveRewardDto activeReward = activeRewards.remove(playerID);
-			if(activeReward == null) {
+			if (activeReward == null) {
 				return "처리할 보상이 없습니다";
 			}
-			
+
 			List<String> remainingRewards = new ArrayList<>();
-			if(activeReward.hasAvailableSkills()) {
+			if (activeReward.hasAvailableSkills()) {
 				remainingRewards.add("스킬 " + activeReward.getAvailableSkills().size());
 			}
-			if(activeReward.hasAvailableArtifact()) {
+			if (activeReward.hasAvailableArtifact()) {
 				remainingRewards.add("아티팩트");
 			}
-			if(activeReward.hasAvailableHeal()) {
+			if (activeReward.hasAvailableHeal()) {
 				remainingRewards.add("회복");
 			}
-			if(activeReward.hasAvailableGold() ) {
+			if (activeReward.hasAvailableGold()) {
 				remainingRewards.add("골드 " + activeReward.getGoldAmount());
 			}
-			
-			if(!remainingRewards.isEmpty()) {
+
+			if (!remainingRewards.isEmpty()) {
 				log.info("포기한 보상 : " + String.join(", ", remainingRewards));
 				return "캠프로 이동합니다. 두고가는 것들 : " + String.join(", ", remainingRewards);
-			}else {
+			} else {
 				return "모든 것을 챙기고 캠프로 이동합니다";
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			log.error("캠프 이동 실패: " + e.getMessage(), e);
 			return "캠프 이동 중 오류 발생: " + e.getMessage();
 		}
 	}
-	
-	
+
+	@Override
+	public boolean isSkillInActiveReward(String playerID, int skillID) {
+		try {
+			ActiveRewardDto activeReward = getCurrentRewards(playerID);
+			if (activeReward == null) {
+				return false;
+			}
+
+			return activeReward.isSkillAvailable(skillID);
+		} catch (Exception e) {
+			log.error("스킬 보상 확인 중 오류 : " + e.getMessage(), e);
+			return false;
+		}
+	}
 }

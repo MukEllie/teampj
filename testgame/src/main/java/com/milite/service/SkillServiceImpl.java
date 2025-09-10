@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import com.milite.dto.PlayerDto;
@@ -37,7 +39,7 @@ public class SkillServiceImpl implements SkillService {
 	public SkillDto getSkillInfo(String skillID) {
 		return skillMapper.getSkillInfoByString(skillID);
 	}
-	
+
 	@Override
 	public List<SkillDto> getSkillReward(String job, String rarity, String type, String element) {
 		log.info("스킬 조회 - job: " + job + ", rarity: " + rarity + ", type: " + type + ", element: " + element);
@@ -227,5 +229,148 @@ public class SkillServiceImpl implements SkillService {
 		SkillDto rewardSkill = skillList.get(r - 1);
 		log.info("선택된 스킬 : " + rewardSkill.getSkill_name() + " (" + rewardSkill.getRarity() + ")");
 		return rewardSkill;
+	}
+
+	@Override
+	public List<SkillDto> getOwnSkillList(String playerID) {
+		log.info("보유 스킬 조회");
+
+		try {
+			PlayerDto player = characterMapper.getPlayerInfo(playerID);
+			if (player == null || player.getOwn_Skill() == null || player.getOwn_Skill().isEmpty()) {
+				return new ArrayList<>();
+			}
+
+			List<String> ownedSkillIDs = player.getOwnSkillList();
+			List<SkillDto> ownedSkill = new ArrayList<>();
+
+			for (String skillID : ownedSkillIDs) {
+				SkillDto skill = getSkillInfo(skillID);
+				if (skill != null) {
+					ownedSkill.add(skill);
+				}
+			}
+
+			log.info("보유 스킬 조회 완료 : " + ownedSkill.size());
+			return ownedSkill;
+		} catch (Exception e) {
+			log.error("보유 스킬 조회 실패: " + e.getMessage());
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public List<SkillDto> getUsingSkillList(String playerID) {
+		log.info("사용 스킬 조회");
+
+		try {
+			PlayerDto player = characterMapper.getPlayerInfo(playerID);
+			if (player == null || player.getUsing_Skill() == null || player.getUsing_Skill().isEmpty()) {
+				return new ArrayList<>();
+			}
+
+			List<String> usingSkillIDs = player.getUsingSkillList();
+			List<SkillDto> usingSkill = new ArrayList<>();
+
+			for (String skillID : usingSkillIDs) {
+				SkillDto skill = getSkillInfo(skillID);
+				if (skill != null) {
+					usingSkill.add(skill);
+				}
+			}
+
+			log.info("사용 스킬 조회 완료 : " + usingSkill.size());
+			return usingSkill;
+		} catch (Exception e) {
+			log.error("사용 스킬 조회 실패: " + e.getMessage());
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public Map<String, Object> setUsingSkill(String playerID, String skillIDs) {
+		log.info("사용 스킬 설정");
+
+		Map<String, Object> result = new HashMap<>();
+
+		try {
+			if (skillIDs == null || skillIDs.trim().isEmpty()) {
+				skillIDs = "";
+			}
+
+			List<String> skillIDList;
+			if (skillIDs.isEmpty()) {
+				skillIDList = new ArrayList<>();
+			} else {
+				skillIDList = StringUtil.splitCommaString(skillIDs);
+			}
+
+			Map<String, Object> validation = validateUsingSkill(playerID, skillIDList);
+			if (!(Boolean) validation.get("success")) {
+				return validation;
+			}
+
+			PlayerDto player = characterMapper.getPlayerInfo(playerID);
+			player.setUsing_Skill(skillIDs);
+			characterMapper.updateStatus(player);
+
+			result.put("success", true);
+			result.put("message", "사용 스킬 설정 완료");
+			result.put("usingSkillCount", skillIDList.size());
+			return result;
+		} catch (Exception e) {
+			log.error("사용 스킬 설정 실패: " + e.getMessage());
+			result.put("success", false);
+			result.put("message", "사용 스킬 설정 중 오류가 발생했습니다: " + e.getMessage());
+			return result;
+		}
+	}
+
+	@Override
+	public boolean isOwnSkill(String playerID, String skillID) {
+		try {
+			PlayerDto player = characterMapper.getPlayerInfo(playerID);
+			if (player == null || player.getOwn_Skill() == null) {
+				return false;
+			}
+
+			List<String> ownedSkills = player.getOwnSkillList();
+			return ownedSkills.contains(skillID);
+		} catch (Exception e) {
+			log.error("스킬 보유 여부 확인 실패: " + e.getMessage());
+			return false;
+		}
+	}
+
+	@Override
+	public Map<String, Object> validateUsingSkill(String playerID, List<String> skillIDs) {
+		Map<String, Object> result = new HashMap<>();
+
+		try {
+			if (skillIDs.size() > 4) {
+				result.put("success", false);
+				result.put("message", "사용 스킬은 최대 4개까지만 선택가능합니다");
+				return result;
+			}
+
+			// 중복 적용은 프론트 측에서 방지
+
+			for (String skillID : skillIDs) {
+				if (!isOwnSkill(playerID, skillID)) {
+					result.put("success", false);
+					result.put("message", "보유하지 않은 스킬 : " + skillID);
+					return result;
+				}
+			}
+
+			result.put("success", true);
+			result.put("message", "유효한 스킬 설정입니다.");
+			return result;
+		} catch (Exception e) {
+			log.error("스킬 검증 실패: " + e.getMessage());
+			result.put("success", false);
+			result.put("message", "스킬 검증 중 오류가 발생했습니다: " + e.getMessage());
+			return result;
+		}
 	}
 }

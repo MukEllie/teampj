@@ -122,6 +122,43 @@ public class BattleServiceImpl implements BattleService {
 	}
 
 	@Override
+	public BattleResultDto battleEvent(String PlayerID) {
+		try {
+			final int SUMMON_MASTER_ID = BattleConstants.getSummonMasterId();
+			MonsterDto eventBossDto = monsterMapper.getMonsterByID(SUMMON_MASTER_ID);
+
+			if (eventBossDto == null) {
+				return new BattleResultDto("이벤트 보스 정보를 찾을 수 없습니다.", 0, 0, false, false, null);
+			}
+
+			PlayerDto player = characterStatusMapper.getPlayerInfo(PlayerID);
+			if (player == null) {
+				return new BattleResultDto("플레이어 정보를 찾을 수 없습니다.", 0, 0, false, false, null);
+			}
+
+			int sessionID = generateSessionID();
+			ArrayList<BattleMonsterUnit> eventEnemy = new ArrayList<>();
+			BattleMonsterUnit eventBoss = new BattleMonsterUnit(eventBossDto);
+			eventEnemy.add(eventBoss);
+
+			List<BattleUnit> actionOrder = createActionOrder(player, eventEnemy);
+
+			BattleSession session = new BattleSession(sessionID, player, eventEnemy, false, 1, new ArrayList<>(),
+					actionOrder, 0);
+
+			saveToMemory(PlayerID, player, eventEnemy, session);
+
+			log.info("=== 전투 시작 ===");
+			logActionOrder(actionOrder);
+
+			return new BattleResultDto("전투 시작", 0, 0, false, false, new ArrayList<>());
+		} catch (Exception e) {
+			log.error("이벤트 전투 시작 중 오류 발생 : " + e.getMessage());
+			return new BattleResultDto("이벤트 전투 시작 중 오류 : " + e.getMessage(), 0, 0, false, false, new ArrayList<>());
+		}
+	}
+
+	@Override
 	public Map<String, Object> getBattleStatus(String PlayerID) {
 		BattleSession session = SessionMemory.get(PlayerID);
 		if (session == null) {
