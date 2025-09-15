@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미디어 - 게임 포털</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="common-auth.js"></script>
+</head>
+<body>
+    <!-- 헤더 네비게이션 -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🎮</span>
+                <span class="logo-text">GAME PORTAL</span>
+            </a>
+            
+            <nav class="nav">
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="game.html" class="nav-link">게임</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="game-info.html" class="nav-link">게임정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="news.html" class="nav-link">공지사항</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="gacha-shop.html" class="nav-link">가챠샵</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="community.html" class="nav-link">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="media.html" class="nav-link">미디어</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="customer-service.html" class="nav-link">고객센터</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="auth-buttons">
+                <a href="#" class="auth-btn login-btn" id="loginBtn">로그인</a>
+                <a href="#" class="auth-btn signup-btn" id="signupBtn">회원가입</a>
+            </div>
+
+            <button class="mobile-menu-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main">
+        <!-- 페이지 헤더 -->
+        <section class="page-header media-header gradient-media">
+            <div class="container">
+                <div class="page-header-content">
+                    <h1 class="page-title">🎬 미디어</h1>
+                    <p class="page-subtitle">게임의 아름다운 순간들을 감상하세요</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 미디어 컨텐츠 -->
+        <section class="content-section">
+            <div class="container">
+                <!-- 미디어 액션 바 -->
+                <div class="media-action-bar" style="
+                    background: white; 
+                    padding: 1.5rem; 
+                    border-radius: 15px; 
+                    margin-bottom: 2rem; 
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                    display: flex; 
+                    justify-content: space-between; 
+                    align-items: center; 
+                    flex-wrap: wrap; 
+                    gap: 1rem;
+                ">
+                    <div class="action-buttons" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="window.mediaManager && window.mediaManager.showUploadModal()" style="
+                            background: linear-gradient(45deg, #667eea, #764ba2); 
+                            color: white; 
+                            border: none; 
+                            padding: 0.8rem 1.5rem; 
+                            border-radius: 8px; 
+                            cursor: pointer; 
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                        ">
+                            📤 미디어 업로드
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.mediaManager && window.mediaManager.showMyMedia()" style="
+                            background: #6c757d; 
+                            color: white; 
+                            border: none; 
+                            padding: 0.8rem 1.5rem; 
+                            border-radius: 8px; 
+                            cursor: pointer; 
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                        ">
+                            📁 내 미디어
+                        </button>
+                        <button class="btn btn-warning" onclick="window.mediaManager && window.mediaManager.showAdvancedSearch()" style="
+                            background: #ffc107; 
+                            color: #333; 
+                            border: none; 
+                            padding: 0.8rem 1.5rem; 
+                            border-radius: 8px; 
+                            cursor: pointer; 
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                        ">
+                            🔍 고급 검색
+                        </button>
+                        <button class="btn btn-info" onclick="window.mediaManager && window.mediaManager.showMediaStats()" style="
+                            background: #17a2b8; 
+                            color: white; 
+                            border: none; 
+                            padding: 0.8rem 1.5rem; 
+                            border-radius: 8px; 
+                            cursor: pointer; 
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                        ">
+                            📊 미디어 통계
+                        </button>
+                    </div>
+                    <div class="view-options" style="display: flex; gap: 1rem; align-items: center;">
+                        <label style="color: #666; font-weight: 600;">보기:</label>
+                        <select id="viewModeSelect" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="grid">격자 보기</option>
+                            <option value="list">리스트 보기</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 미디어 탭 -->
+                <div class="media-tabs">
+                    <button class="media-tab active" data-tab="screenshots">스크린샷</button>
+                    <button class="media-tab" data-tab="videos">동영상</button>
+                    <button class="media-tab" data-tab="artwork">아트워크</button>
+                    <button class="media-tab" data-tab="wallpapers">배경화면</button>
+                </div>
+
+                <!-- 스크린샷 섹션 -->
+                <div class="media-section active" id="screenshots">
+                    <h3>📸 게임 스크린샷</h3>
+                    <div class="media-gallery">
+                        <div class="loading-placeholder" style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #666;">
+                            <div class="loading-spinner" style="margin: 0 auto 1rem auto;"></div>
+                            <p>미디어를 불러오는 중...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 동영상 섹션 -->
+                <div class="media-section" id="videos">
+                    <h3>🎥 게임 동영상</h3>
+                    <div class="media-gallery">
+                        <!-- 동적으로 로드됨 -->
+                    </div>
+                </div>
+
+                <!-- 아트워크 섹션 -->
+                <div class="media-section" id="artwork">
+                    <h3>🎨 컨셉 아트워크</h3>
+                    <div class="media-gallery">
+                        <!-- 동적으로 로드됨 -->
+                    </div>
+                </div>
+
+                <!-- 배경화면 섹션 -->
+                <div class="media-section" id="wallpapers">
+                    <h3>🖥️ 공식 배경화면</h3>
+                    <div class="media-gallery">
+                        <!-- 동적으로 로드됨 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>게임 포털</h4>
+                    <p>최고의 게임 경험을 제공합니다</p>
+                </div>
+                <div class="footer-section">
+                    <h4>지원</h4>
+                    <a href="#">FAQ</a>
+                    <a href="customer-service.html">고객센터</a>
+                    <a href="#">버그 신고</a>
+                </div>
+                <div class="footer-section">
+                    <h4>커뮤니티</h4>
+                    <a href="community.html">공식 포럼</a>
+                    <a href="#">디스코드</a>
+                    <a href="#">유튜브</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Game Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript 파일들 -->
+    <script src="media.js"></script>
+    <script>
+        // 레거시 브라우저 지원을 위한 폴리필
+        if (!Element.prototype.matches) {
+            Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+        }
+
+        if (!Element.prototype.closest) {
+            Element.prototype.closest = function(s) {
+                var el = this;
+                do {
+                    if (Element.prototype.matches.call(el, s)) return el;
+                    el = el.parentElement || el.parentNode;
+                } while (el !== null && el.nodeType === 1);
+                return null;
+            };
+        }
+
+        // 안전한 미디어 URL 생성 함수
+        function getSecureMediaUrl(mediaItem) {
+            if (!mediaItem) return null;
+            
+            // 외부 플랫폼
+            if (mediaItem.mime_type === 'video/youtube' || mediaItem.mime_type === 'video/vimeo') {
+                return mediaItem.file_url || mediaItem.file_path;
+            }
+            
+            // 외부 URL
+            if (mediaItem.file_url && (mediaItem.file_url.startsWith('http://') || mediaItem.file_url.startsWith('https://'))) {
+                return mediaItem.file_url;
+            }
+            
+            // 로컬 파일
+            if (mediaItem.file_name) {
+                return `/uploads/media/${mediaItem.file_name}`;
+            }
+            
+            return null;
+        }
+
+        // YouTube ID 추출 함수
+        function extractYouTubeId(url) {
+            if (!url) return null;
+            
+            const patterns = [
+                /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i,
+                /youtube\.com\/embed\/([^"&?\/\s]{11})/i
+            ];
+            
+            for (const pattern of patterns) {
+                const match = url.match(pattern);
+                if (match) return match[1];
+            }
+            
+            return null;
+        }
+
+        // 카테고리 아이콘 함수
+        function getCategoryIcon(categoryCode) {
+            const icons = {
+                'screenshots': '📸',
+                'videos': '🎥',
+                'artwork': '🎨',
+                'wallpapers': '🖥️'
+            };
+            return icons[categoryCode] || '📁';
+        }
+
+        // 개선된 미디어 표시 함수
+        function displayMedia(mediaItem) {
+            if (!mediaItem) return '<div>미디어 정보가 없습니다</div>';
+            
+            const isYouTube = mediaItem.mime_type === 'video/youtube' || 
+                             (mediaItem.file_url && mediaItem.file_url.includes('youtube.com/embed')) ||
+                             (mediaItem.file_path && (mediaItem.file_path.includes('youtube.com') || mediaItem.file_path.includes('youtu.be')));
+            
+            const isVimeo = mediaItem.mime_type === 'video/vimeo' || 
+                           (mediaItem.file_url && mediaItem.file_url.includes('player.vimeo.com'));
+            
+            if (isYouTube) {
+                const youtubeId = extractYouTubeId(mediaItem.file_path || mediaItem.file_url);
+                const thumbnailUrl = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : null;
+                
+                return `
+                    <div class="video-container youtube-preview" style="position: relative; width: 100%; height: 200px; border-radius: 10px; overflow: hidden; background: #000; cursor: pointer;">
+                        ${thumbnailUrl ? `
+                            <img src="${thumbnailUrl}" alt="${mediaItem.title}" 
+                                 style="width: 100%; height: 100%; object-fit: cover;"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        ` : ''}
+                        <div class="youtube-placeholder" style="${thumbnailUrl ? 'display: none;' : 'display: flex;'} position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #ff0000, #cc0000); align-items: center; justify-content: center; flex-direction: column; color: white;">
+                            <span style="font-size: 2.5rem; margin-bottom: 0.5rem;">📺</span>
+                            <span style="font-weight: 600; font-size: 0.9rem;">YouTube</span>
+                        </div>
+                        <div class="play-indicator" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.9; pointer-events: none;">
+                            <div style="background: rgba(255,0,0,0.9); color: white; border-radius: 6px; padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">
+                                <span>▶️</span>
+                                <span>YouTube</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (isVimeo) {
+                return `
+                    <div class="video-container vimeo-preview" style="position: relative; width: 100%; height: 200px; border-radius: 10px; overflow: hidden;">
+                        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #1ab7ea, #1563c7); display: flex; align-items: center; justify-content: center; flex-direction: column; color: white;">
+                            <span style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎬</span>
+                            <span style="font-weight: 600; font-size: 0.9rem;">Vimeo</span>
+                        </div>
+                        <div class="play-indicator" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.9;">
+                            <div style="background: rgba(26,183,234,0.9); color: white; border-radius: 6px; padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">
+                                <span>▶️</span>
+                                <span>Vimeo</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (mediaItem.file_type === 'video') {
+                const videoUrl = getSecureMediaUrl(mediaItem);
+                return `
+                    <div class="video-container" style="position: relative; height: 200px; border-radius: 10px; overflow: hidden;">
+                        ${videoUrl ? `
+                            <video style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;" preload="metadata" muted>
+                                <source src="${videoUrl}" type="${mediaItem.mime_type || 'video/mp4'}">
+                            </video>
+                        ` : `
+                            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; flex-direction: column; color: white;">
+                                <span style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎥</span>
+                                <span style="font-weight: 600; font-size: 0.9rem;">동영상</span>
+                            </div>
+                        `}
+                        <div class="play-indicator" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.3s ease;">
+                            <div style="background: rgba(0,0,0,0.8); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                <span>▶</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                const imageUrl = getSecureMediaUrl(mediaItem);
+                return `
+                    <div class="media-thumbnail" style="height: 200px; overflow: hidden; border-radius: 10px; background: #f8f9fa;">
+                        ${imageUrl && !mediaItem.is_placeholder ? `
+                            <img src="${imageUrl}" alt="${mediaItem.title}" 
+                                 style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
+                                 loading="lazy"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        ` : ''}
+                        <div class="image-placeholder" style="${imageUrl && !mediaItem.is_placeholder ? 'display: none;' : 'display: flex;'} width: 100%; height: 100%; background: linear-gradient(135deg, #f8f9fa, #e9ecef); align-items: center; justify-content: center; flex-direction: column; color: #666;">
+                            <span style="font-size: 2.5rem; margin-bottom: 0.5rem;">${getCategoryIcon(mediaItem.category_code)}</span>
+                            <span style="font-weight: 600; text-align: center; padding: 0 1rem; font-size: 0.8rem;">${mediaItem.title}</span>
+                            <span style="font-size: 0.7rem; margin-top: 0.3rem; opacity: 0.7;">이미지 없음</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // 미디어 아이템 HTML 생성 함수
+        function createMediaItemHTML(item) {
+            const mediaContent = displayMedia(item);
+            const isVideo = item.file_type === 'video';
+            const isYouTube = item.mime_type === 'video/youtube' || (item.file_url && item.file_url.includes('youtube.com/embed'));
+            const isVimeo = item.mime_type === 'video/vimeo' || (item.file_url && item.file_url.includes('player.vimeo.com'));
+            
+            return `
+                <div class="media-item" data-id="${item.media_id}" onclick="openMediaModal(${item.media_id})">
+                    ${mediaContent}
+                    
+                    <div class="media-info">
+                        <h4 class="media-title">${item.title}</h4>
+                        <p class="media-description">${item.description || ''}</p>
+                        <div class="media-meta">
+                            <span>📅 ${new Date(item.upload_date || item.created_at).toLocaleDateString('ko-KR')}</span>
+                            <span>📂 ${item.category_name}</span>
+                        </div>
+                        <div class="media-stats">
+                            <span>👁️ ${item.views || 0}</span>
+                            <span>❤️ ${item.likes || 0}</span>
+                            <span>⬇️ ${item.downloads || 0}</span>
+                            ${item.tags && item.tags.length > 0 ? `<span>🏷️ ${item.tags.slice(0, 2).join(', ')}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 미디어 아이템 목록 조회
+        async function loadMediaItems(category = 'screenshots') {
+            try {
+                console.log(`미디어 로드 시작 - 카테고리: ${category}`);
+                
+                const response = await fetch(`/api/media/items?category=${category}&limit=50`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const items = await response.json();
+                console.log(`미디어 아이템 조회 성공: ${items.length}개`);
+                
+                const galleryElement = document.querySelector(`#${category} .media-gallery`);
+                if (!galleryElement) {
+                    console.error(`갤러리 요소를 찾을 수 없음: #${category} .media-gallery`);
+                    return;
+                }
+
+                if (items.length === 0) {
+                    galleryElement.innerHTML = `
+                        <div class="no-media" style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #666;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">${getCategoryIcon(category)}</div>
+                            <p>아직 업로드된 미디어가 없습니다.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const itemsHTML = items.map(item => createMediaItemHTML(item)).join('');
+                galleryElement.innerHTML = itemsHTML;
+                console.log(`${category} 갤러리 업데이트 완료: ${items.length}개 아이템`);
+                
+            } catch (error) {
+                console.error('미디어 로드 실패:', error);
+                const galleryElement = document.querySelector(`#${category} .media-gallery`);
+                if (galleryElement) {
+                    galleryElement.innerHTML = `
+                        <div class="error-message" style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #ff6b6b;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                            <p>미디어를 불러오는 중 오류가 발생했습니다.</p>
+                            <button onclick="loadMediaItems('${category}')" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">다시 시도</button>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // 페이지 초기화 함수
+        function initializeMediaPage() {
+            console.log('미디어 페이지 초기화 시작');
+            
+            // 탭 이벤트 리스너 추가
+            document.querySelectorAll('.media-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const category = this.dataset.tab;
+                    
+                    // 모든 탭과 섹션에서 active 클래스 제거
+                    document.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.media-section').forEach(s => s.classList.remove('active'));
+                    
+                    // 선택된 탭과 섹션에 active 클래스 추가
+                    this.classList.add('active');
+                    const targetSection = document.getElementById(category);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                    
+                    // 해당 카테고리 미디어 로드
+                    loadMediaItems(category);
+                });
+            });
+            
+            // 초기 미디어 로드 (스크린샷)
+            loadMediaItems('screenshots');
+        }
+
+        // 미디어 모달 열기 함수
+        async function openMediaModal(mediaId) {
+            try {
+                console.log('미디어 상세 보기:', mediaId);
+                
+                const response = await fetch(`/api/media/items/${mediaId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: 미디어 정보를 불러올 수 없습니다`);
+                }
+                
+                const data = await response.json();
+                showMediaDetailModal(data);
+            } catch (error) {
+                console.error('미디어 상세 정보 로드 실패:', error);
+                showErrorModal('미디어 상세 정보를 불러오는 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 미디어 상세 모달 표시 함수
+        function showMediaDetailModal(mediaItem) {
+            if (!mediaItem) {
+                showErrorModal('미디어 정보가 없습니다.');
+                return;
+            }
+
+            // 기존 모달이 있으면 제거
+            const existingModal = document.getElementById('mediaDetailModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            const isVideo = mediaItem.file_type === 'video';
+            const isYouTube = mediaItem.mime_type === 'video/youtube' || 
+                             (mediaItem.file_url && mediaItem.file_url.includes('youtube.com/embed'));
+            const isVimeo = mediaItem.mime_type === 'video/vimeo' || 
+                           (mediaItem.file_url && mediaItem.file_url.includes('player.vimeo.com'));
+            
+            const youtubeId = isYouTube ? extractYouTubeId(mediaItem.file_path || mediaItem.file_url) : null;
+            const thumbnailUrl = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : getSecureMediaUrl(mediaItem);
+
+            // 모달 HTML 생성
+            const modalHTML = `
+                <div id="mediaDetailModal" class="modal-overlay" style="
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
+                    z-index: 1000; animation: fadeIn 0.3s ease;
+                " onclick="closeMediaModal(event)">
+                    <div class="modal-content" style="
+                        background: white; border-radius: 15px; max-width: 90vw; max-height: 90vh;
+                        overflow-y: auto; position: relative; animation: slideUp 0.3s ease;
+                        width: 100%; max-width: 1000px;
+                    " onclick="event.stopPropagation()">
+                        <button class="modal-close" onclick="closeMediaModal()" style="
+                            position: absolute; top: 15px; right: 20px; background: none; border: none;
+                            font-size: 24px; cursor: pointer; z-index: 1001; color: #999;
+                            padding: 0.5rem; border-radius: 50%; transition: all 0.3s ease;
+                        ">×</button>
+                        
+                        <div style="padding: 2rem;">
+                            <div id="modalMediaContent" style="margin-bottom: 1.5rem; text-align: center;">
+                                ${createModalMediaContent(mediaItem, isYouTube, isVimeo, isVideo, thumbnailUrl, youtubeId)}
+                            </div>
+                            
+                            <div class="media-detail-info">
+                                <h2 style="margin: 0 0 1rem 0; color: #333;">${mediaItem.title}</h2>
+                                <p style="color: #666; line-height: 1.6; margin-bottom: 1rem;">${mediaItem.description || ''}</p>
+                                
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem; background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                                    <div><strong>업로드:</strong> ${new Date(mediaItem.upload_date || mediaItem.created_at).toLocaleDateString('ko-KR')}</div>
+                                    <div><strong>카테고리:</strong> ${mediaItem.category_name}</div>
+                                    <div><strong>타입:</strong> ${isYouTube ? 'YouTube' : isVimeo ? 'Vimeo' : mediaItem.file_type}</div>
+                                    <div><strong>조회수:</strong> ${(mediaItem.views || 0).toLocaleString()}</div>
+                                    <div><strong>좋아요:</strong> ${(mediaItem.likes || 0).toLocaleString()}</div>
+                                    <div><strong>다운로드:</strong> ${(mediaItem.downloads || 0).toLocaleString()}</div>
+                                </div>
+                                
+                                ${mediaItem.tags && mediaItem.tags.length > 0 ? `
+                                    <div style="margin-bottom: 1.5rem;">
+                                        <strong style="color: #333;">태그:</strong>
+                                        <div style="margin-top: 0.5rem;">
+                                            ${mediaItem.tags.map(tag => `<span style="background: #e9ecef; color: #495057; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem; margin-right: 0.5rem; display: inline-block; margin-bottom: 0.5rem;">${tag}</span>`).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                
+                                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                                    <button onclick="likeMedia(${mediaItem.media_id})" style="
+                                        background: #ff6b6b; color: white; border: none; padding: 0.8rem 1.5rem;
+                                        border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;
+                                    ">❤️ 좋아요</button>
+                                    
+                                    ${!isYouTube && !isVimeo ? `
+                                        <button onclick="downloadMedia(${mediaItem.media_id})" style="
+                                            background: #4ecdc4; color: white; border: none; padding: 0.8rem 1.5rem;
+                                            border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;
+                                        ">⬇️ 다운로드</button>
+                                    ` : `
+                                        <button onclick="openOriginalVideo('${mediaItem.file_path || mediaItem.file_url || ''}')" style="
+                                            background: #667eea; color: white; border: none; padding: 0.8rem 1.5rem;
+                                            border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;
+                                        ">🔗 원본 보기</button>
+                                    `}
+                                    
+                                    <button onclick="shareMedia(${mediaItem.media_id})" style="
+                                        background: #6c757d; color: white; border: none; padding: 0.8rem 1.5rem;
+                                        border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;
+                                    ">📤 공유</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 모달을 body에 추가
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // 모달 표시 애니메이션
+            const modal = document.getElementById('mediaDetailModal');
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                modal.style.transition = 'opacity 0.3s ease';
+            }, 10);
+        }
+
+        // 모달용 미디어 콘텐츠 생성
+        function createModalMediaContent(mediaItem, isYouTube, isVimeo, isVideo, thumbnailUrl, youtubeId) {
+            if (isYouTube) {
+                return `
+                    <div id="youtubeContainer" style="position: relative; width: 100%; max-width: 800px; height: 450px; margin: 0 auto; border-radius: 8px; overflow: hidden; background: #000;">
+                        ${thumbnailUrl ? `
+                            <div class="youtube-thumbnail-wrapper" style="width: 100%; height: 100%; position: relative; cursor: pointer;" onclick="replaceWithYouTubePlayer('${mediaItem.file_url}', '${youtubeId}')">
+                                <img src="${thumbnailUrl}" alt="${mediaItem.title}" 
+                                     style="width: 100%; height: 100%; object-fit: cover;"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="youtube-error" style="display: none; width: 100%; height: 100%; background: linear-gradient(135deg, #ff0000, #cc0000); align-items: center; justify-content: center; flex-direction: column; color: white;">
+                                    <span style="font-size: 4rem; margin-bottom: 1rem;">📺</span>
+                                    <p style="margin: 0; font-weight: 600;">YouTube 썸네일 로드 실패</p>
+                                </div>
+                                <div class="youtube-play-large" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                    <div style="background: rgba(255,0,0,0.9); color: white; border-radius: 12px; padding: 1rem 1.5rem; font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 0.8rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4); transition: all 0.3s ease;">
+                                        <span style="font-size: 1.5rem;">▶️</span>
+                                        <span>YouTube에서 재생</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : `
+                            <iframe width="100%" height="100%" src="${mediaItem.file_url}" frameborder="0" allowfullscreen 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                        `}
+                    </div>
+                `;
+            } else if (isVimeo) {
+                return `
+                    <div style="position: relative; width: 100%; max-width: 800px; height: 450px; margin: 0 auto; border-radius: 8px; overflow: hidden;">
+                        <iframe width="100%" height="100%" src="${mediaItem.file_url}" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                `;
+            } else if (isVideo) {
+                const videoUrl = getSecureMediaUrl(mediaItem);
+                return `
+                    <div style="position: relative; width: 100%; max-width: 800px; margin: 0 auto; border-radius: 8px; overflow: hidden;">
+                        ${videoUrl ? `
+                            <video controls style="width: 100%; max-height: 450px; border-radius: 8px;" preload="metadata">
+                                <source src="${videoUrl}" type="${mediaItem.mime_type}">
+                                동영상을 재생할 수 없습니다.
+                            </video>
+                        ` : `
+                            <div style="width: 100%; height: 450px; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; flex-direction: column; color: white; border-radius: 8px;">
+                                <span style="font-size: 4rem; margin-bottom: 1rem;">🎥</span>
+                                <p style="margin: 0; font-weight: 600; text-align: center;">${mediaItem.title}</p>
+                                <p style="margin: 0.5rem 0 0 0; opacity: 0.8;">동영상을 불러올 수 없습니다</p>
+                            </div>
+                        `}
+                    </div>
+                `;
+            } else {
+                const imageUrl = getSecureMediaUrl(mediaItem);
+                return `
+                    <div style="position: relative; width: 100%; max-width: 800px; margin: 0 auto; border-radius: 8px; overflow: hidden; background: #f8f9fa;">
+                        ${imageUrl && !mediaItem.is_placeholder ? `
+                            <img src="${imageUrl}" alt="${mediaItem.title}" 
+                                 style="width: 100%; max-height: 450px; object-fit: contain; border-radius: 8px;"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        ` : ''}
+                        <div class="image-error" style="${imageUrl && !mediaItem.is_placeholder ? 'display: none;' : 'display: flex;'} width: 100%; height: 450px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); align-items: center; justify-content: center; flex-direction: column; color: #666; border-radius: 8px;">
+                            <span style="font-size: 4rem; margin-bottom: 1rem;">${getCategoryIcon(mediaItem.category_code)}</span>
+                            <p style="margin: 0; font-weight: 600; font-size: 1.1rem; text-align: center;">${mediaItem.title}</p>
+                            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; opacity: 0.7;">이미지를 표시할 수 없습니다</p>
+                            ${mediaItem.file_name ? `<p style="margin: 0.3rem 0 0 0; font-size: 0.8rem; opacity: 0.6;">파일: ${mediaItem.file_name}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // YouTube 썸네일을 플레이어로 교체
+        function replaceWithYouTubePlayer(embedUrl, youtubeId) {
+            const container = document.getElementById('youtubeContainer');
+            if (container) {
+                const finalEmbedUrl = embedUrl || `https://www.youtube.com/embed/${youtubeId}`;
+                container.innerHTML = `
+                    <iframe width="100%" height="100%" 
+                           src="${finalEmbedUrl}?autoplay=1" 
+                           frameborder="0" allowfullscreen
+                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                    </iframe>
+                `;
+            }
+        }
+
+        // 모달 닫기 함수
+        function closeMediaModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            
+            const modal = document.getElementById('mediaDetailModal');
+            if (modal) {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
+        }
+
+        // 에러 모달 표시 함수
+        function showErrorModal(message) {
+            const errorModal = `
+                <div class="error-modal" style="
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+                    z-index: 10000;
+                " onclick="this.remove()">
+                    <div style="background: white; padding: 2rem; border-radius: 10px; text-align: center; max-width: 400px; margin: 1rem;" onclick="event.stopPropagation()">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                        <p style="margin: 0; color: #666;">${message}</p>
+                        <button onclick="this.closest('.error-modal').remove()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">확인</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', errorModal);
+        }
+
+        // 미디어 좋아요 함수
+        function likeMedia(mediaId) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            if (!currentUser.id) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            fetch(`/api/media/items/${mediaId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: currentUser.id
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                showSuccessNotification(data.message);
+                // 좋아요 수 업데이트
+                updateLikeCount(mediaId, data.liked);
+            })
+            .catch(error => {
+                console.error('좋아요 처리 실패:', error);
+                showErrorNotification('좋아요 처리 중 오류가 발생했습니다.');
+            });
+        }
+
+        // 좋아요 수 업데이트
+        function updateLikeCount(mediaId, isLiked) {
+            // 모든 해당 미디어 아이템의 좋아요 수 업데이트
+            const mediaItems = document.querySelectorAll(`[data-id="${mediaId}"]`);
+            mediaItems.forEach(item => {
+                const likeSpan = item.querySelector('.media-stats span:nth-child(2)');
+                if (likeSpan) {
+                    const currentCount = parseInt(likeSpan.textContent.replace(/[^\d]/g, '')) || 0;
+                    const newCount = isLiked ? currentCount + 1 : Math.max(0, currentCount - 1);
+                    likeSpan.textContent = `❤️ ${newCount}`;
+                }
+            });
+        }
+
+        // 미디어 다운로드 함수
+        function downloadMedia(mediaId) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            
+            const downloadUrl = `/api/media/download/${mediaId}${currentUser.id ? `?user_id=${currentUser.id}` : ''}`;
+            
+            // 새 창에서 다운로드 시작
+            window.open(downloadUrl, '_blank');
+            showSuccessNotification('다운로드가 시작되었습니다.');
+        }
+
+        // 원본 비디오 열기 함수
+        function openOriginalVideo(originalUrl) {
+            if (originalUrl) {
+                window.open(originalUrl, '_blank');
+            } else {
+                alert('원본 링크를 찾을 수 없습니다.');
+            }
+        }
+
+        // 미디어 공유 함수
+        function shareMedia(mediaId) {
+            const shareUrl = `${window.location.origin}/media.html?item=${mediaId}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '게임 미디어',
+                    url: shareUrl
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    showSuccessNotification('링크가 클립보드에 복사되었습니다!');
+                }).catch(() => {
+                    prompt('다음 링크를 복사하세요:', shareUrl);
+                });
+            }
+        }
+
+        // 성공 알림 표시
+        function showSuccessNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 10000;
+                background: #28a745; color: white; padding: 1rem 1.5rem;
+                border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>✅</span>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 2700);
+        }
+
+        // 에러 알림 표시
+        function showErrorNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 10000;
+                background: #dc3545; color: white; padding: 1rem 1.5rem;
+                border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>⚠️</span>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 2700);
+        }
+
+        // CSS 로딩 완료 후 JavaScript 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.readyState === 'complete') {
+                initializeMediaPage();
+            } else {
+                window.addEventListener('load', initializeMediaPage);
+            }
+        });
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeMediaModal();
+                
+                const errorModal = document.querySelector('.error-modal');
+                if (errorModal) {
+                    errorModal.remove();
+                }
+            }
+        });
+
+        // 추가 CSS 스타일
+        const additionalStyles = document.createElement('style');
+        additionalStyles.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateY(30px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            
+            .youtube-thumbnail-wrapper:hover .youtube-play-large div {
+                transform: scale(1.05);
+                box-shadow: 0 6px 25px rgba(0,0,0,0.5);
+            }
+            
+            .media-item:hover .play-indicator {
+                opacity: 1 !important;
+            }
+            
+            .modal-close:hover {
+                background: rgba(0,0,0,0.1);
+                color: #333;
+            }
+            
+            .loading-spinner {
+                width: 40px;
+                height: 40px;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #667eea;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .media-item {
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .media-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transition: left 0.5s;
+                z-index: 1;
+                pointer-events: none;
+            }
+
+            .media-item:hover::before {
+                left: 100%;
+            }
+
+            .media-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 4rem 0;
+                text-align: center;
+            }
+
+            .media-tabs {
+                display: flex;
+                gap: 0.5rem;
+                margin-bottom: 2rem;
+                border-bottom: 2px solid #f0f0f0;
+                overflow-x: auto;
+            }
+
+            .media-tab {
+                padding: 1rem 1.5rem;
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-weight: 600;
+                color: #666;
+                transition: all 0.3s ease;
+                position: relative;
+                white-space: nowrap;
+                min-width: fit-content;
+            }
+
+            .media-tab.active {
+                color: #667eea;
+            }
+
+            .media-tab.active::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: linear-gradient(45deg, #667eea, #764ba2);
+            }
+
+            .media-tab:hover {
+                color: #667eea;
+            }
+
+            .media-section {
+                display: none;
+            }
+
+            .media-section.active {
+                display: block;
+            }
+
+            .media-section h3 {
+                margin-bottom: 1.5rem;
+                color: #333;
+                font-size: 1.5rem;
+            }
+
+            .media-gallery {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .media-item {
+                background: white;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            .media-item:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            }
+
+            .media-thumbnail {
+                position: relative;
+                height: 200px;
+                overflow: hidden;
+            }
+
+            .media-info {
+                padding: 1rem;
+            }
+
+            .media-title {
+                margin: 0 0 0.5rem 0;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #333;
+                line-height: 1.3;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .media-description {
+                margin: 0 0 0.75rem 0;
+                color: #666;
+                font-size: 0.9rem;
+                line-height: 1.4;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+
+            .media-meta {
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.8rem;
+                color: #999;
+                margin-bottom: 0.5rem;
+            }
+
+            .media-stats {
+                display: flex;
+                gap: 0.75rem;
+                font-size: 0.8rem;
+                color: #888;
+            }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            }
+
+            .btn-primary:hover {
+                background: linear-gradient(45deg, #5a6fd8, #6a42a0) !important;
+            }
+
+            .btn-secondary:hover {
+                background: #5a6268 !important;
+            }
+
+            .btn-warning:hover {
+                background: #e0a800 !important;
+            }
+
+            .btn-info:hover {
+                background: #138496 !important;
+            }
+
+            /* 반응형 디자인 */
+            @media (max-width: 768px) {
+                .media-action-bar {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                
+                .action-buttons {
+                    width: 100%;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                }
+                
+                .view-options {
+                    width: 100%;
+                    justify-content: center;
+                }
+
+                .media-gallery {
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: 1rem;
+                }
+
+                .modal-content {
+                    margin: 1rem;
+                    max-width: calc(100vw - 2rem);
+                }
+                
+                #youtubeContainer, .video-container {
+                    height: 250px !important;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .media-gallery {
+                    grid-template-columns: 1fr;
+                }
+
+                .action-buttons {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .action-buttons button {
+                    width: 100%;
+                    margin-bottom: 0.5rem;
+                }
+                
+                #youtubeContainer, .video-container {
+                    height: 200px !important;
+                }
+            }
+        `;
+
+        if (document.head) {
+            document.head.appendChild(additionalStyles);
+        }
+    </script>
+</body>
+</html>

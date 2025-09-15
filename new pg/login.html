@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 게임 포털</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="common-auth.js"></script>
+</head>
+<body>
+    <!-- 헤더 네비게이션 -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🎮</span>
+                <span class="logo-text">GAME PORTAL</span>
+            </a>
+            
+            <nav class="nav">
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="game-info.html" class="nav-link">게임정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="gacha-shop.html" class="nav-link">갓챠샵</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="community.html" class="nav-link">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="media.html" class="nav-link">미디어</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="customer-service.html" class="nav-link">고객센터</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="auth-buttons">
+                <!-- common-auth.js에서 동적으로 업데이트됨 -->
+            </div>
+
+            <button class="mobile-menu-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main">
+        <!-- 인증 섹션 -->
+        <section class="auth-section">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1 class="auth-title">로그인</h1>
+                        <p class="auth-subtitle">게임 포털에 오신 것을 환영합니다</p>
+                    </div>
+
+                    <form class="auth-form" id="loginForm">
+                        <div class="form-group">
+                            <label class="form-label" for="email">이메일</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email"
+                                class="form-input" 
+                                placeholder="이메일을 입력해주세요"
+                                required
+                            >
+                            <span class="form-error" id="emailError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="password">비밀번호</label>
+                            <div class="password-field">
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password"
+                                    class="form-input" 
+                                    placeholder="비밀번호를 입력해주세요"
+                                    required
+                                >
+                                <button type="button" class="password-toggle" id="passwordToggle">
+                                    ◉
+                                </button>
+                            </div>
+                            <span class="form-error" id="passwordError"></span>
+                        </div>
+
+                        <div class="form-options">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rememberMe">
+                                <span class="checkmark"></span>
+                                로그인 상태 유지
+                            </label>
+                            <a href="forgot-password.html" class="forgot-password">비밀번호 찾기</a>
+                        </div>
+
+                        <button type="submit" class="auth-submit-btn" id="loginBtn">
+                            <span class="btn-text">로그인</span>
+                            <div class="btn-loading" id="loginLoading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </button>
+
+                        <div class="form-divider">
+                            <span>또는</span>
+                        </div>
+
+                        <div class="social-login">
+                            <button type="button" class="social-btn google-btn" id="googleLogin">
+                                <span class="social-icon">🌐</span>
+                                Google로 로그인
+                            </button>
+                            <button type="button" class="social-btn kakao-btn" id="kakaoLogin">
+                                <span class="social-icon">💬</span>
+                                카카오로 로그인
+                            </button>
+                        </div>
+
+                        <div class="auth-switch">
+                            <p>아직 계정이 없으신가요? <a href="signup.html">회원가입</a></p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 로그인 혜택 섹션 -->
+                <div class="auth-benefits">
+                    <h3>로그인 혜택</h3>
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🎁</div>
+                            <div class="benefit-content">
+                                <h4>매일 로그인 보상</h4>
+                                <p>매일 접속하면 다이아몬드와 골드를 드려요!</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">💾</div>
+                            <div class="benefit-content">
+                                <h4>게임 진행상황 저장</h4>
+                                <p>언제 어디서든 게임을 이어서 플레이하세요</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">👥</div>
+                            <div class="benefit-content">
+                                <h4>친구와 함께</h4>
+                                <p>친구들과 함께 레이드와 길드 활동을 즐기세요</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🏆</div>
+                            <div class="benefit-content">
+                                <h4>랭킹 시스템</h4>
+                                <p>다른 플레이어들과 실력을 겨뤄보세요</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>게임 포털</h4>
+                    <p>최고의 게임 경험을 제공합니다</p>
+                </div>
+                <div class="footer-section">
+                    <h4>지원</h4>
+                    <a href="#">FAQ</a>
+                    <a href="customer-service.html">고객센터</a>
+                    <a href="#">버그 신고</a>
+                </div>
+                <div class="footer-section">
+                    <h4>커뮤니티</h4>
+                    <a href="community.html">공식 포럼</a>
+                    <a href="#">디스코드</a>
+                    <a href="#">유튜브</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Game Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 모바일 메뉴 토글
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        mobileToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // 비밀번호 보기/숨기기
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordField = document.getElementById('password');
+
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.textContent = type === 'password' ? '◉' : '●';
+        });
+
+        // 폼 유효성 검사
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function showError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId + 'Error');
+            const inputElement = document.getElementById(fieldId);
+            errorElement.textContent = message;
+            inputElement.classList.add('error');
+        }
+
+        function clearError(fieldId) {
+            const errorElement = document.getElementById(fieldId + 'Error');
+            const inputElement = document.getElementById(fieldId);
+            errorElement.textContent = '';
+            inputElement.classList.remove('error');
+        }
+
+        // 로그인 폼 제출
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginLoading = document.getElementById('loginLoading');
+
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // 에러 초기화
+            clearError('email');
+            clearError('password');
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            let isValid = true;
+
+            // 이메일 유효성 검사
+            if (!email) {
+                showError('email', '이메일을 입력해주세요.');
+                isValid = false;
+            } else if (!validateEmail(email)) {
+                showError('email', '올바른 이메일 형식을 입력해주세요.');
+                isValid = false;
+            }
+
+            // 비밀번호 유효성 검사
+            if (!password) {
+                showError('password', '비밀번호를 입력해주세요.');
+                isValid = false;
+            } else if (password.length < 4) {
+                showError('password', '비밀번호는 최소 4자 이상이어야 합니다.');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // 로딩 상태 표시
+            loginBtn.disabled = true;
+            loginLoading.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // 로그인 성공
+                    if (rememberMe) {
+                        localStorage.setItem('rememberUser', email);
+                    }
+                    
+                    // common-auth.js의 함수 사용
+                    onLoginSuccess(result.user);
+                } else {
+                    // 로그인 실패
+                    if (result.error === '존재하지 않는 이메일입니다') {
+                        showError('email', result.error);
+                    } else if (result.error === '비밀번호가 올바르지 않습니다') {
+                        showError('password', result.error);
+                    } else {
+                        alert(result.error || '로그인 중 오류가 발생했습니다.');
+                    }
+                }
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                AuthUtils.handleNetworkError(error);
+            } finally {
+                // 로딩 상태 해제
+                loginBtn.disabled = false;
+                loginLoading.style.display = 'none';
+            }
+        });
+
+        // 소셜 로그인
+        document.getElementById('googleLogin').addEventListener('click', function() {
+            alert('Google 로그인 기능은 준비 중입니다.');
+        });
+
+        document.getElementById('kakaoLogin').addEventListener('click', function() {
+            alert('카카오 로그인 기능은 준비 중입니다.');
+        });
+
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            // 기억된 사용자 정보 불러오기
+            const rememberedUser = localStorage.getItem('rememberUser');
+            if (rememberedUser) {
+                document.getElementById('email').value = rememberedUser;
+                document.getElementById('rememberMe').checked = true;
+            }
+
+            // 스크롤 효과
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('.header');
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // 입력 필드 포커스 시 에러 제거
+            document.getElementById('email').addEventListener('focus', () => clearError('email'));
+            document.getElementById('password').addEventListener('focus', () => clearError('password'));
+        });
+    </script>
+</body>
+</html>

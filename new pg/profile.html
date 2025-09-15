@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원정보 - 게임 포털</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="common-auth.js"></script>
+</head>
+<body>
+    <!-- 헤더 네비게이션 -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🎮</span>
+                <span class="logo-text">GAME PORTAL</span>
+            </a>
+            
+            <nav class="nav">
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="game.html" class="nav-link">게임</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="game-info.html" class="nav-link">게임정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="news.html" class="nav-link">공지사항</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="gacha-shop.html" class="nav-link">가챠샵</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="community.html" class="nav-link">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="media.html" class="nav-link">미디어</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="customer-service.html" class="nav-link">고객센터</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="auth-buttons" id="authButtons">
+                <!-- 로그인 후 동적으로 변경됨 -->
+            </div>
+
+            <button class="mobile-menu-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main">
+        <!-- 페이지 헤더 -->
+        <section class="page-header">
+            <div class="container">
+                <div class="page-header-content">
+                    <h1 class="page-title">회원정보</h1>
+                    <p class="page-subtitle">나의 계정 정보를 확인하고 관리하세요</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 회원정보 섹션 -->
+        <section class="content-section">
+            <div class="container">
+                <div class="profile-container">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">
+                                <span class="avatar-icon">👤</span>
+                            </div>
+                            <div class="profile-basic">
+                                <h2 id="profileNickname">로딩중...</h2>
+                                <p class="profile-id" id="profileId">@로딩중...</p>
+                            </div>
+                        </div>
+
+                        <div class="profile-content">
+                            <div class="info-section">
+                                <h3>기본 정보</h3>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <span class="info-label">아이디</span>
+                                        <span class="info-value" id="infoId">로딩중...</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">닉네임</span>
+                                        <span class="info-value" id="infoNickname">로딩중...</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">이메일</span>
+                                        <span class="info-value" id="infoEmail">로딩중...</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">생년월일</span>
+                                        <span class="info-value" id="infoBirthDate">미입력</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">성별</span>
+                                        <span class="info-value" id="infoGender">미입력</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">가입일</span>
+                                        <span class="info-value" id="infoJoinDate">로딩중...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="game-section">
+                                <h3>게임 정보</h3>
+                                <div class="game-stats">
+                                    <div class="stat-card">
+                                        <div class="stat-icon">💰</div>
+                                        <div class="stat-info">
+                                            <span class="stat-value" id="gameGold">0</span>
+                                            <span class="stat-label">보유 골드</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon">👕</div>
+                                        <div class="stat-info">
+                                            <span class="stat-value" id="gameSkins">0</span>
+                                            <span class="stat-label">보유 스킨</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon">⚔️</div>
+                                        <div class="stat-info">
+                                            <span class="stat-value" id="gameCharacter">없음</span>
+                                            <span class="stat-label">사용 캐릭터</span>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon">🎯</div>
+                                        <div class="stat-info">
+                                            <span class="stat-value" id="gameLevel">1</span>
+                                            <span class="stat-label">레벨</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-section">
+                                <button class="profile-btn edit-btn" id="editProfileBtn">
+                                    정보 수정
+                                </button>
+                                <button class="profile-btn logout-btn" id="logoutBtn">
+                                    로그아웃
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>게임 포털</h4>
+                    <p>최고의 게임 경험을 제공합니다</p>
+                </div>
+                <div class="footer-section">
+                    <h4>지원</h4>
+                    <a href="#">FAQ</a>
+                    <a href="customer-service.html">고객센터</a>
+                    <a href="#">버그 신고</a>
+                </div>
+                <div class="footer-section">
+                    <h4>커뮤니티</h4>
+                    <a href="community.html">공식 포럼</a>
+                    <a href="#">디스코드</a>
+                    <a href="#">유튜브</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Game Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 로그인 상태 확인 및 헤더 업데이트
+        function updateAuthButtons() {
+            const authButtons = document.getElementById('authButtons');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            
+            if (currentUser) {
+                authButtons.innerHTML = `
+                    <span class="user-info">${currentUser.nickname}님</span>
+                    <a href="/profile" class="auth-btn profile-btn">회원정보</a>
+                    <button class="auth-btn logout-btn" id="headerLogoutBtn">로그아웃</button>
+                `;
+                
+                // 헤더 로그아웃 버튼 이벤트
+                document.getElementById('headerLogoutBtn').addEventListener('click', logout);
+            } else {
+                authButtons.innerHTML = `
+                    <a href="/login" class="auth-btn login-btn">로그인</a>
+                    <a href="/signup" class="auth-btn signup-btn">회원가입</a>
+                `;
+            }
+        }
+
+        // 회원정보 로드
+        function loadProfile() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            
+            if (!currentUser) {
+                alert('로그인이 필요합니다.');
+                window.location.href = '/login';
+                return;
+            }
+
+            // 기본 정보 표시
+            document.getElementById('profileNickname').textContent = currentUser.nickname;
+            document.getElementById('profileId').textContent = '@' + currentUser.id;
+            document.getElementById('infoId').textContent = currentUser.id;
+            document.getElementById('infoNickname').textContent = currentUser.nickname;
+            document.getElementById('infoEmail').textContent = currentUser.email || '미입력';
+            
+            if (currentUser.birthDate) {
+                const birthDate = new Date(currentUser.birthDate);
+                document.getElementById('infoBirthDate').textContent = birthDate.toLocaleDateString('ko-KR');
+            }
+            
+            // 성별 표시
+            const genderMap = {
+                'male': '남성',
+                'female': '여성',
+                'other': '기타'
+            };
+            document.getElementById('infoGender').textContent = genderMap[currentUser.gender] || '미입력';
+            
+            if (currentUser.joinDate) {
+                const joinDate = new Date(currentUser.joinDate);
+                document.getElementById('infoJoinDate').textContent = joinDate.toLocaleDateString('ko-KR');
+            }
+
+            // 게임 정보 표시
+            document.getElementById('gameGold').textContent = currentUser.gold?.toLocaleString() || '0';
+            document.getElementById('gameSkins').textContent = currentUser.ownedSkins?.length || '0';
+            
+            if (currentUser.playerData) {
+                document.getElementById('gameCharacter').textContent = currentUser.playerData.Using_Character || '없음';
+                document.getElementById('gameLevel').textContent = currentUser.playerData.WhereStage || '1';
+            }
+        }
+
+        // 로그아웃 함수
+        function logout() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberUser');
+            alert('로그아웃되었습니다.');
+            window.location.href = '/';
+        }
+
+        // 이벤트 리스너
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthButtons();
+            loadProfile();
+
+            // 모바일 메뉴 토글
+            const mobileToggle = document.getElementById('mobileToggle');
+            const navMenu = document.getElementById('navMenu');
+            mobileToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+
+            // 로그아웃 버튼
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // 정보 수정 버튼
+            document.getElementById('editProfileBtn').addEventListener('click', function() {
+                alert('정보 수정 기능은 준비 중입니다.');
+            });
+
+            // 스크롤 효과
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('.header');
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+
+    <style>
+        /* 프로필 페이지 전용 스타일 */
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            color: #fff;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-basic h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-id {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .profile-content {
+            padding: 2rem;
+        }
+
+        .info-section, .game-section {
+            margin-bottom: 2rem;
+        }
+
+        .info-section h3, .game-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .game-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            color: #fff;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .action-section {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .profile-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: #fff;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+        .logout-btn {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        .logout-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        /* 헤더 사용자 정보 스타일 */
+        .user-info {
+            color: #fff;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .profile-btn.auth-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .profile-btn.auth-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .game-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .action-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-btn {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</body>
+</html>

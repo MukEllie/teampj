@@ -1,0 +1,901 @@
+/* ===== 기본 설정 ===== */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;overflow-x:hidden}
+a{transition:color .3s ease;text-decoration:none}
+img{max-width:100%;height:auto}
+::selection{background:rgba(102,126,234,.3);color:#333}
+
+/* ===== 공통 그라데이션 ===== */
+.gradient-primary{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+.gradient-secondary{background:linear-gradient(45deg,#667eea,#764ba2)}
+.gradient-warning{background:linear-gradient(45deg,#ff6b6b,#ee5a24)}
+.gradient-gacha{background:linear-gradient(135deg,#feca57 0%,#ff9ff3 50%,#667eea 100%)}
+.gradient-media{background:linear-gradient(135deg,#ff6b6b 0%,#feca57 100%)}
+.gradient-support{background:linear-gradient(135deg,#48dbfb 0%,#0abde3 100%)}
+
+/* ===== 공통 컨테이너 ===== */
+.container{max-width:1400px;margin:0 auto;padding:0 2rem}
+.text-center{text-align:center}
+
+/* ===== 헤더 ===== */
+.header{position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,.95);backdrop-filter:blur(10px);z-index:9999;transition:all .3s ease;border-bottom:1px solid rgba(255,255,255,.1);height:80px;display:flex;align-items:center}
+.header.scrolled{background:rgba(0,0,0,.98);box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.nav-container{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;gap:2rem;width:100%;height:100%}
+.logo{display:flex;align-items:center;gap:.5rem;color:#fff;font-weight:bold;font-size:1.2rem}
+.logo-icon{font-size:1.8rem}
+.logo-text{letter-spacing:1px}
+
+/* ===== 네비게이션 ===== */
+.nav-menu{display:flex;list-style:none;gap:2rem;align-items:center}
+.nav-link{color:#fff;padding:.8rem 1.2rem;border-radius:8px;transition:all .3s ease;position:relative;font-weight:500}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+.nav-link::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;background:linear-gradient(45deg,#667eea 0%,#764ba2 100%);transition:all .3s ease;transform:translateX(-50%)}
+.nav-link:hover::after,.nav-link.active::after{width:80%}
+
+/* ===== 인증 버튼 ===== */
+.auth-buttons{display:flex;gap:1rem;align-items:center}
+.auth-btn{padding:.8rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9rem;transition:all .3s ease;border:2px solid #fff;color:#333;background:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.auth-btn:hover{background:#f8f9fa;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.signup-btn{margin-left:.5rem}
+
+/* ===== 모바일 메뉴 ===== */
+.mobile-menu-toggle{display:none;flex-direction:column;background:none;border:none;cursor:pointer;padding:.5rem}
+.mobile-menu-toggle span{width:25px;height:3px;background:#fff;margin:3px 0;transition:.3s;border-radius:2px}
+.mobile-menu-toggle.active span:nth-child(1){transform:rotate(-45deg) translate(-5px,6px)}
+.mobile-menu-toggle.active span:nth-child(2){opacity:0}
+.mobile-menu-toggle.active span:nth-child(3){transform:rotate(45deg) translate(-5px,-6px)}
+
+/* ===== 메인 컨텐츠 ===== */
+.main{margin-top:80px;position:relative;z-index:1}
+.content-section{background:#fff;padding:5rem 0;position:relative}
+
+/* ===== 페이지 헤더 ===== */
+.page-header{padding:6rem 0 4rem;margin-top:0;color:#fff;position:relative;overflow:hidden;z-index:2}
+.page-header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 20% 80%,rgba(120,119,198,.3) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(255,119,198,.3) 0%,transparent 50%);pointer-events:none}
+.page-header-content{text-align:center;position:relative;z-index:2}
+.page-title{font-size:3rem;font-weight:900;margin-bottom:1rem;text-shadow:2px 2px 10px rgba(0,0,0,.3)}
+.page-subtitle{font-size:1.2rem;opacity:.9;font-weight:300}
+
+/* ===== 게임 실행 섹션 ===== */
+.game-launch-section{min-height:90vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.game-launch-section::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 20% 80%,rgba(120,119,198,.3) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(255,119,198,.3) 0%,transparent 50%);pointer-events:none}
+.game-launch-container{text-align:center;color:#fff;max-width:800px;padding:2rem;position:relative;z-index:2}
+.game-title{font-size:4rem;font-weight:900;margin-bottom:1rem;text-shadow:2px 2px 10px rgba(0,0,0,.3);letter-spacing:2px;background:linear-gradient(45deg,#fff,#e0e6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.game-subtitle{font-size:1.3rem;margin-bottom:3rem;opacity:.9;font-weight:300}
+
+/* ===== 통계 표시 ===== */
+.game-stats,.community-stats,.user-currency{display:flex;justify-content:center;gap:3rem;margin-top:2rem}
+.stat-item,.currency-item{text-align:center;background:rgba(255,255,255,.1);padding:1.5rem 2rem;border-radius:15px;backdrop-filter:blur(10px)}
+.stat-number,.currency-amount{display:block;font-size:1.8rem;font-weight:bold;margin-bottom:.5rem}
+.stat-label,.currency-name{font-size:.9rem;opacity:.9}
+.currency-item{display:flex;align-items:center;gap:.5rem;border:1px solid rgba(255,255,255,.3)}
+.currency-icon{font-size:1.5rem}
+
+/* ===== 게임 실행 버튼 ===== */
+.game-launch-btn{color:#fff;border:none;padding:1.5rem 3rem;font-size:1.3rem;font-weight:bold;border-radius:50px;cursor:pointer;position:relative;display:inline-flex;align-items:center;gap:1rem;transition:all .3s ease;box-shadow:0 10px 30px rgba(255,107,107,.4),0 0 0 0 rgba(255,107,107,.7);overflow:hidden}
+.game-launch-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s}
+.game-launch-btn:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 15px 40px rgba(255,107,107,.6),0 0 0 10px rgba(255,107,107,.1)}
+.game-launch-btn:hover::before{left:100%}
+.game-launch-btn.clicked{transform:scale(.95);box-shadow:0 5px 15px rgba(255,107,107,.8),0 0 0 5px rgba(255,107,107,.3)}
+.btn-icon{font-size:1.5rem}
+.btn-text{letter-spacing:1px}
+.launch-hint{margin-top:1rem;opacity:.7;font-size:.9rem}
+
+/* ===== 공통 그리드 ===== */
+.feature-grid,.category-grid,.support-categories,.media-gallery,.gacha-boxes,.requirements-grid,.contact-methods{display:grid;gap:2rem;margin-bottom:3rem}
+.feature-grid,.category-grid,.support-categories,.media-gallery{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.requirements-grid{grid-template-columns:repeat(auto-fit,minmax(400px,1fr))}
+.contact-methods{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+
+/* ===== 카드 스타일 ===== */
+.feature-card,.category-card,.support-card,.media-item,.gacha-box,.sidebar-section{background:#fff;border-radius:15px;padding:2rem;box-shadow:0 5px 20px rgba(0,0,0,.1);transition:all .3s ease;position:relative}
+.feature-card:hover,.category-card:hover,.support-card:hover,.media-item:hover,.gacha-box:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,.15)}
+
+/* ===== 아이콘 스타일 ===== */
+.feature-icon,.category-icon,.support-icon,.media-placeholder-icon{font-size:3rem;margin-bottom:1rem;display:block}
+.category-icon{min-width:60px;text-align:center;font-size:2.5rem}
+
+/* ===== 제목 스타일 ===== */
+.feature-title,.category-info h4,.support-card h3,.media-title{font-size:1.2rem;margin-bottom:1rem;color:#333;font-weight:600}
+.support-card h3{font-size:1.3rem;text-align:center}
+
+/* ===== 설명 텍스트 ===== */
+.feature-description,.category-desc,.support-card p,.media-description{color:#666;line-height:1.6;margin-bottom:1rem}
+.category-desc{font-size:.9rem;margin-bottom:1rem}
+.media-description{font-size:.9rem}
+
+/* ===== 링크 버튼 ===== */
+.feature-link{display:inline-block;color:#667eea;font-weight:600;padding:.8rem 1.5rem;border:2px solid #667eea;border-radius:25px;transition:all .3s ease}
+.feature-link:hover{background:#667eea;color:#fff;transform:translateY(-2px)}
+.feature-link.special{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.3)}
+.feature-link.special:hover{background:rgba(255,255,255,.9);color:#667eea}
+
+/* ===== 게임 정보 페이지 ===== */
+.game-overview{margin-bottom:4rem}
+.game-overview-content{display:grid;grid-template-columns:300px 1fr;gap:3rem;align-items:start}
+.game-cover{position:sticky;top:120px}
+.game-image-placeholder{width:100%;height:400px;background:linear-gradient(135deg,#f8f9fa,#e9ecef);border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px dashed #dee2e6}
+.placeholder-icon{font-size:4rem;margin-bottom:1rem;opacity:.5}
+.game-details h2{font-size:2.5rem;margin-bottom:2rem;color:#333}
+.game-meta{margin-bottom:2rem}
+.meta-item{display:flex;margin-bottom:.8rem;padding:.5rem 0}
+.meta-label{font-weight:bold;min-width:100px;color:#666}
+.meta-value{color:#333}
+.rating-section{padding:1.5rem 0;border-top:1px solid #eee;border-bottom:1px solid #eee}
+.rating{display:flex;align-items:center;gap:1rem}
+.rating-score{font-size:2rem;font-weight:bold;color:#ffd700}
+.stars{font-size:1.5rem;color:#ffd700}
+.rating-count{color:#666}
+
+/* ===== 섹션 제목 ===== */
+.game-description-section h3,.game-features h3,.system-requirements h3,.latest-updates h3,.board-categories h3,.recent-posts h3,.faq-section h3,.contact-section h3,.contact-info h3,.probability-section h3,.recent-drops h3{font-size:1.8rem;margin-bottom:2rem;color:#333;border-bottom:3px solid #667eea;padding-bottom:.5rem;display:inline-block}
+
+/* ===== 설명 컨텐츠 ===== */
+.description-content p{font-size:1.1rem;line-height:1.8;margin-bottom:1rem;color:#555}
+.feature-item{background:#fff;padding:2rem;border-radius:15px;text-align:center;box-shadow:0 5px 20px rgba(0,0,0,.1);transition:transform .3s ease}
+.feature-item:hover{transform:translateY(-5px)}
+.feature-item h4{font-size:1.3rem;margin-bottom:1rem;color:#333}
+.feature-item p{color:#666;line-height:1.6}
+
+/* ===== 요구사항 카드 ===== */
+.requirement-card{background:#f8f9fa;padding:2rem;border-radius:15px;border-left:5px solid #667eea}
+.requirement-card.recommended{color:#fff;border-left-color:#fff}
+.requirement-card h4{font-size:1.3rem;margin-bottom:1.5rem;color:inherit}
+.requirement-card ul{list-style:none}
+.requirement-card li{margin-bottom:.8rem;padding-left:1rem;position:relative}
+.requirement-card li::before{content:'▶';position:absolute;left:0;color:#667eea}
+.requirement-card.recommended li::before{color:#fff}
+
+/* ===== 업데이트 목록 ===== */
+.update-item{display:flex;gap:2rem;padding:2rem;background:#fff;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.1);margin-bottom:2rem}
+.update-date{min-width:120px;font-weight:bold;color:#667eea;font-size:1.1rem}
+.update-content h5{font-size:1.2rem;margin-bottom:1rem;color:#333}
+.update-content ul{list-style:none}
+.update-content li{margin-bottom:.5rem;padding-left:1rem;position:relative;color:#666}
+.update-content li::before{content:'•';position:absolute;left:0;color:#667eea;font-weight:bold}
+
+/* ===== 갓챠샵 ===== */
+.event-banner{border-radius:20px;padding:2rem;margin-bottom:3rem;color:#fff;position:relative;overflow:hidden}
+.banner-content{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+.banner-text h3{font-size:1.8rem;margin-bottom:.5rem}
+.banner-text p{font-size:1.1rem;margin-bottom:.5rem;opacity:.9}
+.event-period{font-size:.9rem;opacity:.8}
+.character-placeholder{width:80px;height:80px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.character-icon{font-size:2rem}
+
+/* ===== 탭 스타일 ===== */
+.category-tabs,.media-tabs{display:flex;gap:1rem;margin-bottom:2rem;border-bottom:2px solid #eee;padding-bottom:1rem}
+.tab-btn,.media-tab{background:none;border:none;padding:1rem 2rem;font-size:1.1rem;font-weight:600;cursor:pointer;border-radius:25px;transition:all .3s ease;color:#666}
+.tab-btn.active{background:linear-gradient(45deg,#667eea,#764ba2);color:#fff}
+.media-tab.active{background:linear-gradient(45deg,#ff6b6b,#feca57);color:#fff}
+
+/* ===== 갓챠 박스 ===== */
+.gacha-section{display:none}
+.gacha-section.active{display:block}
+.gacha-box.featured{border:3px solid #ffd700;box-shadow:0 15px 40px rgba(255,215,0,.3)}
+.gacha-banner{height:200px;position:relative;display:flex;align-items:center;justify-content:center;color:#fff}
+.banner-bg{position:absolute;top:0;left:0;right:0;bottom:0;opacity:.9}
+.banner-bg.legendary{background:linear-gradient(135deg,#ffd700,#ff6b6b)}
+.banner-bg.epic{background:linear-gradient(135deg,#9b59b6,#3498db)}
+.banner-bg.rainbow{background:linear-gradient(135deg,#ff6b6b,#feca57,#48dbfb,#0abde3,#ff9ff3);background-size:400% 400%;animation:rainbow 3s ease infinite}
+@keyframes rainbow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+/* ===== 갓챠 정보 ===== */
+.gacha-title{text-align:center;position:relative;z-index:2}
+.gacha-title h4{font-size:1.8rem;margin-bottom:.5rem;text-shadow:2px 2px 4px rgba(0,0,0,.3)}
+.gacha-subtitle{font-size:1rem;opacity:.9}
+.rate-up-badge,.limited-badge{position:absolute;top:15px;right:15px;background:#ff3838;color:#fff;padding:.5rem 1rem;border-radius:20px;font-size:.8rem;font-weight:bold;z-index:3;animation:pulse 2s infinite}
+.limited-badge{background:#8e44ad}
+.gacha-info{padding:2rem}
+.featured-items{margin-bottom:2rem}
+.item-showcase{display:flex;gap:1rem;justify-content:center}
+.showcase-item{text-align:center;padding:1rem;border-radius:15px;min-width:120px;color:#fff}
+.showcase-item.legendary{background:linear-gradient(135deg,#ffd700,#ff6b6b)}
+.showcase-item.epic{background:linear-gradient(135deg,#9b59b6,#3498db)}
+.showcase-item.rare{background:linear-gradient(135deg,#27ae60,#2ecc71)}
+.item-icon{font-size:2rem;margin-bottom:.5rem;display:block}
+.item-name{display:block;font-weight:bold;font-size:.9rem;margin-bottom:.3rem}
+.item-grade{display:block;font-size:1.1rem}
+
+/* ===== 갓챠 액션 ===== */
+.gacha-actions{border-top:1px solid #eee;padding-top:2rem}
+.gacha-cost{text-align:center;margin-bottom:1.5rem}
+.cost-single,.cost-multi{display:block;margin-bottom:.5rem;color:#666}
+.gacha-buttons{display:flex;gap:1rem;justify-content:center}
+.gacha-btn{padding:1rem 2rem;border:none;border-radius:25px;font-weight:bold;cursor:pointer;transition:all .3s ease;color:#fff}
+.gacha-btn:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(102,126,234,.4)}
+.gacha-btn.premium{box-shadow:0 5px 15px rgba(255,215,0,.4)}
+
+/* ===== 확률 및 로그 ===== */
+.probability-table,.drop-log{background:#fff;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.1);overflow:hidden}
+.prob-row{display:grid;grid-template-columns:120px 100px 1fr;padding:1rem;align-items:center}
+.prob-row.header{background:#f8f9fa;font-weight:bold;color:#333}
+.prob-row:not(.header):nth-child(even){background:#f8f9fa}
+.prob-row.legendary{border-left:4px solid #ffd700}
+.prob-row.epic{border-left:4px solid #9b59b6}
+.prob-row.rare{border-left:4px solid #27ae60}
+.prob-row.common{border-left:4px solid #95a5a6}
+.log-item{display:flex;align-items:center;gap:1rem;padding:1rem 1.5rem;border-bottom:1px solid #eee}
+.log-item:last-child{border-bottom:none}
+.player-name{font-weight:bold;min-width:100px}
+.obtained{color:#666;font-size:.9rem}
+.item-info{font-weight:bold;flex:1}
+.item-info.legendary{color:#ffd700}
+.item-info.epic{color:#9b59b6}
+.time-ago{font-size:.8rem;color:#999}
+
+/* ===== 커뮤니티 ===== */
+.community-layout{display:grid;grid-template-columns:1fr 300px;gap:3rem;align-items:start}
+.main-content{min-width:0}
+.category-card{cursor:pointer;display:flex;gap:1.5rem;align-items:center}
+.category-card.popular{border:2px solid #ff6b6b;background:linear-gradient(135deg,#fff,#fff5f5)}
+.category-stats{display:flex;gap:1rem;font-size:.8rem}
+.post-count{color:#666}
+.new-posts{color:#ff6b6b;font-weight:bold}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+.write-btn{color:#fff;border:none;padding:.8rem 1.5rem;border-radius:25px;font-weight:600;cursor:pointer;transition:all .3s ease}
+.write-btn:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(102,126,234,.4)}
+
+/* ===== 게시글 목록 ===== */
+.post-list{background:#fff;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.1);overflow:hidden}
+.post-item{display:flex;align-items:center;gap:1rem;padding:1.5rem;border-bottom:1px solid #eee;cursor:pointer;transition:background .3s ease;position:relative}
+.post-item:hover{background:#f8f9fa}
+.post-item:last-child{border-bottom:none}
+.post-item.hot{background:linear-gradient(135deg,#fff5f5,#fff);border-left:4px solid #ff6b6b}
+.post-badge{background:#ff6b6b;color:#fff;padding:.3rem .8rem;border-radius:15px;font-size:.7rem;font-weight:bold;position:absolute;top:.5rem;right:1rem}
+.post-category{background:#667eea;color:#fff;padding:.3rem .8rem;border-radius:15px;font-size:.8rem;font-weight:600;min-width:60px;text-align:center}
+.post-content{flex:1;min-width:0}
+.post-title{font-size:1.1rem;margin-bottom:.5rem;color:#333;line-height:1.4}
+.post-meta{display:flex;gap:1rem;font-size:.8rem;color:#666;flex-wrap:wrap}
+.author{font-weight:bold;color:#667eea}
+
+/* ===== 페이지네이션 ===== */
+.pagination{display:flex;justify-content:center;gap:.5rem;margin-top:2rem}
+.page-btn{background:#fff;border:1px solid #ddd;padding:.5rem 1rem;border-radius:8px;cursor:pointer;transition:all .3s ease}
+.page-btn:hover{background:#f8f9fa}
+.page-btn.active{background:#667eea;color:#fff;border-color:#667eea}
+
+/* ===== 사이드바 ===== */
+.community-sidebar{position:sticky;top:120px}
+.sidebar-section h4{font-size:1.2rem;margin-bottom:1.5rem;color:#333}
+.notice-item{display:flex;justify-content:space-between;align-items:center;padding:.8rem 0;border-bottom:1px solid #eee}
+.notice-item:last-child{border-bottom:none}
+.notice-title{flex:1;font-size:.9rem;color:#333;line-height:1.4}
+.notice-date{font-size:.8rem;color:#999;white-space:nowrap;margin-left:1rem}
+.member-item{display:flex;align-items:center;gap:1rem;padding:.8rem 0}
+.member-rank{background:linear-gradient(45deg,#ffd700,#ff6b6b);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.9rem}
+.member-info{flex:1}
+.member-name{display:block;font-weight:bold;color:#333;margin-bottom:.2rem}
+.member-points{font-size:.8rem;color:#666}
+
+/* ===== 채팅 ===== */
+.chat-box{background:#f8f9fa;border-radius:10px;padding:1rem}
+.chat-messages{height:200px;overflow-y:auto;margin-bottom:1rem;padding-right:.5rem}
+.chat-message{margin-bottom:.8rem;font-size:.9rem}
+.chat-user{font-weight:bold;color:#667eea}
+.chat-text{color:#333;margin-left:.5rem}
+.chat-input{display:flex;gap:.5rem}
+.chat-input input{flex:1;padding:.5rem;border:1px solid #ddd;border-radius:5px;font-size:.9rem}
+.chat-input button{background:#667eea;color:#fff;border:none;padding:.5rem 1rem;border-radius:5px;cursor:pointer;font-size:.9rem}
+.chat-input button:disabled{background:#ccc;cursor:not-allowed}
+
+/* ===== 미디어 ===== */
+.media-section{display:none}
+.media-section.active{display:block}
+.media-thumbnail{width:100%;height:200px;background:linear-gradient(135deg,#f8f9fa,#e9ecef);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.media-placeholder{display:flex;flex-direction:column;align-items:center;color:#999}
+.play-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s ease}
+.media-item:hover .play-overlay{opacity:1}
+.play-btn{background:rgba(255,255,255,.9);border:none;border-radius:50%;width:60px;height:60px;font-size:1.5rem;cursor:pointer;transition:transform .3s ease}
+.play-btn:hover{transform:scale(1.1)}
+.media-info{padding:1.5rem}
+.media-meta{display:flex;justify-content:space-between;font-size:.8rem;color:#999}
+
+/* ===== 고객센터 ===== */
+.support-card{text-align:center;cursor:pointer}
+.faq-list{background:#fff;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.1);overflow:hidden}
+.faq-item{border-bottom:1px solid #eee}
+.faq-item:last-child{border-bottom:none}
+.faq-question{width:100%;background:none;border:none;padding:1.5rem;text-align:left;cursor:pointer;font-size:1rem;font-weight:600;color:#333;display:flex;justify-content:space-between;align-items:center;transition:background .3s ease}
+.faq-question:hover{background:#f8f9fa}
+.faq-toggle{font-size:1.2rem;transition:transform .3s ease}
+.faq-item.active .faq-toggle{transform:rotate(180deg)}
+.faq-answer{padding:0 1.5rem;max-height:0;overflow:hidden;transition:all .3s ease;background:#f8f9fa}
+.faq-item.active .faq-answer{max-height:200px;padding:1.5rem}
+
+/* ===== 폼 스타일 ===== */
+.contact-form{background:#fff;border-radius:15px;padding:2rem;box-shadow:0 5px 15px rgba(0,0,0,.1)}
+.form-group{margin-bottom:1.5rem}
+.form-label{display:block;margin-bottom:.5rem;font-weight:600;color:#333}
+.form-input,.form-textarea{width:100%;padding:.8rem;border:1px solid #ddd;border-radius:8px;font-size:1rem;transition:border-color .3s ease}
+.form-input:focus,.form-textarea:focus{outline:none;border-color:#48dbfb}
+.form-textarea{resize:vertical;min-height:120px}
+.submit-btn{color:#fff;border:none;padding:1rem 2rem;border-radius:25px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .3s ease}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(72,219,251,.4)}
+
+/* ===== 연락처 정보 ===== */
+.contact-info{background:#fff;border-radius:15px;padding:2rem;box-shadow:0 5px 15px rgba(0,0,0,.1)}
+.contact-method{display:flex;gap:1rem;align-items:center;padding:1.5rem;background:#f8f9fa;border-radius:10px}
+.contact-icon{font-size:2rem;min-width:50px;text-align:center}
+.contact-details h4{margin-bottom:.5rem;color:#333}
+.contact-details p{margin-bottom:.3rem;font-weight:600;color:#48dbfb}
+.contact-note{font-size:.8rem;color:#666}
+
+/* ===== 푸터 ===== */
+.footer{background:#1a1a1a;color:#fff;padding:3rem 0 1rem}
+.footer-container{max-width:1400px;margin:0 auto;padding:0 2rem}
+.footer-content{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;margin-bottom:2rem}
+.footer-section h4{margin-bottom:1rem;color:#667eea}
+.footer-section a{display:block;color:#ccc;margin-bottom:.5rem;transition:color .3s ease}
+.footer-section a:hover{color:#667eea}
+.footer-bottom{text-align:center;padding-top:2rem;border-top:1px solid #333;color:#999}
+
+/* ===== 공통 버튼 ===== */
+.btn{display:inline-block;padding:.8rem 1.5rem;background:#667eea;color:#fff;border-radius:8px;transition:all .3s ease;border:none;cursor:pointer;font-weight:500}
+.btn:hover{background:#5a67d8;transform:translateY(-2px)}
+.btn-secondary{background:#6c757d}
+.btn-secondary:hover{background:#5a6268}
+
+/* ===== 애니메이션 ===== */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* ===== 스크롤바 ===== */
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:#f1f1f1;border-radius:4px}
+::-webkit-scrollbar-thumb{background:#667eea;border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#5a67d8}
+
+/* ===== 반응형 디자인 ===== */
+@media (max-width:768px){
+.mobile-menu-toggle{display:flex;z-index:10001}
+.auth-buttons{order:-1;gap:.5rem;z-index:10000}
+.auth-btn{padding:.6rem 1rem;font-size:.8rem}
+.nav-menu{position:fixed;top:80px;left:0;right:0;background:rgba(0,0,0,.95);flex-direction:column;gap:0;padding:2rem 0;transform:translateY(-100%);opacity:0;transition:all .3s ease;pointer-events:none;z-index:9998}
+.nav-menu.active{transform:translateY(0);opacity:1;pointer-events:auto}
+.nav-link{padding:1rem 2rem;width:100%;text-align:center}
+.game-title{font-size:2.5rem}
+.game-stats,.community-stats,.user-currency{flex-direction:column;gap:1rem;align-items:center}
+.game-launch-btn{padding:1.2rem 2rem;font-size:1.1rem}
+.feature-grid,.category-grid,.support-categories,.media-gallery,.requirements-grid,.contact-methods{grid-template-columns:1fr;gap:1.5rem}
+.nav-container{padding:1rem}
+.page-title{font-size:2rem}
+.game-overview-content{grid-template-columns:1fr;gap:2rem}
+.game-cover{position:static;order:-1}
+.game-image-placeholder{height:250px}
+.placeholder-icon{font-size:2.5rem}
+.game-details h2{font-size:2rem}
+.update-item{flex-direction:column;gap:1rem}
+.update-date{min-width:auto}
+.banner-content{flex-direction:column;gap:1rem;text-align:center}
+.category-tabs,.media-tabs{flex-wrap:wrap;gap:.5rem}
+.tab-btn,.media-tab{padding:.8rem 1.2rem;font-size:1rem}
+.item-showcase{flex-direction:column;align-items:center}
+.gacha-buttons{flex-direction:column}
+.prob-row{grid-template-columns:80px 80px 1fr;font-size:.9rem}
+.log-item{flex-wrap:wrap;gap:.5rem}
+.player-name{min-width:auto}
+.community-layout{grid-template-columns:1fr;gap:2rem}
+.category-card{flex-direction:column;text-align:center;gap:1rem}
+.category-icon{min-width:auto}
+.post-item{flex-direction:column;align-items:flex-start;gap:.5rem}
+.post-meta{gap:.5rem}
+.pagination{flex-wrap:wrap}
+.community-sidebar{position:static}
+.chat-messages{height:150px}
+.media-thumbnail{height:150px}
+.media-placeholder-icon{font-size:2rem}
+.contact-method{flex-direction:column;text-align:center}
+.faq-question{font-size:.9rem;padding:1rem}
+.faq-answer{padding:0 1rem}
+.faq-item.active .faq-answer{padding:1rem}
+}
+
+@media (max-width:480px){
+.game-title{font-size:2rem}
+.game-subtitle{font-size:1.1rem}
+.feature-card,.sidebar-section{padding:1.5rem}
+.nav-container{gap:1rem}
+.auth-buttons{gap:.3rem}
+.auth-btn{padding:.5rem .8rem;font-size:.75rem}
+.community-stats .stat-item{padding:1rem 1.5rem}
+.post-item{padding:1rem}
+.post-badge{position:static;align-self:flex-start;margin-bottom:.5rem}
+.contact-form{padding:1.5rem}
+}
+
+/* ===== 유틸리티 ===== */
+.mt-1{margin-top:1rem}.mt-2{margin-top:2rem}.mt-3{margin-top:3rem}
+.mb-1{margin-bottom:1rem}.mb-2{margin-bottom:2rem}.mb-3{margin-bottom:3rem}
+.loading{display:inline-block;width:20px;height:20px;border:3px solid #f3f3f3;border-top:3px solid #667eea;border-radius:50%;animation:spin 1s linear infinite}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ===== 특수 효과 ===== */
+.feature-card{opacity:0;transform:translateY(30px)}
+.feature-card.animate{opacity:1;transform:translateY(0)}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(45deg,#667eea,#764ba2);transform:scaleX(0);transition:transform .3s ease}
+.feature-card:hover::before{transform:scaleX(1)}
+.feature-card.highlight{color:#fff}
+.feature-card.highlight::before{background:rgba(255,255,255,.3)}
+
+/* ===== 인증 페이지 스타일 ===== */
+.auth-section{min-height:100vh;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;padding:2rem 0;position:relative}
+.auth-section::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 20% 80%,rgba(120,119,198,.3) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(255,119,198,.3) 0%,transparent 50%);pointer-events:none}
+.auth-container{max-width:1200px;width:100%;display:grid;grid-template-columns:1fr 300px;gap:3rem;align-items:start;position:relative;z-index:2}
+.auth-card{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:20px;padding:3rem;box-shadow:0 20px 60px rgba(0,0,0,.1);border:1px solid rgba(255,255,255,.2)}
+.auth-header{text-align:center;margin-bottom:2rem}
+.auth-title{font-size:2.5rem;font-weight:900;color:#333;margin-bottom:1rem}
+.auth-subtitle{font-size:1.1rem;color:#666;margin-bottom:0}
+
+/* ===== 인증 폼 ===== */
+.auth-form{width:100%}
+.form-group{margin-bottom:1.5rem;position:relative}
+.form-label{display:block;font-weight:600;color:#333;margin-bottom:.5rem;font-size:.9rem}
+.form-input{width:100%;padding:1rem;border:2px solid #e1e8ed;border-radius:12px;font-size:1rem;transition:all .3s ease;background:#fff}
+.form-input:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
+.form-input.error{border-color:#ff4757;box-shadow:0 0 0 3px rgba(255,71,87,.1)}
+.form-error{display:block;color:#ff4757;font-size:.8rem;margin-top:.5rem;min-height:1rem}
+.form-help{display:block;color:#999;font-size:.8rem;margin-top:.3rem}
+
+/* ===== 비밀번호 필드 ===== */
+.password-field{position:relative}
+.password-toggle{position:absolute;right:1rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.2rem;padding:.3rem;border-radius:4px;transition:background .3s ease}
+.password-toggle:hover{background:rgba(0,0,0,.1)}
+
+/* ===== 비밀번호 강도 ===== */
+.password-strength{margin-top:.5rem}
+.strength-bar{width:100%;height:4px;background:#e1e8ed;border-radius:2px;overflow:hidden}
+.strength-fill{height:100%;width:0%;background:#ddd;transition:all .3s ease;border-radius:2px}
+.strength-text{font-size:.8rem;color:#666;margin-top:.3rem;display:block}
+
+/* ===== 체크박스 및 라디오 ===== */
+.checkbox-container,.radio-container{position:relative;padding-left:2rem;margin-bottom:.8rem;cursor:pointer;display:block;font-size:.9rem;line-height:1.4}
+.checkbox-container input,.radio-container input{position:absolute;opacity:0;cursor:pointer}
+.checkmark,.radio-mark{position:absolute;top:0;left:0;height:1.2rem;width:1.2rem;background:#fff;border:2px solid #ddd;transition:all .3s ease}
+.checkmark{border-radius:4px}
+.radio-mark{border-radius:50%}
+.checkbox-container:hover .checkmark,.radio-container:hover .radio-mark{border-color:#667eea}
+.checkbox-container input:checked~.checkmark,.radio-container input:checked~.radio-mark{background:#667eea;border-color:#667eea}
+.checkmark:after{content:"";position:absolute;display:none}
+.checkbox-container input:checked~.checkmark:after{display:block}
+.checkbox-container .checkmark:after{left:4px;top:1px;width:4px;height:8px;border:solid white;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.radio-mark:after{content:"";position:absolute;display:none}
+.radio-container input:checked~.radio-mark:after{display:block}
+.radio-container .radio-mark:after{top:3px;left:3px;width:6px;height:6px;border-radius:50%;background:white}
+
+/* ===== 라디오 그룹 ===== */
+.radio-group{display:flex;gap:1.5rem;flex-wrap:wrap}
+
+/* ===== 폼 옵션 ===== */
+.form-options{display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0}
+.forgot-password{color:#667eea;font-size:.9rem;font-weight:500;transition:color .3s ease}
+.forgot-password:hover{color:#5a67d8}
+
+/* ===== 약관 동의 ===== */
+.form-agreements{border:1px solid #e1e8ed;border-radius:12px;padding:1.5rem;margin:1.5rem 0;background:#f8f9fa}
+.agreement-list{margin-top:1rem;padding-left:1rem}
+.checkbox-container.required{position:relative}
+.required-mark{color:#ff4757;font-size:.8rem}
+.agreement-link{color:#667eea;font-size:.8rem;margin-left:.5rem;font-weight:500}
+.agreement-link:hover{color:#5a67d8}
+
+/* ===== 제출 버튼 ===== */
+.auth-submit-btn{width:100%;padding:1rem;border:none;border-radius:12px;font-size:1.1rem;font-weight:700;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden;margin:1.5rem 0}
+.auth-submit-btn .btn-text{position:relative;z-index:2}
+.auth-submit-btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-loading{display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3}
+.loading-spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top:2px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
+
+/* ===== 구분선 ===== */
+.form-divider{text-align:center;margin:2rem 0;position:relative}
+.form-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:#e1e8ed}
+.form-divider span{background:#fff;padding:0 1rem;color:#999;font-size:.9rem}
+
+/* ===== 소셜 로그인 ===== */
+.social-login{display:flex;flex-direction:column;gap:1rem;margin:1.5rem 0}
+.social-btn{display:flex;align-items:center;justify-content:center;gap:.8rem;padding:1rem;border:2px solid #e1e8ed;border-radius:12px;background:#fff;cursor:pointer;transition:all .3s ease;font-weight:600;font-size:1rem}
+.social-btn:hover{background:#f8f9fa;border-color:#ddd;transform:translateY(-1px)}
+.social-icon{font-size:1.2rem}
+.google-btn:hover{border-color:#4285f4;color:#4285f4}
+.kakao-btn{background:#fee500;border-color:#fee500;color:#3c1e1e}
+.kakao-btn:hover{background:#fdd835;border-color:#fdd835}
+
+/* ===== 인증 전환 ===== */
+.auth-switch{text-align:center;margin-top:2rem;font-size:.9rem;color:#666}
+.auth-switch a{color:#667eea;font-weight:600;margin-left:.3rem}
+.auth-switch a:hover{color:#5a67d8}
+
+/* ===== 혜택 섹션 ===== */
+.auth-benefits{background:rgba(255,255,255,.9);backdrop-filter:blur(20px);border-radius:20px;padding:2rem;box-shadow:0 10px 40px rgba(0,0,0,.1);border:1px solid rgba(255,255,255,.2);position:sticky;top:120px}
+.auth-benefits h3{font-size:1.3rem;font-weight:700;color:#333;margin-bottom:1.5rem;text-align:center}
+.benefits-list{appearance:1rem}
+.benefit-item{display:flex;align-items:center;gap:1rem;padding:1rem;background:rgba(255,255,255,.7);border-radius:12px;margin-bottom:1rem;border:1px solid rgba(255,255,255,.3)}
+.benefit-icon{font-size:2rem;min-width:40px;text-align:center}
+.benefit-content h4{font-size:1rem;font-weight:600;color:#333;margin-bottom:.3rem}
+.benefit-content p{font-size:.8rem;color:#666;line-height:1.4;margin:0}
+
+/* ===== 활성 상태 ===== */
+.auth-btn.active{background:#667eea;color:#fff;border-color:#667eea}
+
+/* ===== 반응형 - 인증 페이지 ===== */
+@media (max-width:768px){
+.auth-container{grid-template-columns:1fr;gap:2rem;padding:1rem}
+.auth-card{padding:2rem}
+.auth-title{font-size:2rem}
+.radio-group{flex-direction:column;gap:1rem}
+.form-options{flex-direction:column;gap:1rem;align-items:flex-start}
+.social-login{flex-direction:column}
+.auth-benefits{position:static;order:-1}
+.benefit-item{flex-direction:column;text-align:center;gap:.5rem}
+.agreement-list{padding-left:0}
+}
+
+@media (max-width:480px){
+.auth-card{padding:1.5rem}
+.auth-title{font-size:1.8rem}
+.benefit-item{padding:.8rem}
+.form-input,.auth-submit-btn{padding:.8rem}
+}
+button:focus,input:focus,textarea:focus,select:focus{outline:2px solid rgba(102,126,234,.5);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media print{.header,.footer,.nav,.auth-buttons,.mobile-menu-toggle{display:none}.main{margin-top:0}.page-header{background:none!important;color:#000!important}}
+@media (prefers-contrast:high){.nav-link,.feature-link,.auth-btn{border:2px solid currentColor}}
+
+/* ===== 커뮤니티 추가 스타일 ===== */
+
+/* ===== 게시판 컨트롤 ===== */
+.board-controls{display:flex;gap:1rem;align-items:center}
+.category-filter{padding:.5rem 1rem;border:1px solid #ddd;border-radius:8px;font-size:.9rem}
+
+/* ===== 상태 메시지 ===== */
+.no-posts,.no-comments,.error{text-align:center;padding:3rem;color:#666;font-size:1.1rem}
+.error{color:#ff4757}
+
+/* ===== 모달 스타일 ===== */
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center;z-index:10000}
+.modal.show{display:flex}
+.modal-content{background:#fff;border-radius:15px;width:90%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-content.large{max-width:800px}
+.modal-header{padding:1.5rem;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{margin:0;color:#333}
+.modal-close{background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .3s ease}
+.modal-close:hover{background:#f0f0f0}
+.modal-body{padding:1.5rem}
+
+/* ===== 폼 스타일 확장 ===== */
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;margin-bottom:.5rem;font-weight:600;color:#333}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:.8rem;border:1px solid #ddd;border-radius:8px;font-size:1rem}
+.form-group textarea{resize:vertical;font-family:inherit}
+.form-actions{display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem}
+
+/* ===== 버튼 스타일 확장 ===== */
+.btn{padding:.8rem 1.5rem;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:all .3s ease}
+.btn-primary{background:#667eea;color:#fff}
+.btn-primary:hover{background:#5a67d8;transform:translateY(-1px)}
+.btn-secondary{background:#6c757d;color:#fff}
+.btn-secondary:hover{background:#5a6268}
+
+/* ===== 게시글 상세 스타일 ===== */
+.post-info{display:flex;gap:1rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #eee;font-size:.9rem;color:#666}
+.post-content{line-height:1.8;margin-bottom:2rem;padding:1rem 0}
+.post-actions{text-align:center;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid #eee}
+.like-btn{background:#ff6b6b;color:#fff;display:inline-flex;align-items:center;gap:.5rem}
+.like-btn:hover{background:#ff5252;transform:translateY(-1px)}
+
+/* ===== 댓글 스타일 ===== */
+.comments-section h4{margin-bottom:1rem;color:#333}
+.comment-write{margin-bottom:1.5rem}
+.comment-write textarea{width:100%;margin-bottom:.5rem;resize:vertical;border:1px solid #ddd;border-radius:8px;padding:.8rem}
+.comment-item{padding:1rem;border:1px solid #eee;border-radius:8px;margin-bottom:1rem}
+.comment-header{display:flex;justify-content:space-between;margin-bottom:.5rem}
+.comment-author{font-weight:600;color:#667eea}
+.comment-date{font-size:.8rem;color:#999}
+.comment-content{line-height:1.6;color:#333}
+
+/* ===== 인기 게시글 스타일 ===== */
+.popular-post{padding:.8rem 0;border-bottom:1px solid #eee;cursor:pointer;transition:background .3s ease}
+.popular-post:hover{background:#f8f9fa}
+.popular-post:last-child{border-bottom:none}
+.popular-post-title{font-size:.9rem;margin-bottom:.3rem;line-height:1.4;color:#333}
+.popular-post-meta{display:flex;gap:.5rem;font-size:.8rem;color:#666}
+
+/* ===== 페이지네이션 확장 ===== */
+.page-btn.disabled{opacity:.5;cursor:not-allowed}
+.page-btn.disabled:hover{background:#fff;transform:none}
+
+/* ===== 반응형 확장 - 커뮤니티 ===== */
+@media (max-width:768px){
+.modal-content{width:95%;margin:1rem;max-height:calc(100vh - 2rem)}
+.board-controls{flex-direction:column;align-items:stretch;gap:.5rem}
+.form-actions{flex-direction:column}
+.post-info{flex-direction:column;gap:.5rem}
+.popular-post-meta{justify-content:space-between}
+}
+
+@media (max-width:480px){
+.modal-header,.modal-body{padding:1rem}
+.community-stats{flex-direction:column;gap:1rem}
+.stat-item{padding:1rem}
+}
+
+/* customer-service.css - 기존 styles.css에 추가할 고객센터 전용 스타일 */
+
+/* FAQ 스타일 */
+.faq-item{border-bottom:1px solid #eee}
+.faq-item:last-child{border-bottom:none}
+.faq-item.active .faq-answer{max-height:300px;padding:1.5rem}
+.faq-meta{margin-top:1rem;padding-top:1rem;border-top:1px solid #f0f0f0;font-size:.8rem;color:#666}
+
+/* 폼 에러 스타일 */
+.form-input.error,.form-textarea.error{border-color:#ff4757;box-shadow:0 0 0 3px rgba(255,71,87,.1)}
+.form-error{color:#ff4757;font-size:.8rem;margin-top:.5rem;display:none}
+
+/* 로딩 버튼 */
+.btn-loading{display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+.loading-spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top:2px solid #fff;border-radius:50%;animation:spin 1s linear infinite}
+
+/* 성공 모달 */
+.success-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:center;z-index:10001}
+.success-content{background:white;border-radius:15px;padding:2rem;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:400px;margin:1rem}
+.success-icon{font-size:3rem;margin-bottom:1rem}
+.success-content h3{color:#28a745;margin-bottom:1rem}
+.success-content p{color:#666;line-height:1.6;margin-bottom:1rem}
+
+/* 실시간 채팅 모달 */
+.chat-modal{max-width:500px;height:600px;max-height:90vh;display:flex;flex-direction:column}
+.chat-status{display:flex;align-items:center}
+.status-indicator{display:inline-block;padding:.3rem .8rem;border-radius:15px;font-size:.8rem;background:#ffc107;color:#333}
+.status-indicator.connected{background:#28a745;color:white}
+
+/* 채팅 컨테이너 */
+.chat-container{display:flex;flex-direction:column;height:100%}
+.chat-messages{flex:1;overflow-y:auto;padding:0;margin-bottom:1rem;border:1px solid #eee;border-radius:8px}
+.chat-message{padding:1rem;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:flex-start}
+.chat-message:last-child{border-bottom:none}
+.chat-message.system{background:#f8f9fa}
+.chat-message.user{background:#e3f2fd}
+.chat-message.agent{background:#f1f8e9}
+.message-content{flex:1}
+.message-content p{margin:0;line-height:1.5}
+.message-time{font-size:.7rem;color:#999;margin-left:1rem;white-space:nowrap}
+
+/* 채팅 입력 */
+.chat-input-container{display:flex;gap:.5rem;border-top:1px solid #eee;padding-top:1rem}
+.chat-input-container input{flex:1;padding:.8rem;border:1px solid #ddd;border-radius:8px}
+.chat-send-btn{background:#48dbfb;color:white;border:none;border-radius:8px;padding:.8rem 1.5rem;cursor:pointer;font-weight:600}
+.chat-send-btn:hover{background:#0abde3}
+
+/* 문의 내역 */
+.inquiry-history{margin-top:3rem}
+.no-inquiries{text-align:center;padding:2rem;color:#666;font-style:italic}
+
+/* 문의 아이템 */
+.inquiry-item{background:white;border:1px solid #eee;border-radius:10px;padding:1.5rem;margin-bottom:1rem;transition:box-shadow .3s ease}
+.inquiry-item:hover{box-shadow:0 5px 15px rgba(0,0,0,.1)}
+.inquiry-item.pending{border-left:4px solid #ffc107}
+.inquiry-item.processing{border-left:4px solid #17a2b8}
+.inquiry-item.resolved{border-left:4px solid #28a745}
+.inquiry-item.closed{border-left:4px solid #6c757d}
+
+/* 문의 헤더 */
+.inquiry-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.inquiry-title{font-weight:600;color:#333;flex:1}
+.inquiry-status{padding:.3rem .8rem;border-radius:15px;font-size:.8rem;font-weight:600;white-space:nowrap;margin-left:1rem}
+.inquiry-status.pending{background:#fff3cd;color:#856404}
+.inquiry-status.processing{background:#d1ecf1;color:#0c5460}
+.inquiry-status.resolved{background:#d4edda;color:#155724}
+.inquiry-status.closed{background:#d6d8db;color:#383d41}
+
+/* 문의 메타 정보 */
+.inquiry-meta{display:flex;gap:1rem;margin-bottom:1rem;font-size:.9rem;color:#666}
+.inquiry-type{background:#e9ecef;padding:.2rem .6rem;border-radius:10px;font-size:.8rem}
+.inquiry-preview{color:#666;line-height:1.6;margin-bottom:1rem}
+
+/* 답변 섹션 */
+.inquiry-response{background:#f8f9fa;border-radius:8px;padding:1rem;border-left:3px solid #28a745}
+.response-header{font-weight:600;color:#28a745;margin-bottom:.5rem;font-size:.9rem}
+.response-content{color:#333;line-height:1.6;margin-bottom:.5rem}
+.response-date{font-size:.8rem;color:#666;text-align:right}
+
+/* 체크박스 */
+.checkbox-container{position:relative;padding-left:2rem;margin-bottom:.8rem;cursor:pointer;display:block;font-size:.9rem;line-height:1.4}
+.checkbox-container input{position:absolute;opacity:0;cursor:pointer;width:auto;padding:0}
+.checkmark{position:absolute;top:0;left:0;height:1.2rem;width:1.2rem;background:#fff;border:2px solid #ddd;border-radius:4px;transition:all .3s ease}
+.checkbox-container:hover .checkmark{border-color:#48dbfb}
+.checkbox-container input:checked~.checkmark{background:#48dbfb;border-color:#48dbfb}
+.checkmark:after{content:"";position:absolute;display:none}
+.checkbox-container input:checked~.checkmark:after{display:block}
+.checkbox-container .checkmark:after{left:4px;top:1px;width:4px;height:8px;border:solid white;border-width:0 2px 2px 0;transform:rotate(45deg)}
+
+/* 반응형 */
+@media (max-width:768px){
+.chat-modal{width:95%;height:80vh;margin:1rem}
+.inquiry-header{flex-direction:column;align-items:flex-start;gap:.5rem}
+.inquiry-status{margin-left:0}
+.inquiry-meta{flex-direction:column;gap:.3rem}
+.chat-input-container{flex-direction:column}
+.chat-send-btn{align-self:stretch}
+}
+
+@media (max-width:480px){
+.success-content{padding:1.5rem}
+.inquiry-item{padding:1rem}
+.chat-messages{height:300px}
+}
+/* 미디어 모달 추가 스타일 */
+.media-detail-container{display:grid;grid-template-columns:1fr 400px;gap:2rem;max-height:80vh;overflow-y:auto}
+.media-preview{position:sticky;top:0}
+.media-preview-content{width:100%;margin-bottom:1rem;border-radius:8px;overflow:hidden;background:#f8f9fa}
+.media-preview-content img,.media-preview-content video{width:100%;height:auto;display:block}
+.media-actions{display:flex;gap:1rem;justify-content:center;margin-bottom:1rem}
+.action-btn{display:flex;align-items:center;gap:.5rem;padding:.8rem 1.5rem;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:all .3s ease}
+.like-btn{background:#ff6b6b;color:#fff}
+.like-btn:hover,.like-btn.liked{background:#ff5252;transform:translateY(-2px)}
+.download-btn{background:#48dbfb;color:#fff}
+.download-btn:hover{background:#0abde3;transform:translateY(-2px)}
+.share-btn{background:#667eea;color:#fff}
+.share-btn:hover{background:#5a67d8;transform:translateY(-2px)}
+.meta-details{margin:1rem 0}
+.meta-item{display:flex;justify-content:space-between;margin-bottom:.5rem;padding:.5rem 0;border-bottom:1px solid #f0f0f0}
+.meta-item:last-child{border-bottom:none}
+.meta-item .label{font-weight:600;color:#666}
+.meta-item .value{color:#333}
+.tag{display:inline-block;background:#f0f0f0;color:#333;padding:.3rem .8rem;border-radius:15px;font-size:.8rem;margin-right:.5rem;margin-bottom:.3rem}
+.no-tags{color:#999;font-style:italic}
+.comments-section{margin-top:2rem;border-top:1px solid #eee;padding-top:1.5rem}
+.comments-section h5{margin-bottom:1rem;font-size:1.2rem;color:#333}
+.comment-write{margin-bottom:1.5rem}
+.comment-write textarea{width:100%;padding:.8rem;border:1px solid #ddd;border-radius:8px;resize:vertical;min-height:80px;margin-bottom:.5rem;font-family:inherit}
+.comments-list{max-height:400px;overflow-y:auto}
+.comment-item{padding:1rem;border:1px solid #eee;border-radius:8px;margin-bottom:1rem}
+.comment-header{display:flex;justify-content:space-between;margin-bottom:.5rem;font-size:.9rem}
+.comment-author{font-weight:600;color:#667eea}
+.comment-date{color:#999}
+.comment-content{line-height:1.6;margin-bottom:.5rem}
+.comment-likes{font-size:.8rem;color:#666}
+.no-comments{text-align:center;color:#666;padding:2rem;font-style:italic}
+@media (max-width:768px){
+.media-detail-container{grid-template-columns:1fr;gap:1rem}
+.media-preview{position:static}
+.media-actions{flex-wrap:wrap;gap:.5rem}
+.action-btn{padding:.6rem 1rem;font-size:.9rem;flex:1;min-width:120px}
+}
+/* ===== 게임 페이지 스타일 ===== */
+.game-page{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh}
+.game-ui-header{position:fixed;top:80px;left:0;right:0;z-index:999;background:rgba(0,0,0,.9);backdrop-filter:blur(10px);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid rgba(255,255,255,.1)}
+.player-info{display:flex;gap:1.5rem;align-items:center}
+.player-stat{display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.1);padding:.5rem 1rem;border-radius:25px;color:#fff;font-weight:600;font-size:.9rem}
+.stat-icon{font-size:1rem}
+.game-controls{display:flex;gap:1rem}
+.game-stage-section{margin-top:160px;padding:2rem;min-height:calc(100vh - 240px);display:flex;align-items:center;justify-content:center}
+.game-stage-container{background:rgba(255,255,255,.95);border-radius:20px;padding:2rem;width:100%;max-width:1000px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.stage-info{text-align:center;margin-bottom:2rem}
+.stage-title{font-size:2rem;font-weight:900;color:#333;margin-bottom:.5rem}
+.stage-description{font-size:1.1rem;color:#666}
+.battle-arena{display:grid;grid-template-columns:1fr auto 1fr;gap:2rem;align-items:center;margin:2rem 0;padding:2rem;background:linear-gradient(135deg,#f8f9fa,#e9ecef);border-radius:15px}
+.character-section,.monster-section{display:flex;justify-content:center}
+.character-card{background:#fff;border-radius:15px;padding:1.5rem;box-shadow:0 10px 30px rgba(0,0,0,.1);text-align:center;min-width:200px}
+.player-card{border:3px solid #28a745}
+.monster-card{border:3px solid #dc3545}
+.character-avatar{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto 1rem}
+.character-card .character-avatar{background:linear-gradient(45deg,#28a745,#20c997);color:#fff}
+.monster-avatar{background:linear-gradient(45deg,#dc3545,#fd7e14);color:#fff}
+.character-name{font-size:1.2rem;font-weight:700;margin-bottom:1rem;color:#333}
+.character-stats{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem}
+.stat-badge{background:#f8f9fa;padding:.3rem .8rem;border-radius:15px;font-size:.8rem;font-weight:600;color:#666}
+.stat-badge.hp{background:#ffebee;color:#d32f2f}
+.stat-badge.atk{background:#fff3e0;color:#ef6c00}
+.stat-badge.luck{background:#e8f5e8;color:#2e7d32}
+.stat-badge.element{background:#e3f2fd;color:#1565c0}
+.status-effects{min-height:20px;margin-top:.5rem}
+.vs-section{display:flex;flex-direction:column;align-items:center;gap:1rem}
+.vs-indicator{font-size:3rem;font-weight:900;color:#667eea;text-shadow:2px 2px 4px rgba(0,0,0,.3)}
+.battle-actions{display:flex;flex-direction:column;gap:.5rem}
+.action-btn{padding:.8rem 1.5rem;border:none;border-radius:25px;font-weight:700;cursor:pointer;transition:all .3s ease;font-size:.9rem;min-width:100px;color:#fff}
+.attack-btn{background:linear-gradient(45deg,#ff6b6b,#ff5252)}
+.skill-btn{background:linear-gradient(45deg,#667eea,#764ba2)}
+.item-btn{background:linear-gradient(45deg,#feca57,#ff9ff3)}
+.action-btn:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,0,0,.3)}
+.action-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.skill-panel,.item-panel{background:#fff;border-radius:15px;padding:1.5rem;margin-top:1rem;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+.skill-panel h3,.item-panel h3{margin-bottom:1rem;color:#333;text-align:center}
+.skill-list,.item-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1rem}
+.skill-card,.item-card{background:#f8f9fa;border:2px solid #dee2e6;border-radius:10px;padding:1rem;cursor:pointer;transition:all .3s ease;text-align:center}
+.skill-card:hover,.item-card:hover{border-color:#667eea;transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,0,0,.1)}
+.skill-name,.item-name{font-weight:600;margin-bottom:.5rem;color:#333}
+.skill-description{font-size:.9rem;color:#666;margin-bottom:.5rem}
+.skill-cost{font-size:.8rem;color:#007bff;font-weight:600}
+.item-icon{font-size:2rem;margin-bottom:.5rem}
+.item-count{font-size:.8rem;color:#666;background:#e9ecef;padding:.2rem .5rem;border-radius:10px;margin-top:.5rem;display:inline-block}
+.battle-log{background:#f8f9fa;border-radius:15px;padding:1.5rem;margin-top:2rem}
+.battle-log h4{margin-bottom:1rem;color:#333}
+.log-content{max-height:200px;overflow-y:auto;padding-right:.5rem}
+.log-entry{padding:.5rem 0;border-bottom:1px solid #dee2e6;font-size:.9rem;line-height:1.4}
+.log-entry:last-child{border-bottom:none}
+.log-entry.system{color:#666;font-style:italic}
+.log-entry.player{color:#28a745;font-weight:600}
+.log-entry.monster{color:#dc3545;font-weight:600}
+.game-progress{background:rgba(255,255,255,.95);margin:2rem;border-radius:15px;padding:2rem;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+.progress-container{display:flex;justify-content:space-between;align-items:center;max-width:1000px;margin:0 auto}
+.progress-info h3{margin-bottom:1rem;color:#333}
+.progress-stats{display:flex;gap:2rem}
+.progress-stats .stat-item{text-align:center}
+.progress-stats .stat-label{display:block;font-size:.9rem;color:#666;margin-bottom:.5rem}
+.progress-stats .stat-value{display:block;font-size:1.5rem;font-weight:700;color:#333}
+.next-stage-btn-container{flex-shrink:0}
+.modal .game-over-stats{display:flex;gap:2rem;justify-content:center;margin:1rem 0}
+.modal .rewards{margin:1rem 0}
+.modal .rewards h4{margin-bottom:1rem;color:#333}
+.reward-item{display:flex;align-items:center;gap:.5rem;padding:.5rem 0;font-size:1.1rem}
+.reward-icon{font-size:1.5rem}
+.reward-text{font-weight:600;color:#28a745}
+@media (max-width:768px){
+.game-ui-header{padding:.5rem 1rem;flex-direction:column;gap:1rem}
+.player-info{flex-wrap:wrap;gap:.5rem}
+.player-stat{padding:.3rem .8rem;font-size:.8rem}
+.game-stage-section{margin-top:200px;padding:1rem}
+.game-stage-container{padding:1rem}
+.stage-title{font-size:1.5rem}
+.battle-arena{grid-template-columns:1fr;grid-template-rows:auto auto auto;gap:1rem;padding:1rem}
+.vs-section{order:2}
+.monster-section{order:3}
+.vs-indicator{font-size:2rem}
+.battle-actions{flex-direction:row;flex-wrap:wrap;justify-content:center}
+.action-btn{min-width:80px;padding:.6rem 1rem;font-size:.8rem}
+.character-card{min-width:150px;padding:1rem}
+.character-avatar{width:60px;height:60px;font-size:2rem}
+.skill-list,.item-list{grid-template-columns:1fr}
+.progress-container{flex-direction:column;gap:1rem;text-align:center}
+.progress-stats{justify-content:center;gap:1rem}
+.game-progress{margin:1rem;padding:1rem}
+}
+@media (max-width:480px){
+.game-ui-header{position:relative;top:0}
+.game-stage-section{margin-top:80px}
+.stage-title{font-size:1.2rem}
+.character-card{min-width:120px;padding:.8rem}
+.character-stats{flex-direction:column;gap:.3rem}
+.battle-actions{flex-direction:column;width:100%}
+.action-btn{width:100%}
+.progress-stats{flex-direction:column;gap:.5rem}
+}
+/* 게임 데이터 탭 버튼 텍스트 색상 수정 */
+.game-data-tabs .admin-nav-btn {
+    color: #333; /* 기본 상태: 검은색 텍스트 */
+}
+
+.game-data-tabs .admin-nav-btn:hover {
+    color: #333; /* 호버 상태: 검은색 유지 */
+}
+
+.game-data-tabs .admin-nav-btn.active {
+    color: #667eea; /* 활성 상태: 파란색 텍스트 */
+}
+/* 기존 CSS를 이것으로 교체 */
+.admin-table,
+.admin-table th,
+.admin-table td,
+table th,
+table td {
+    transform: none !important;
+    transform-origin: initial !important;
+    writing-mode: horizontal-tb !important;
+    text-orientation: mixed !important;
+    direction: ltr !important;
+}
+
+/* 테이블 레이아웃 강제 적용 */
+.admin-table {
+    table-layout: fixed !important;
+    width: 100% !important;
+}
+
+.admin-table th,
+.admin-table td {
+    display: table-cell !important;
+    vertical-align: top !important;
+    text-align: left !important;
+    white-space: normal !important;
+}

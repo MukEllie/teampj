@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>커뮤니티 - 게임 포털</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="common-auth.js"></script>
+    <script src="community.js" defer></script>
+</head>
+<body>
+    <!-- 헤더 네비게이션 -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🎮</span>
+                <span class="logo-text">GAME PORTAL</span>
+            </a>
+            
+            <nav class="nav">
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="game.html" class="nav-link">게임</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="game-info.html" class="nav-link">게임정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="news.html" class="nav-link">공지사항</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="gacha-shop.html" class="nav-link">가챠샵</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="community.html" class="nav-link">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="media.html" class="nav-link">미디어</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="customer-service.html" class="nav-link">고객센터</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="auth-buttons" id="authButtons">
+                <!-- common-auth.js에서 동적으로 업데이트됨 -->
+            </div>
+
+            <button class="mobile-menu-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main">
+        <!-- 페이지 헤더 -->
+        <section class="page-header community-header">
+            <div class="container">
+                <div class="page-header-content">
+                    <h1 class="page-title">💥 커뮤니티</h1>
+                    <p class="page-subtitle">플레이어들과 함께 소통하고 정보를 공유하세요</p>
+                    <div class="community-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalMembers">15,432</span>
+                            <span class="stat-label">회원수</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="todayVisitors">1,234</span>
+                            <span class="stat-label">오늘 접속</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="onlineUsers">456</span>
+                            <span class="stat-label">온라인</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 커뮤니티 컨텐츠 -->
+        <section class="content-section">
+            <div class="container">
+                <div class="community-layout">
+                    <div class="main-content">
+                        <!-- 게시판 카테고리 -->
+                        <div class="board-categories">
+                            <h3>📋 게시판</h3>
+                            <div class="category-grid" id="categoryGrid">
+                                <!-- JS에서 동적으로 로드됨 -->
+                            </div>
+                        </div>
+
+                        <!-- 최신 게시글 -->
+                        <div class="recent-posts">
+                            <div class="section-header">
+                                <h3>📝 최신 게시글</h3>
+                                <div class="board-controls">
+                                    <select id="categoryFilter" class="category-filter">
+                                        <option value="전체">전체</option>
+                                        <option value="자유">자유</option>
+                                        <option value="공략">공략</option>
+                                        <option value="질문">질문</option>
+                                        <option value="창작">창작</option>
+                                        <option value="건의">건의</option>
+                                    </select>
+                                    <button class="write-btn" id="writeBtn">글쓰기</button>
+                                </div>
+                            </div>
+                            
+                            <div class="post-list" id="postList">
+                                <!-- JS에서 동적으로 로드됨 -->
+                            </div>
+
+                            <div class="pagination" id="pagination">
+                                <!-- JS에서 동적으로 생성됨 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 사이드바 -->
+                    <aside class="community-sidebar">
+                        <!-- 공지사항 -->
+                        <div class="sidebar-section">
+                            <h4>📢 공지사항</h4>
+                            <div class="notice-list" id="noticeList">
+                                <div class="notice-item">
+                                    <span class="notice-title">[필독] 커뮤니티 이용 규칙</span>
+                                    <span class="notice-date">08.20</span>
+                                </div>
+                                <div class="notice-item">
+                                    <span class="notice-title">v1.2.5 업데이트 안내</span>
+                                    <span class="notice-date">08.18</span>
+                                </div>
+                                <div class="notice-item">
+                                    <span class="notice-title">신규 이벤트 안내</span>
+                                    <span class="notice-date">08.15</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 인기 게시글 -->
+                        <div class="sidebar-section">
+                            <h4>🔥 인기 게시글</h4>
+                            <div class="popular-posts" id="popularPosts">
+                                <!-- JS에서 동적으로 로드됨 -->
+                            </div>
+                        </div>
+
+                        <!-- 인기 회원 -->
+                        <div class="sidebar-section">
+                            <h4>🏆 이달의 회원</h4>
+                            <div class="popular-members">
+                                <div class="member-item">
+                                    <div class="member-rank">1</div>
+                                    <div class="member-info">
+                                        <span class="member-name">드래곤마스터</span>
+                                        <span class="member-points">1,234 포인트</span>
+                                    </div>
+                                </div>
+                                <div class="member-item">
+                                    <div class="member-rank">2</div>
+                                    <div class="member-info">
+                                        <span class="member-name">공략왕</span>
+                                        <span class="member-points">987 포인트</span>
+                                    </div>
+                                </div>
+                                <div class="member-item">
+                                    <div class="member-rank">3</div>
+                                    <div class="member-info">
+                                        <span class="member-name">헬퍼</span>
+                                        <span class="member-points">756 포인트</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 실시간 채팅 -->
+                        <div class="sidebar-section">
+                            <h4>💬 실시간 채팅</h4>
+                            <div class="chat-box">
+                                <div class="chat-messages" id="chatMessages">
+                                    <div class="chat-message">
+                                        <span class="chat-user">플레이어A:</span>
+                                        <span class="chat-text">누구 같이 레이드 할 사람?</span>
+                                    </div>
+                                    <div class="chat-message">
+                                        <span class="chat-user">게이머B:</span>
+                                        <span class="chat-text">저요! 초대해주세요</span>
+                                    </div>
+                                    <div class="chat-message">
+                                        <span class="chat-user">헌터C:</span>
+                                        <span class="chat-text">신규 던전 정말 어렵네요</span>
+                                    </div>
+                                </div>
+                                <div class="chat-input">
+                                    <input type="text" id="chatInput" placeholder="로그인이 필요합니다..." disabled>
+                                    <button id="chatSendBtn" disabled>전송</button>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 글쓰기 모달 -->
+    <div id="writeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>새 게시글 작성</h3>
+                <button class="modal-close" id="writeModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="writeForm">
+                    <div class="form-group">
+                        <label for="writeCategory">카테고리</label>
+                        <select id="writeCategory" required>
+                            <option value="">카테고리 선택</option>
+                            <option value="자유">자유</option>
+                            <option value="공략">공략</option>
+                            <option value="질문">질문</option>
+                            <option value="창작">창작</option>
+                            <option value="건의">건의</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="writeTitle">제목</label>
+                        <input type="text" id="writeTitle" placeholder="제목을 입력하세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="writeContent">내용</label>
+                        <textarea id="writeContent" placeholder="내용을 입력하세요" rows="10" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="writeCancelBtn">취소</button>
+                        <button type="submit" class="btn btn-primary" id="writeSubmitBtn">작성하기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 게시글 상세 모달 -->
+    <div id="postDetailModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3 id="postDetailTitle">게시글 제목</h3>
+                <button class="modal-close" id="postDetailClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="post-info">
+                    <span class="post-author" id="postDetailAuthor">작성자</span>
+                    <span class="post-date" id="postDetailDate">작성일</span>
+                    <span class="post-views" id="postDetailViews">조회수</span>
+                    <span class="post-likes" id="postDetailLikes">좋아요</span>
+                </div>
+                <div class="post-content" id="postDetailContent">
+                    <!-- 게시글 내용 -->
+                </div>
+                <div class="post-actions">
+                    <button class="btn like-btn" id="likeBtn">
+                        <span id="likeIcon">❤️</span>
+                        <span id="likeText">좋아요</span>
+                    </button>
+                </div>
+                <div class="comments-section">
+                    <h4>댓글</h4>
+                    <div class="comment-write">
+                        <textarea id="commentContent" placeholder="댓글을 입력하세요" rows="3"></textarea>
+                        <button class="btn" id="commentSubmitBtn">댓글 작성</button>
+                    </div>
+                    <div class="comments-list" id="commentsList">
+                        <!-- 댓글 목록 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>게임 포털</h4>
+                    <p>최고의 게임 경험을 제공합니다</p>
+                </div>
+                <div class="footer-section">
+                    <h4>지원</h4>
+                    <a href="#">FAQ</a>
+                    <a href="customer-service.html">고객센터</a>
+                    <a href="#">버그 신고</a>
+                </div>
+                <div class="footer-section">
+                    <h4>커뮤니티</h4>
+                    <a href="community.html">공식 포럼</a>
+                    <a href="#">디스코드</a>
+                    <a href="#">유튜브</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Game Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

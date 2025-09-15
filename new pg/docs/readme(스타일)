@@ -1,0 +1,131 @@
+# 게임 홈페이지 CSS 스타일 가이드
+
+## 📦 주요 구성 요소
+
+### 🎨 색상 시스템
+```css
+.gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.gradient-warning { background: linear-gradient(45deg, #ff6b6b, #ee5a24); }
+.gradient-gacha { background: linear-gradient(135deg, #feca57 0%, #ff9ff3 50%, #667eea 100%); }
+.gradient-media { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%); }
+.gradient-support { background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%); }
+```
+
+### 🧭 헤더 & 네비게이션
+- `.header` - 고정 헤더 (블러 효과)
+- `.nav-menu` - 플렉스 네비게이션
+- `.mobile-menu-toggle` - 모바일 햄버거 메뉴
+- `.auth-btn` - 로그인/회원가입 버튼
+
+### 🎮 게임 UI
+- `.game-launch-btn` - 메인 게임 실행 버튼 (호버 애니메이션)
+- `.game-ui-header` - 게임 내 UI 헤더
+- `.battle-arena` - 배틀 화면 그리드 레이아웃
+- `.character-card` - 캐릭터/몬스터 카드
+
+### 📱 카드 시스템
+- `.feature-card` - 기본 카드 (호버 시 상승 효과)
+- `.gacha-box` - 가챠 박스 (.featured로 골드 테두리)
+- `.post-item` - 게시글 아이템 (.hot으로 인기 게시글)
+
+### 🎰 가챠 시스템
+- `.gacha-banner` - 가챠 배너 (그라디언트 배경)
+- `.probability-table` - 확률 테이블
+- `.showcase-item` - 등급별 아이템 (.legendary, .epic, .rare)
+
+### 💬 커뮤니티
+- `.community-layout` - 2열 그리드 (메인 + 사이드바)
+- `.post-list` - 게시글 목록
+- `.chat-box` - 실시간 채팅
+
+### 🎬 미디어
+- `.media-item` - 미디어 카드
+- `.play-overlay` - 재생 버튼 오버레이
+
+### 🔄 모달
+- `.modal` - 기본 모달 (.show로 표시)
+- `.modal-content` - 모달 내용
+
+### 🆘 고객 서비스
+- `.faq-item` - FAQ 아이템 (.active로 펼침)
+- `.contact-form` - 문의 폼
+- `.inquiry-item` - 문의 내역 (상태별 색상)
+
+### 🔐 인증
+- `.auth-section` - 인증 페이지 배경
+- `.auth-card` - 인증 폼 카드
+- `.social-btn` - 소셜 로그인 버튼
+
+## 🎯 핵심 CSS 클래스
+
+### 레이아웃
+```css
+.container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+```
+
+### 버튼
+```css
+.btn { padding: .8rem 1.5rem; background: #667eea; color: #fff; border-radius: 8px; }
+.game-launch-btn { 호버 시 scale(1.05) + 그림자 효과 }
+```
+
+### 카드
+```css
+.feature-card { 
+  background: #fff; 
+  border-radius: 15px; 
+  padding: 2rem; 
+  box-shadow: 0 5px 20px rgba(0,0,0,.1);
+  hover: translateY(-5px);
+}
+```
+
+## 📱 반응형 포인트
+- **768px 이하**: 모바일 메뉴 활성화, 그리드 → 1열
+- **480px 이하**: 폰트 크기 축소, 패딩 감소
+
+## 🎨 특수 효과
+- **애니메이션**: fadeInUp, pulse, spin, rainbow
+- **스크롤바**: 커스텀 스타일 (#667eea)
+- **백드롭 필터**: 블러 효과
+
+## ⚡ 사용법
+
+### 기본 카드
+```html
+<div class="feature-card">
+  <span class="feature-icon">🎯</span>
+  <h3 class="feature-title">제목</h3>
+  <p class="feature-description">설명</p>
+  <a href="#" class="feature-link">링크</a>
+</div>
+```
+
+### 가챠 박스
+```html
+<div class="gacha-box featured">
+  <div class="gacha-banner gradient-gacha">
+    <div class="gacha-title">
+      <h4>픽업 가챠</h4>
+    </div>
+  </div>
+</div>
+```
+
+### 게시글
+```html
+<div class="post-item hot">
+  <div class="post-category">공지</div>
+  <div class="post-content">
+    <h4 class="post-title">제목</h4>
+  </div>
+</div>
+```
+
+## 🔧 커스터마이징
+주요 색상 변경: `#667eea` (메인), `#ff6b6b` (경고), `#48dbfb` (서포트)
+그리드 컬럼 수정: `minmax(300px, 1fr)` 값 조정
+애니메이션 비활성화: `@media (prefers-reduced-motion: reduce)` 추가됨
+
+이 가이드로 CSS 파일의 핵심 구조와 사용법을 파악할 수 있습니다.

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>갓챠샵 - 게임 포털</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="common-auth.js"></script>
+</head>
+<body>
+    <!-- 헤더 네비게이션 -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🎮</span>
+                <span class="logo-text">GAME PORTAL</span>
+            </a>
+            
+            <nav class="nav">
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="game.html" class="nav-link">게임</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="game-info.html" class="nav-link">게임정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="news.html" class="nav-link">공지사항</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="gacha-shop.html" class="nav-link">가챠샵</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="community.html" class="nav-link">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="media.html" class="nav-link">미디어</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="customer-service.html" class="nav-link">고객센터</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="auth-buttons">
+                <a href="#" class="auth-btn login-btn" id="loginBtn">로그인</a>
+                <a href="#" class="auth-btn signup-btn" id="signupBtn">회원가입</a>
+            </div>
+
+            <button class="mobile-menu-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main">
+        <!-- 페이지 헤더 -->
+        <section class="page-header gacha-header">
+            <div class="container">
+                <div class="page-header-content">
+                    <h1 class="page-title">✨ 갓챠샵 ✨</h1>
+                    <p class="page-subtitle">희귀한 아이템과 캐릭터를 획득하세요!</p>
+                    <div class="user-currency">
+                        <div class="currency-item">
+                            <span class="currency-icon">💎</span>
+                            <span class="currency-amount">1,250</span>
+                            <span class="currency-name">다이아몬드</span>
+                        </div>
+                        <div class="currency-item">
+                            <span class="currency-icon">🪙</span>
+                            <span class="currency-amount">45,800</span>
+                            <span class="currency-name">골드</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 갓챠 컨텐츠 -->
+        <section class="content-section">
+            <div class="container">
+                <!-- 특별 이벤트 배너 -->
+                <div class="event-banner">
+                    <div class="banner-content">
+                        <div class="banner-text">
+                            <h3>🎉 신규 캐릭터 출시 이벤트!</h3>
+                            <p>전설급 영웅 '드래곤 슬레이어' 확률 UP!</p>
+                            <span class="event-period">이벤트 기간: 2025.08.25 - 2025.09.10</span>
+                        </div>
+                        <div class="banner-character">
+                            <div class="character-placeholder">
+                                <span class="character-icon">🗡️</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 갓챠 카테고리 -->
+                <div class="gacha-categories">
+                    <div class="category-tabs">
+                        <button class="tab-btn active" data-category="character">캐릭터 갓챠</button>
+                        <button class="tab-btn" data-category="weapon">무기 갓챠</button>
+                        <button class="tab-btn" data-category="special">특별 갓챠</button>
+                    </div>
+
+                    <!-- 캐릭터 갓챠 -->
+                    <div class="gacha-section active" id="character-gacha">
+                        <div class="gacha-boxes">
+                            <div class="gacha-box featured">
+                                <div class="gacha-banner">
+                                    <div class="banner-bg legendary"></div>
+                                    <div class="gacha-title">
+                                        <h4>전설의 영웅</h4>
+                                        <p class="gacha-subtitle">드래곤 슬레이어 픽업!</p>
+                                    </div>
+                                    <div class="rate-up-badge">확률 UP!</div>
+                                </div>
+                                <div class="gacha-info">
+                                    <div class="featured-items">
+                                        <div class="item-showcase">
+                                            <div class="showcase-item legendary">
+                                                <div class="item-icon">⚔️</div>
+                                                <span class="item-name">드래곤 슬레이어</span>
+                                                <span class="item-grade">★★★★★</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="gacha-actions">
+                                        <div class="gacha-cost">
+                                            <span class="cost-single">💎 300 (1회)</span>
+                                            <span class="cost-multi">💎 3000 (10+1회)</span>
+                                        </div>
+                                        <div class="gacha-buttons">
+                                            <button class="gacha-btn single">1회 뽑기</button>
+                                            <button class="gacha-btn multi premium">11회 뽑기</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="gacha-box">
+                                <div class="gacha-banner">
+                                    <div class="banner-bg epic"></div>
+                                    <div class="gacha-title">
+                                        <h4>일반 영웅 소환</h4>
+                                        <p class="gacha-subtitle">다양한 영웅들을 만나보세요</p>
+                                    </div>
+                                </div>
+                                <div class="gacha-info">
+                                    <div class="featured-items">
+                                        <div class="item-showcase">
+                                            <div class="showcase-item epic">
+                                                <div class="item-icon">🛡️</div>
+                                                <span class="item-name">성기사</span>
+                                                <span class="item-grade">★★★★</span>
+                                            </div>
+                                            <div class="showcase-item rare">
+                                                <div class="item-icon">🏹</div>
+                                                <span class="item-name">궁수</span>
+                                                <span class="item-grade">★★★</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="gacha-actions">
+                                        <div class="gacha-cost">
+                                            <span class="cost-single">💎 200 (1회)</span>
+                                            <span class="cost-multi">💎 2000 (10+1회)</span>
+                                        </div>
+                                        <div class="gacha-buttons">
+                                            <button class="gacha-btn single">1회 뽑기</button>
+                                            <button class="gacha-btn multi">11회 뽑기</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 무기 갓챠 (숨김) -->
+                    <div class="gacha-section" id="weapon-gacha">
+                        <div class="gacha-boxes">
+                            <div class="gacha-box">
+                                <div class="gacha-banner">
+                                    <div class="banner-bg legendary"></div>
+                                    <div class="gacha-title">
+                                        <h4>신화의 무기</h4>
+                                        <p class="gacha-subtitle">전설적인 무기를 획득하세요</p>
+                                    </div>
+                                </div>
+                                <div class="gacha-info">
+                                    <div class="gacha-actions">
+                                        <div class="gacha-cost">
+                                            <span class="cost-single">💎 250 (1회)</span>
+                                            <span class="cost-multi">💎 2500 (10+1회)</span>
+                                        </div>
+                                        <div class="gacha-buttons">
+                                            <button class="gacha-btn single">1회 뽑기</button>
+                                            <button class="gacha-btn multi premium">11회 뽑기</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 특별 갓챠 (숨김) -->
+                    <div class="gacha-section" id="special-gacha">
+                        <div class="gacha-boxes">
+                            <div class="gacha-box featured">
+                                <div class="gacha-banner">
+                                    <div class="banner-bg rainbow"></div>
+                                    <div class="gacha-title">
+                                        <h4>한정 특별 소환</h4>
+                                        <p class="gacha-subtitle">기간 한정! 놓치지 마세요</p>
+                                    </div>
+                                    <div class="limited-badge">한정</div>
+                                </div>
+                                <div class="gacha-info">
+                                    <div class="gacha-actions">
+                                        <div class="gacha-cost">
+                                            <span class="cost-single">💎 500 (1회)</span>
+                                            <span class="cost-multi">💎 5000 (10+1회)</span>
+                                        </div>
+                                        <div class="gacha-buttons">
+                                            <button class="gacha-btn single">1회 뽑기</button>
+                                            <button class="gacha-btn multi premium">11회 뽑기</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 확률 정보 -->
+                <div class="probability-section">
+                    <h3>📊 확률 정보</h3>
+                    <div class="probability-table">
+                        <div class="prob-row header">
+                            <div class="prob-grade">등급</div>
+                            <div class="prob-rate">확률</div>
+                            <div class="prob-description">설명</div>
+                        </div>
+                        <div class="prob-row legendary">
+                            <div class="prob-grade">★★★★★</div>
+                            <div class="prob-rate">1.5%</div>
+                            <div class="prob-description">전설급 (피벗업 시 3%)</div>
+                        </div>
+                        <div class="prob-row epic">
+                            <div class="prob-grade">★★★★</div>
+                            <div class="prob-rate">8.5%</div>
+                            <div class="prob-description">영웅급</div>
+                        </div>
+                        <div class="prob-row rare">
+                            <div class="prob-grade">★★★</div>
+                            <div class="prob-rate">40%</div>
+                            <div class="prob-description">희귀급</div>
+                        </div>
+                        <div class="prob-row common">
+                            <div class="prob-grade">★★</div>
+                            <div class="prob-rate">50%</div>
+                            <div class="prob-description">일반급</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 최근 획득 로그 -->
+                <div class="recent-drops">
+                    <h3>🎲 최근 획득 현황</h3>
+                    <div class="drop-log">
+                        <div class="log-item">
+                            <span class="player-name">플레이어***</span>
+                            <span class="obtained">획득:</span>
+                            <span class="item-info legendary">⚔️ 드래곤 슬레이어 ★★★★★</span>
+                            <span class="time-ago">5분 전</span>
+                        </div>
+                        <div class="log-item">
+                            <span class="player-name">게이머***</span>
+                            <span class="obtained">획득:</span>
+                            <span class="item-info epic">🛡️ 성기사 ★★★★</span>
+                            <span class="time-ago">12분 전</span>
+                        </div>
+                        <div class="log-item">
+                            <span class="player-name">모험가***</span>
+                            <span class="obtained">획득:</span>
+                            <span class="item-info legendary">🏹 엘프 궁수 ★★★★★</span>
+                            <span class="time-ago">23분 전</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>게임 포털</h4>
+                    <p>최고의 게임 경험을 제공합니다</p>
+                </div>
+                <div class="footer-section">
+                    <h4>지원</h4>
+                    <a href="#">FAQ</a>
+                    <a href="customer-service.html">고객센터</a>
+                    <a href="#">버그 신고</a>
+                </div>
+                <div class="footer-section">
+                    <h4>커뮤니티</h4>
+                    <a href="community.html">공식 포럼</a>
+                    <a href="#">디스코드</a>
+                    <a href="#">유튜브</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Game Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 기본 스크립트들
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        mobileToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+
+        loginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('로그인 페이지로 이동합니다.\n(현재는 데모 버전입니다)');
+        });
+
+        signupBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('회원가입 페이지로 이동합니다.\n(현재는 데모 버전입니다)');
+        });
+
+        // 갓챠 탭 전환
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const gachaSections = document.querySelectorAll('.gacha-section');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const category = this.dataset.category;
+                
+                // 모든 탭 비활성화
+                tabBtns.forEach(tab => tab.classList.remove('active'));
+                gachaSections.forEach(section => section.classList.remove('active'));
+                
+                // 선택된 탭 활성화
+                this.classList.add('active');
+                document.getElementById(category + '-gacha').classList.add('active');
+            });
+        });
+
+        // 갓챠 버튼 클릭 이벤트
+        const gachaBtns = document.querySelectorAll('.gacha-btn');
+        gachaBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const type = this.classList.contains('multi') ? '11회' : '1회';
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                    alert(`${type} 갓챠를 실행합니다!\n(현재는 데모 버전입니다)`);
+                }, 150);
+            });
+        });
+
+        // 스크롤 효과
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

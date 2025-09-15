@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게임 - Game Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="common-auth.js"></script>
+    <style>
+        /* 게임 페이지 전용 스타일 - styles.css 기반 */
+        .game-container {
+            width: 100%;
+            height: calc(100vh - 80px);
+            margin-top: 80px;
+            position: relative;
+            background: #000;
+        }
+
+        .game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: #000;
+        }
+
+        /* 로딩 화면 - styles.css의 gradient-primary 클래스 활용 */
+        .game-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 10;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .loading-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* 에러 화면 - styles.css의 gradient-warning 클래스 활용 */
+        .game-error {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .error-message {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            max-width: 500px;
+        }
+
+        .retry-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .game-container {
+                height: calc(100vh - 80px);
+                margin-top: 80px;
+            }
+            
+            .error-message {
+                font-size: 0.9rem;
+                padding: 0 1rem;
+            }
+            
+            .loading-text {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-icon {
+                font-size: 3rem;
+            }
+            
+            .error-title {
+                font-size: 1.3rem;
+            }
+            
+            .retry-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 네비게이션 (기존과 동일) -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-text">GAME PORTAL</span>
+            </a>
+            
+            <nav class="nav">
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="game.html" class="nav-link active">게임</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="game-info.html" class="nav-link">게임정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="news.html" class="nav-link">공지사항</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="gacha-shop.html" class="nav-link">가챠샵</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="community.html" class="nav-link">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="media.html" class="nav-link">미디어</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="customer-service.html" class="nav-link">고객센터</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="auth-buttons">
+                <a href="/login" class="auth-btn login-btn" id="loginBtn">로그인</a>
+                <a href="/signup" class="auth-btn signup-btn" id="signupBtn">회원가입</a>
+            </div>
+
+            <button class="mobile-menu-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 게임 컨테이너 -->
+    <div class="game-container">
+        <!-- 로딩 화면 -->
+        <div class="game-loading" id="gameLoading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">게임 로딩 중...</div>
+            <div class="loading-subtitle">잠시만 기다려주세요</div>
+        </div>
+
+        <!-- 에러 화면 -->
+        <div class="game-error" id="gameError">
+            <div class="error-icon">⚠️</div>
+            <div class="error-title">게임을 불러올 수 없습니다</div>
+            <div class="error-message">게임 서버가 실행되지 않았거나 연결에 문제가 있습니다.<br>React 개발 서버(포트 3000)가 실행 중인지 확인해주세요.</div>
+            <button class="retry-btn" onclick="retryLoadGame()">다시 시도</button>
+        </div>
+
+        <!-- React 게임 iframe -->
+        <iframe 
+            id="gameFrame" 
+            class="game-frame" 
+            src="http://localhost:3000"
+            title="React Game">
+        </iframe>
+    </div>
+
+    <script>
+        // 모바일 메뉴 토글
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        if (mobileToggle && navMenu) {
+            mobileToggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        }
+
+        // 스크롤 효과
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            if (header) {
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            }
+        });
+
+        // 게임 로딩 관리
+        const gameFrame = document.getElementById('gameFrame');
+        const gameLoading = document.getElementById('gameLoading');
+        const gameError = document.getElementById('gameError');
+        let loadingTimeout;
+        let retryCount = 0;
+        const maxRetries = 3;
+
+        function showLoading() {
+            gameLoading.style.display = 'flex';
+            gameError.style.display = 'none';
+            gameFrame.style.display = 'none';
+        }
+
+        function showGame() {
+            gameLoading.style.display = 'none';
+            gameError.style.display = 'none';
+            gameFrame.style.display = 'block';
+        }
+
+        function showError() {
+            gameLoading.style.display = 'none';
+            gameError.style.display = 'flex';
+            gameFrame.style.display = 'none';
+        }
+
+        function retryLoadGame() {
+            if (retryCount < maxRetries) {
+                retryCount++;
+                showLoading();
+                
+                // iframe src를 다시 설정하여 재로드
+                gameFrame.src = 'http://localhost:3000?' + new Date().getTime();
+                
+                // 5초 후에도 로드되지 않으면 에러 표시
+                loadingTimeout = setTimeout(() => {
+                    showError();
+                }, 5000);
+            }
+        }
+
+        // iframe 로드 완료 이벤트
+        gameFrame.addEventListener('load', function() {
+            clearTimeout(loadingTimeout);
+            setTimeout(() => {
+                showGame();
+                retryCount = 0; // 성공시 재시도 카운트 리셋
+            }, 1000); // 1초 딜레이로 로딩 화면 유지
+        });
+
+        // iframe 로드 에러 이벤트
+        gameFrame.addEventListener('error', function() {
+            clearTimeout(loadingTimeout);
+            showError();
+        });
+
+        // 페이지 로드시 초기화
+        window.addEventListener('load', function() {
+            showLoading();
+            
+            // 5초 후에도 게임이 로드되지 않으면 에러 표시
+            loadingTimeout = setTimeout(() => {
+                showError();
+            }, 5000);
+        });
+
+        // 네비게이션 링크 활성화 상태 관리
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // 현재 페이지 링크는 활성 상태 유지
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                const href = this.getAttribute('href');
+                if (href && href.endsWith('.html')) {
+                    console.log('페이지 이동:', href);
+                }
+            });
+        });
+
+        // 현재 페이지의 네비게이션 링크 활성화
+        const currentPage = 'game.html';
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

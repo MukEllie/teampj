@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지 - 게임 포털</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 관리자 페이지 전용 스타일 */
+        .admin-body {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        /* 로그인 페이지 */
+        .admin-login {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-login-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .admin-login-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+        }
+
+        /* 관리자 헤더 */
+        .admin-header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .admin-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-nav-btn {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .admin-nav-btn:hover, .admin-nav-btn.active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* 메인 컨테이너 */
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* 대시보드 */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 섹션 */
+        .admin-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        /* 테이블 스타일 */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .admin-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* 버튼 스타일 */
+        .admin-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+
+        .admin-btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .admin-btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .admin-btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .admin-btn-success:hover {
+            background: #229954;
+        }
+
+        .admin-btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .admin-btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .admin-btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .admin-btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* 검색 및 필터 */
+        .admin-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .admin-search {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .admin-filter {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* 모달 */
+        .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .admin-modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .admin-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        /* 로딩 스피너 */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+
+        /* 상태 배지 */
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-published {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-draft {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-deleted {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-processing {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-resolved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-closed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* 미디어 미리보기 */
+        .media-preview {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .media-preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 20000;
+        }
+
+        .media-preview-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .media-preview-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .admin-nav {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .admin-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .admin-table {
+                font-size: 0.8rem;
+            }
+
+            .admin-table th,
+            .admin-table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="admin-body">
+    <!-- 로그인 화면 -->
+    <div id="adminLogin" class="admin-login">
+        <div class="admin-login-card">
+            <h1 class="admin-login-title">🔐 관리자 로그인</h1>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <input type="text" id="adminId" placeholder="관리자 ID" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="adminPassword" placeholder="비밀번호" class="form-input" required>
+                </div>
+                <button type="submit" class="auth-submit-btn admin-btn-primary">
+                    <span class="btn-text">로그인</span>
+                    <div class="btn-loading" id="adminLoginLoading">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </button>
+                <p class="form-error" id="adminLoginError"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- 관리자 메인 화면 -->
+    <div id="adminMain" style="display: none;">
+        <!-- 관리자 헤더 -->
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <div class="admin-logo">🛠️ 관리자 페이지</div>
+                <nav class="admin-nav">
+                    <button class="admin-nav-btn active" data-section="dashboard">대시보드</button>
+                    <button class="admin-nav-btn" data-section="users">회원관리</button>
+                    <button class="admin-nav-btn" data-section="posts">게시글관리</button>
+                    <button class="admin-nav-btn" data-section="comments">댓글관리</button>
+                    <button class="admin-nav-btn" data-section="media">미디어관리</button>
+                    <button class="admin-nav-btn" data-section="news">뉴스관리</button>
+                    <button class="admin-nav-btn" data-section="inquiries">문의관리</button>
+                    <button class="admin-nav-btn" data-section="faq">FAQ관리</button>
+                    <button class="admin-nav-btn" data-section="game">게임데이터</button>
+                </nav>
+                <div class="admin-user-info">
+                    <span>관리자님</span>
+                    <button class="admin-logout-btn" id="adminLogoutBtn">로그아웃</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-container">
+            <!-- 대시보드 섹션 -->
+            <section id="dashboard" class="admin-section active">
+                <div class="section-header">
+                    <h2 class="section-title">📊 대시보드</h2>
+                </div>
+                
+                <div class="dashboard-stats" id="dashboardStats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="statUsers">0</div>
+                        <div class="stat-label">총 회원수</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statPosts">0</div>
+                        <div class="stat-label">총 게시글</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statComments">0</div>
+                        <div class="stat-label">총 댓글</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statMedia">0</div>
+                        <div class="stat-label">미디어 파일</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statNews">0</div>
+                        <div class="stat-label">뉴스/공지</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statInquiries">0</div>
+                        <div class="stat-label">문의사항</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statPendingInquiries">0</div>
+                        <div class="stat-label">대기 중 문의</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statFaq">0</div>
+                        <div class="stat-label">FAQ</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 회원관리 섹션 -->
+            <section id="users" class="admin-section">
+                <div class="section-header">
+                    <h2 class="section-title">👥 회원관리</h2>
+                    <button class="admin-btn admin-btn-success" id="addUserBtn">신규 회원 추가</button>
+                </div>
+                
+                <div class="admin-controls">
+                    <input type="text" class="admin-search" id="userSearch" placeholder="회원 검색 (ID, 닉네임, 이메일)">
+                    <select class="admin-filter" id="userFilter">
+                        <option value="all">전체 회원</option>
+                        <option value="recent">최근 가입</option>
+                        <option value="active">활성 회원</option>
+                    </select>
+                    <button class="admin-btn admin-btn-primary" id="userRefreshBtn">새로고침</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>닉네임</th>
+                                <th>이메일</th>
+                                <th>골드</th>
+                                <th>캐릭터</th>
+                                <th>가입일</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="7" class="loading">
+                                    <div class="loading-spinner"></div>
+                                    데이터를 불러오는 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 게시글관리 섹션 -->
+            <section id="posts" class="admin-section">
+                <div class="section-header">
+                    <h2 class="section-title">📝 게시글 관리</h2>
+                </div>
+                
+                <div class="admin-controls">
+                    <input type="text" class="admin-search" id="postSearch" placeholder="게시글 검색 (제목, 내용)">
+                    <select class="admin-filter" id="postCategoryFilter">
+                        <option value="all">전체 카테고리</option>
+                        <option value="자유">자유</option>
+                        <option value="공략">공략</option>
+                        <option value="질문">질문</option>
+                        <option value="이벤트">이벤트</option>
+                        <option value="버그신고">버그신고</option>
+                    </select>
+                    <button class="admin-btn admin-btn-primary" id="postRefreshBtn">새로고침</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table" id="postsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>제목</th>
+                                <th>작성자</th>
+                                <th>카테고리</th>
+                                <th>조회수</th>
+                                <th>좋아요</th>
+                                <th>댓글수</th>
+                                <th>작성일</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postsTableBody">
+                            <tr>
+                                <td colspan="9" class="loading">
+                                    <div class="loading-spinner"></div>
+                                    데이터를 불러오는 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 댓글관리 섹션 -->
+            <section id="comments" class="admin-section">
+                <div class="section-header">
+                    <h2 class="section-title">💬 댓글 관리</h2>
+                </div>
+                
+                <div class="admin-controls">
+                    <input type="text" class="admin-search" id="commentSearch" placeholder="댓글 검색">
+                    <button class="admin-btn admin-btn-primary" id="commentRefreshBtn">새로고침</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table" id="commentsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>내용</th>
+                                <th>작성자</th>
+                                <th>게시글</th>
+                                <th>좋아요</th>
+                                <th>작성일</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="commentsTableBody">
+                            <tr>
+                                <td colspan="7" class="loading">
+                                    <div class="loading-spinner"></div>
+                                    데이터를 불러오는 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 미디어관리 섹션 -->
+            <section id="media" class="admin-section">
+                <div class="section-header">
+                    <h2 class="section-title">🎬 미디어 관리</h2>
+                    <button class="admin-btn admin-btn-success" id="addMediaBtn">미디어 추가</button>
+                </div>
+                
+                <div class="admin-controls">
+                    <input type="text" class="admin-search" id="mediaSearch" placeholder="미디어 검색">
+                    <select class="admin-filter" id="mediaCategoryFilter">
+                        <option value="all">전체 카테고리</option>
+                        <option value="screenshots">스크린샷</option>
+                        <option value="videos">동영상</option>
+                        <option value="artwork">아트워크</option>
+                        <option value="wallpapers">배경화면</option>
+                    </select>
+                    <button class="admin-btn admin-btn-primary" id="mediaRefreshBtn">새로고침</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table" id="mediaTable">
+                        <thead>
+                            <tr>
+                                <th>미리보기</th>
+                                <th>ID</th>
+                                <th>제목</th>
+                                <th>카테고리</th>
+                                <th>파일타입</th>
+                                <th>조회수</th>
+                                <th>좋아요</th>
+                                <th>다운로드</th>
+                                <th>업로드일</th>
+                                <th>상태</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mediaTableBody">
+                            <tr>
+                                <td colspan="11" class="loading">
+                                    <div class="loading-spinner"></div>
+                                    데이터를 불러오는 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 뉴스관리 섹션 -->
+            <section id="news" class="admin-section">
+                <div class="section-header">
+                    <h2 class="section-title">📰 뉴스/공지사항 관리</h2>
+                    <button class="admin-btn admin-btn-success" id="addNewsBtn">뉴스 작성</button>
+                </div>
+                
+                <div class="admin-controls">
+                    <input type="text" class="admin-search" id="newsSearch" placeholder="뉴스 검색">
+                    <select class="admin-filter" id="newsCategoryFilter">
+                        <option value="all">전체 카테고리</option>
+                        <option value="1">공지사항</option>
+                        <option value="2">업데이트</option>
+                        <option value="3">이벤트</option>
+                        <option value="4">점검</option>
+                        <option value="5">개발자노트</option>
+                    </select>
+                    <button class="admin-btn admin-btn-primary" id="newsRefreshBtn">새로고침</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table" id="newsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>제목</th>
+                                <th>카테고리</th>
+                                <th>조회수</th>
+                                <th>중요</th>
+                                <th>상태</th>
+                                <th>작성일</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="newsTableBody">
+                            <tr>
+                                <td colspan="8" class="loading">
+                                    <div class="loading-spinner"></div>
+                                    데이터를 불러오는 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 문의관리 섹션 -->
+            <section id="inquiries" class="admin-section">
+                <div class="section-header">
+                    <h2 class="section-title">📞 문의사항 관리</h2>
+                </div>
+                
+                <div class="admin-controls">
+                    <input type="text" class="admin-search" id="inquirySearch" placeholder="문의사항 검색">
+                    <select class="admin-filter" id="inquiryStatusFilter">
+                        <option value="all">전체 상태</option>
+                        <option value="pending">대기중</option>
+                        <option value="processing">처리중</option>
+                        <option value="resolved">해결완료</option>
+                        <option value="closed">종료</option>
+                    </select>
+                    <select class="admin-filter" id="inquiryTypeFilter">
+                        <option value="all">전체 유형</option>
+                        <option value="general">일반문의</option>
+                        <option value="technical">기술지원</option>
+                        <option value="account">계정문제</option>
+                        <option value="billing">결제문의</option>
+                        <option value="bug">버그신고</option>
+                        <option value="suggestion">건의사항</option>
+                    </select>
+                    <button class="admin-btn admin-btn-primary" id="inquiryRefreshBtn">새로고침</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table" id="inquiriesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>제목</th>
+                                <th>유형</th>
+                                <th>사용자</th>
+                                <th>이메일</th>
+                                <th>상태</th>
+                                <th>접수일</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inquiriesTableBody">
+                            <tr>
+                                <td colspan="8" class="loading">
+                                    <div class="loading-spinner"></div>
+                                    데이터를 불러오는 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- FAQ관리 섹션 -->
+            <section id="faq" class="admin-section">
+                <div class="section-header">
+                    <h2 class="section-title">❓ FAQ 관리</h2>
+                    <button class="admin-btn admin-btn-success" id="addFaqBtn">FAQ 추가</button>
+                </div>
+                
+                <div class="admin-controls">
+                    <input type="text" class="admin-search" id="faqSearch" placeholder="FAQ 검색">
+                    <select class="admin-filter" id="faqCategoryFilter">
+                        <option value="all">전체 카테고리</option>
+                        <option value="general">일반</option>
+                        <option value="account">계정</option>
+                        <option value="game">게임</option>
+                        <option value="technical">기술</option>
+                        <option value="billing">결제</option>
+                    </select>
+                    <select class="admin-filter" id="faqStatusFilter">
+                        <option value="all">전체 상태</option>
+                        <option value="active">활성</option>
+                        <option value="inactive">비활성</option>
+                    </select>
+                    <button class="admin-btn admin-btn-primary" id="faqRefreshBtn">새로고침</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table" id="faqTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>질문</th>
+                                <th>카테고리</th>
+                                <th>조회수</th>
+                                <th>상태</th>
+                                <th>등록일</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="faqTableBody">
+                            <tr>
+                                <td colspan="7" class="loading">
+                                    <div class="loading-spinner"></div>
+                                    데이터를 불러오는 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 게임데이터 섹션 -->
+            <section id="game" class="admin-section">
+                <div class="section-header">
+                    <h2 class="section-title">🎮 게임 데이터 관리</h2>
+                </div>
+
+                <!-- 게임 데이터 탭 -->
+                <div class="game-data-tabs">
+                    <button class="admin-nav-btn active" data-game-tab="characters">캐릭터</button>
+                    <button class="admin-nav-btn" data-game-tab="monsters">몬스터</button>
+                    <button class="admin-nav-btn" data-game-tab="skills">스킬</button>
+                    <button class="admin-nav-btn" data-game-tab="players">플레이어</button>
+                </div>
+
+                <!-- 캐릭터 데이터 -->
+                <div id="characters-tab" class="game-tab-content active">
+                    <div class="admin-controls">
+                        <input type="text" class="admin-search" id="characterSearch" placeholder="캐릭터 검색">
+                        <button class="admin-btn admin-btn-primary" id="characterRefreshBtn">새로고침</button>
+                    </div>
+                    <table class="admin-table" id="charactersTable">
+                        <thead>
+                            <tr>
+                                <th>이름</th>
+                                <th>체력(HP)</th>
+                                <th>공격력(ATK)</th>
+                                <th>운(LUCK)</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="charactersTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- 몬스터 데이터 -->
+                <div id="monsters-tab" class="game-tab-content">
+                    <div class="admin-controls">
+                        <input type="text" class="admin-search" id="monsterSearch" placeholder="몬스터 검색">
+                        <select class="admin-filter" id="monsterSessionFilter">
+                            <option value="all">전체 세션</option>
+                            <option value="Fire">Fire</option>
+                            <option value="Water">Water</option>
+                            <option value="Grass">Grass</option>
+                            <option value="None">None</option>
+                        </select>
+                        <button class="admin-btn admin-btn-primary" id="monsterRefreshBtn">새로고침</button>
+                    </div>
+                    <table class="admin-table" id="monstersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>이름</th>
+                                <th>세션</th>
+                                <th>타입</th>
+                                <th>속성</th>
+                                <th>체력</th>
+                                <th>공격력</th>
+                                <th>특수능력</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monstersTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- 스킬 데이터 -->
+                <div id="skills-tab" class="game-tab-content">
+                    <div class="admin-controls">
+                        <input type="text" class="admin-search" id="skillSearch" placeholder="스킬 검색">
+                        <button class="admin-btn admin-btn-primary" id="skillRefreshBtn">새로고침</button>
+                    </div>
+                    <table class="admin-table" id="skillsTable">
+                        <thead>
+                            <tr>
+                                <th>스킬ID</th>
+                                <th>직업</th>
+                                <th>타입</th>
+                                <th>등급</th>
+                                <th>속성</th>
+                                <th>데미지</th>
+                                <th>상태이상</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="skillsTableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- 플레이어 데이터 -->
+                <div id="players-tab" class="game-tab-content">
+                    <div class="admin-controls">
+                        <input type="text" class="admin-search" id="playerSearch" placeholder="플레이어 검색 (ID, 닉네임, 이메일)">
+                        <select class="admin-filter" id="playerCharacterFilter">
+                            <option value="all">전체 캐릭터</option>
+                            <option value="전사">전사</option>
+                            <option value="도적">도적</option>
+                            <option value="마법사">마법사</option>
+                        </select>
+                        <select class="admin-filter" id="playerSessionFilter">
+                            <option value="all">전체 위치</option>
+                            <option value="Fire">Fire</option>
+                            <option value="Water">Water</option>
+                            <option value="Grass">Grass</option>
+                        </select>
+                        <button class="admin-btn admin-btn-primary" id="playerRefreshBtn">새로고침</button>
+                        <button class="admin-btn admin-btn-success" id="addPlayerBtn">플레이어 추가</button>
+                    </div>
+                    <table class="admin-table" id="playersTable">
+                        <thead>
+                            <tr>
+                                <th>플레이어ID</th>
+                                <th>닉네임</th>
+                                <th>이메일</th>
+                                <th>골드</th>
+                                <th>사용캐릭터</th>
+                                <th>HP (현재/최대)</th>
+                                <th>공격력</th>
+                                <th>운</th>
+                                <th>위치</th>
+                                <th>스테이지</th>
+                                <th>가입일</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="playersTableBody">
+                            <tr>
+                                <td colspan="12" class="loading">
+                                    <div class="loading-spinner"></div>
+                                    데이터를 불러오는 중...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div><!-- players-tab 종료 -->
+        </section><!-- game 섹션 종료 -->
+    </main><!-- main 종료 -->
+    </div><!-- adminMain 종료 -->
+
+    <!-- 편집 모달 -->
+    <div id="editModal" class="admin-modal">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3 id="editModalTitle">데이터 편집</h3>
+                <button class="admin-modal-close" id="editModalClose">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <form id="editForm">
+                    <div id="editFormFields">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                    <div class="form-actions" style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" class="admin-btn admin-btn-secondary" id="editCancelBtn">취소</button>
+                        <button type="submit" class="admin-btn admin-btn-primary" id="editSubmitBtn">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 추가 모달 -->
+    <div id="addModal" class="admin-modal">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3 id="addModalTitle">새 항목 추가</h3>
+                <button class="admin-modal-close" id="addModalClose">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <form id="addForm">
+                    <div id="addFormFields">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                    <div class="form-actions" style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button type="button" class="admin-btn admin-btn-secondary" id="addCancelBtn">취소</button>
+                        <button type="submit" class="admin-btn admin-btn-success" id="addSubmitBtn">추가</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

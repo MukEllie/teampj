@@ -1,0 +1,800 @@
+# 게임 포털 미디어 시스템 완전 가이드
+
+## 목차
+1. [시스템 개요](#시스템-개요)
+2. [파일 구조](#파일-구조)
+3. [핵심 클래스 분석](#핵심-클래스-분석)
+4. [주요 기능별 상세 분석](#주요-기능별-상세-분석)
+5. [API 엔드포인트](#api-엔드포인트)
+6. [사용자 인터페이스](#사용자-인터페이스)
+7. [설치 및 설정](#설치-및-설정)
+8. [사용법](#사용법)
+9. [커스터마이징](#커스터마이징)
+10. [문제 해결](#문제-해결)
+
+## 시스템 개요
+
+### 전체 구조
+이 시스템은 게임 포털의 미디어 관리 시스템으로, 다음과 같은 특징을 가집니다:
+
+- **프론트엔드**: Vanilla JavaScript (ES6+) + HTML5 + CSS3
+- **백엔드**: RESTful API (별도 서버 필요)
+- **미디어 타입**: 이미지, 동영상, YouTube, Vimeo 지원
+- **사용자 기능**: 업로드, 조회, 좋아요, 댓글, 다운로드, 공유
+- **관리자 기능**: 수정, 삭제, 통계 조회
+
+### 핵심 특징
+- 반응형 웹 디자인
+- 무한 스크롤 로딩
+- 모달 기반 상세 보기
+- 파일 및 URL 업로드 지원
+- 실시간 미리보기
+- 사용자 인증 시스템
+
+## 파일 구조
+
+```
+game-portal-media/
+├── media.html              # 메인 HTML 파일
+├── media.js                # 핵심 JavaScript 로직
+├── styles.css              # 스타일시트 (별도 파일)
+├── common-auth.js          # 공통 인증 스크립트
+└── uploads/media/          # 업로드된 미디어 파일 저장소
+```
+
+### media.html
+- 미디어 페이지의 기본 구조
+- 네비게이션, 헤더, 탭, 갤러리 영역 포함
+- 모달 및 동적 콘텐츠를 위한 컨테이너
+
+### media.js
+- `MediaManager` 클래스 중심의 모든 로직
+- 약 1,800줄의 복합적인 기능 구현
+- 업로드, 조회, 편집, 삭제 등 모든 미디어 관련 기능
+
+## 핵심 클래스 분석
+
+### MediaManager 클래스
+
+#### 초기화 및 속성
+```javascript
+class MediaManager {
+    constructor() {
+        this.currentUser = this.getCurrentUser();          // 현재 로그인 사용자
+        this.currentCategory = 'screenshots';              // 현재 선택된 카테고리
+        this.currentPage = 1;                              // 페이지네이션
+        this.itemsPerPage = 12;                            // 페이지당 아이템 수
+        this.mediaItems = [];                              // 전체 미디어 아이템
+        this.userMediaItems = [];                          // 사용자 개인 미디어
+        this.categories = [];                              // 카테고리 목록
+        this.isLoading = false;                            // 로딩 상태
+        this.hasMoreItems = true;                          // 추가 로드 가능 여부
+    }
+}
+```
+
+#### 핵심 메서드
+
+##### 1. 초기화 메서드
+```javascript
+init() {
+    this.setupEventListeners();    // 이벤트 리스너 설정
+    this.loadCategories();          // 카테고리 로드
+    this.loadMediaItems();          // 미디어 아이템 로드
+    this.loadUserMediaItems();      // 사용자 미디어 로드
+    this.initializeAuth();          // 인증 초기화
+}
+```
+
+##### 2. 이벤트 리스너 설정
+```javascript
+setupEventListeners() {
+    // 모바일 토글 메뉴
+    // 미디어 탭 클릭
+    // 동영상 재생 버튼 클릭
+    // 미디어 아이템 클릭
+    // 무한 스크롤 처리
+}
+```
+
+##### 3. 미디어 로딩 시스템
+```javascript
+async loadMediaItems(reset = false) {
+    // API 호출을 통한 미디어 데이터 조회
+    // 페이지네이션 처리
+    // 로딩 상태 관리
+    // 에러 처리
+}
+```
+
+## 주요 기능별 상세 분석
+
+### 1. 미디어 업로드 시스템
+
+#### 업로드 모달 구조
+- **파일 업로드**: 드래그&드롭, 파일 선택
+- **URL 업로드**: YouTube, Vimeo, 직접 링크 지원
+- **메타데이터**: 제목, 설명, 카테고리, 태그
+
+#### 지원 파일 타입
+```javascript
+const allowedTypes = [
+    'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
+    'video/mp4', 'video/webm', 'video/mov'
+];
+const maxFileSize = 50 * 1024 * 1024; // 50MB
+```
+
+#### 업로드 프로세스
+1. 파일 유효성 검사
+2. 미리보기 생성
+3. 메타데이터 입력
+4. 서버 업로드
+5. 응답 처리 및 UI 업데이트
+
+### 2. 미디어 표시 시스템
+
+#### 카테고리별 탭 구조
+- **screenshots**: 스크린샷
+- **videos**: 동영상
+- **artwork**: 아트워크
+- **wallpapers**: 배경화면
+
+#### 미디어 아이템 렌더링
+```javascript
+createMediaElement(item) {
+    // YouTube/Vimeo 특별 처리
+    // 썸네일 생성
+    // 메타데이터 표시
+    // 상호작용 버튼 추가
+}
+```
+
+#### 플랫폼별 처리
+- **YouTube**: 썸네일 자동 생성, embed 플레이어
+- **Vimeo**: embed 플레이어 지원
+- **일반 동영상**: HTML5 video 태그
+- **이미지**: 최적화된 로딩
+
+### 3. 상세 보기 모달
+
+#### 모달 구성 요소
+- 미디어 뷰어 (이미지/동영상/embed)
+- 메타데이터 정보
+- 상호작용 버튼 (좋아요, 다운로드, 공유)
+- 댓글 시스템
+
+#### YouTube 특별 처리
+```javascript
+// 썸네일로 시작하여 클릭 시 플레이어로 전환
+replaceWithYouTubePlayer(embedUrl, youtubeId) {
+    // iframe으로 교체하여 자동 재생
+}
+```
+
+### 4. 사용자 상호작용
+
+#### 좋아요 시스템
+```javascript
+async toggleLike(mediaId, button) {
+    // 로그인 확인
+    // API 호출
+    // UI 실시간 업데이트
+}
+```
+
+#### 댓글 시스템
+- 댓글 작성 (로그인 필수)
+- 댓글 목록 표시
+- 실시간 업데이트
+
+#### 공유 기능
+- 네이티브 공유 API 지원
+- 클립보드 복사 대체
+
+### 5. 개인 미디어 관리
+
+#### 내 미디어 보기
+- 업로드한 미디어만 필터링
+- 편집/삭제 권한 제어
+- 호버 효과로 관리 버튼 표시
+
+#### 편집 기능
+```javascript
+editMedia(mediaId) {
+    // 현재 정보 로드
+    // 편집 폼 표시
+    // 업데이트 처리
+}
+```
+
+#### 삭제 기능
+- 확인 대화상자
+- 서버 삭제 요청
+- UI에서 즉시 제거
+
+### 6. 고급 검색
+
+#### 검색 옵션
+- 키워드 검색 (제목, 설명, 태그)
+- 카테고리 필터
+- 정렬 옵션 (최신순, 인기순, 조회순)
+
+#### 검색 결과 표시
+- 그리드 레이아웃
+- 미리보기 이미지
+- 클릭으로 상세 보기 연결
+
+### 7. 통계 시스템
+
+#### 개인 통계
+- 총 업로드 수
+- 총 조회수
+- 총 좋아요 수
+- 총 다운로드 수
+- 인기 미디어 TOP 5
+
+## API 엔드포인트
+
+### 미디어 관련
+```
+GET    /api/media/categories           # 카테고리 목록
+GET    /api/media/items               # 미디어 아이템 목록
+GET    /api/media/items/:id           # 특정 미디어 상세
+POST   /api/media/upload              # 파일 업로드
+POST   /api/media/upload-url          # URL 업로드
+PUT    /api/media/items/:id           # 미디어 수정
+DELETE /api/media/items/:id           # 미디어 삭제
+GET    /api/media/user/:userId        # 사용자 미디어 목록
+GET    /api/media/download/:id        # 미디어 다운로드
+```
+
+### 상호작용 관련
+```
+POST   /api/media/items/:id/like      # 좋아요 토글
+GET    /api/media/items/:id/comments  # 댓글 목록
+POST   /api/media/items/:id/comments  # 댓글 작성
+```
+
+### 요청/응답 예시
+
+#### 미디어 업로드 (FormData)
+```javascript
+const formData = new FormData();
+formData.append('media', file);
+formData.append('title', title);
+formData.append('description', description);
+formData.append('category_id', categoryId);
+formData.append('tags', JSON.stringify(tags));
+formData.append('user_id', userId);
+```
+
+#### 미디어 아이템 응답
+```json
+{
+  "media_id": 1,
+  "title": "게임 스크린샷",
+  "description": "멋진 게임 장면",
+  "file_name": "screenshot_001.jpg",
+  "file_url": "https://example.com/image.jpg",
+  "file_type": "image",
+  "mime_type": "image/jpeg",
+  "category_code": "screenshots",
+  "category_name": "스크린샷",
+  "upload_date": "2025-01-15T10:30:00Z",
+  "views": 1250,
+  "likes": 45,
+  "downloads": 123,
+  "tags": ["게임", "액션", "스킬"]
+}
+```
+
+## 사용자 인터페이스
+
+### 레이아웃 구조
+```
+Header (네비게이션)
+├── 페이지 헤더 (그라디언트 배경)
+├── 액션 바 (업로드, 검색 등 버튼)
+├── 미디어 탭 (카테고리 전환)
+└── 미디어 갤러리 (그리드 레이아웃)
+```
+
+### 반응형 디자인
+- **데스크톱**: 3-4열 그리드
+- **태블릿**: 2-3열 그리드  
+- **모바일**: 1-2열 그리드
+
+### 주요 UI 컴포넌트
+
+#### 1. 미디어 카드
+- 썸네일 이미지/동영상 미리보기
+- 제목 및 설명
+- 메타정보 (날짜, 조회수, 좋아요 등)
+- 호버 효과 및 애니메이션
+
+#### 2. 업로드 모달
+- 탭 기반 인터페이스 (파일/URL)
+- 드래그&드롭 영역
+- 실시간 미리보기
+- 폼 유효성 검사
+
+#### 3. 상세보기 모달
+- 전체화면 미디어 뷰어
+- 상호작용 버튼
+- 댓글 섹션
+- 닫기 및 ESC 키 지원
+
+## 설치 및 설정
+
+### 1. 필수 요구사항
+- 웹 서버 (Apache, Nginx 등)
+- 백엔드 API 서버
+- 현대적인 웹 브라우저 (ES6+ 지원)
+
+### 2. 파일 배치
+```
+webroot/
+├── media.html
+├── media.js
+├── styles.css
+├── common-auth.js
+└── uploads/
+    └── media/
+```
+
+### 3. 서버 설정
+- API 엔드포인트 구성
+- 파일 업로드 경로 설정
+- CORS 설정 (필요한 경우)
+- 파일 크기 제한 설정
+
+### 4. 데이터베이스 스키마
+```sql
+-- 미디어 테이블
+CREATE TABLE media_items (
+    media_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    file_name VARCHAR(255),
+    file_url VARCHAR(500),
+    file_type VARCHAR(50),
+    mime_type VARCHAR(100),
+    file_size BIGINT,
+    category_id INT,
+    user_id INT,
+    upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    views INT DEFAULT 0,
+    likes INT DEFAULT 0,
+    downloads INT DEFAULT 0
+);
+
+-- 카테고리 테이블
+CREATE TABLE media_categories (
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_code VARCHAR(50) UNIQUE,
+    category_name VARCHAR(100),
+    sort_order INT DEFAULT 0
+);
+
+-- 태그 테이블 (JSON 또는 별도 테이블)
+-- 댓글 테이블
+-- 좋아요 테이블
+```
+
+## 사용법
+
+### 1. 기본 사용법
+
+#### 미디어 보기
+1. 미디어 페이지 접속
+2. 원하는 카테고리 탭 클릭
+3. 미디어 아이템 클릭하여 상세 보기
+
+#### 미디어 업로드 (로그인 필요)
+1. "미디어 업로드" 버튼 클릭
+2. 파일 업로드 또는 URL 입력
+3. 제목, 설명, 카테고리 입력
+4. "업로드" 버튼 클릭
+
+#### 개인 미디어 관리
+1. "내 미디어" 버튼 클릭
+2. 편집/삭제할 미디어에 마우스 호버
+3. 편집 또는 삭제 버튼 클릭
+
+### 2. 고급 기능
+
+#### 고급 검색
+1. "고급 검색" 버튼 클릭
+2. 검색 조건 입력
+3. "검색" 버튼 클릭
+
+#### 통계 조회
+1. "미디어 통계" 버튼 클릭
+2. 개인 업로드 통계 확인
+
+### 3. 키보드 단축키
+- `Ctrl + U`: 미디어 업로드 모달 열기
+- `ESC`: 모달 닫기
+
+## 커스터마이징
+
+### 1. 스타일 수정
+```css
+/* 메인 색상 변경 */
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --accent-color: #ff6b6b;
+}
+
+/* 그리드 레이아웃 조정 */
+.media-gallery {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+```
+
+### 2. 기능 확장
+
+#### 새 카테고리 추가
+1. 데이터베이스에 카테고리 추가
+2. `getCategoryIcon()` 함수에 아이콘 추가
+3. HTML에 새 탭 추가
+
+#### 새 미디어 타입 지원
+1. `validateFile()` 함수에 MIME 타입 추가
+2. `createMediaElement()` 함수에 렌더링 로직 추가
+3. 백엔드 처리 로직 구현
+
+### 3. UI 컴포넌트 수정
+
+#### 미디어 카드 레이아웃 변경
+```javascript
+// media.js의 createMediaElement 함수 수정
+createMediaElement(item) {
+    // 새로운 HTML 구조 구현
+}
+```
+
+#### 모달 크기 및 동작 조정
+```javascript
+// showMediaModal 함수 수정
+showMediaModal(item) {
+    // 모달 크기 및 애니메이션 변경
+}
+```
+
+## 문제 해결
+
+### 1. 일반적인 문제
+
+#### 미디어가 로드되지 않음
+- 네트워크 탭에서 API 응답 확인
+- 서버 로그 확인
+- CORS 설정 점검
+
+#### 업로드가 실패함
+- 파일 크기 제한 확인
+- 서버 디스크 공간 확인
+- 권한 설정 확인
+
+#### 썸네일이 표시되지 않음
+- 이미지 URL 접근성 확인
+- onerror 핸들러 동작 확인
+- 브라우저 개발자 도구 콘솔 확인
+
+### 2. 브라우저 호환성
+
+#### 구형 브라우저 지원
+```javascript
+// 폴리필 추가 (이미 포함됨)
+if (!Element.prototype.matches) {
+    Element.prototype.matches = Element.prototype.msMatchesSelector;
+}
+
+if (!Element.prototype.closest) {
+    // closest 폴리필 구현
+}
+```
+
+#### 모바일 브라우저 이슈
+- 터치 이벤트 처리
+- 뷰포트 설정 확인
+- iOS Safari 특별 처리
+
+### 3. 성능 최적화
+
+#### 이미지 로딩 최적화
+- lazy loading 구현
+- 이미지 압축
+- 썸네일 서비스 사용
+
+#### 무한 스크롤 최적화
+- 디바운싱 적용 (이미 구현됨)
+- 가상 스크롤링 고려
+- 메모리 관리
+
+### 4. 보안 고려사항
+
+#### 파일 업로드 보안
+- 파일 타입 검증 (클라이언트/서버 양쪽)
+- 파일 크기 제한
+- 악성 파일 스캔
+
+#### XSS 방지
+- HTML 이스케이프 처리 (구현됨)
+- CSP 헤더 설정
+- 사용자 입력 검증
+
+### 5. 디버깅 도구
+
+#### 브라우저 개발자 도구 활용
+```javascript
+// 디버깅용 전역 변수
+window.mediaManager = mediaManagerInstance;
+
+// 미디어 정보 확인
+await window.mediaManager.debugMediaItem(mediaId);
+```
+
+#### 로그 레벨 조정
+```javascript
+// 개발 모드 설정
+const DEBUG = true;
+if (DEBUG) {
+    console.log('디버그 정보:', data);
+}
+```
+
+---
+
+## 누락된 주요 기능들
+
+### 1. 추가 유틸리티 함수들
+
+#### 전역 함수들 (media.html 내부)
+```javascript
+// 안전한 미디어 URL 생성
+function getSecureMediaUrl(mediaItem) {
+    // 외부 플랫폼, 외부 URL, 로컬 파일 처리
+}
+
+// YouTube ID 추출 (별도 구현)
+function extractYouTubeId(url) {
+    // 다양한 YouTube URL 패턴 지원
+}
+
+// 카테고리 아이콘 매핑
+function getCategoryIcon(categoryCode) {
+    // 이모지 아이콘 반환
+}
+
+// 미디어 표시 통합 함수
+function displayMedia(mediaItem) {
+    // YouTube, Vimeo, 일반 동영상, 이미지 통합 처리
+}
+
+// 미디어 아이템 HTML 생성
+function createMediaItemHTML(item) {
+    // 완전한 미디어 카드 HTML 구조 생성
+}
+```
+
+#### YouTube/Vimeo URL 변환 함수들
+```javascript
+function convertYouTubeUrl(url) {
+    // YouTube URL을 embed 형태로 변환
+}
+
+function convertVimeoUrl(url) {
+    // Vimeo URL을 embed 형태로 변환
+}
+```
+
+### 2. 모달 시스템 상세 분석
+
+#### 미디어 상세 모달 구조
+```javascript
+// 모달 미디어 콘텐츠 생성
+function createModalMediaContent(mediaItem, isYouTube, isVimeo, isVideo, thumbnailUrl, youtubeId) {
+    // 플랫폼별 상세 뷰어 생성
+}
+
+// YouTube 썸네일을 플레이어로 교체
+function replaceWithYouTubePlayer(embedUrl, youtubeId) {
+    // 클릭 시 iframe으로 동적 교체
+}
+
+// 모달 닫기 시스템
+function closeMediaModal(event) {
+    // 오버레이 클릭, ESC 키 처리
+}
+```
+
+### 3. 알림 및 피드백 시스템
+
+#### 토스트 알림
+```javascript
+// 성공 알림
+function showSuccessNotification(message) {
+    // 우측 상단 슬라이딩 애니메이션
+}
+
+// 에러 알림
+function showErrorNotification(message) {
+    // 에러 스타일링으로 표시
+}
+
+// 에러 모달
+function showErrorModal(message) {
+    // 전체 화면 오버레이 에러 표시
+}
+```
+
+### 4. 상호작용 시스템 확장
+
+#### 추가 상호작용 함수들
+```javascript
+// 좋아요 수 실시간 업데이트
+function updateLikeCount(mediaId, isLiked) {
+    // DOM에서 해당 미디어의 좋아요 수 변경
+}
+
+// 원본 비디오 열기
+function openOriginalVideo(originalUrl) {
+    // 새 창에서 원본 링크 열기
+}
+
+// 미디어 아이템 로딩 (HTML 내부 함수)
+async function loadMediaItems(category = 'screenshots') {
+    // 백업 로딩 시스템
+}
+```
+
+### 5. 페이지 초기화 시스템
+
+#### HTML 내부 초기화 로직
+```javascript
+// 페이지 초기화
+function initializeMediaPage() {
+    // 탭 이벤트, 초기 로딩 처리
+}
+
+// 미디어 모달 열기 (백업 함수)
+async function openMediaModal(mediaId) {
+    // API 호출 및 모달 표시
+}
+```
+
+### 6. 브라우저 호환성 폴리필
+
+#### 레거시 브라우저 지원
+```javascript
+// Element.matches 폴리필
+if (!Element.prototype.matches) {
+    Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+}
+
+// Element.closest 폴리필
+if (!Element.prototype.closest) {
+    Element.prototype.closest = function(s) {
+        // closest 메서드 구현
+    };
+}
+```
+
+### 7. 고급 CSS 애니메이션
+
+#### 키프레임 애니메이션들
+```css
+@keyframes fadeIn { /* 모달 페이드인 */ }
+@keyframes slideUp { /* 모달 슬라이드업 */ }
+@keyframes slideInRight { /* 알림 슬라이드인 */ }
+@keyframes slideOutRight { /* 알림 슬라이드아웃 */ }
+@keyframes spin { /* 로딩 스피너 */ }
+```
+
+#### 고급 호버 효과
+```css
+.media-item::before {
+    /* 호버 시 빛나는 효과 */
+}
+
+.youtube-thumbnail-wrapper:hover .youtube-play-large div {
+    /* YouTube 썸네일 호버 확대 */
+}
+```
+
+### 8. 추가 이벤트 처리
+
+#### 키보드 단축키 시스템
+```javascript
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'u') {
+        // Ctrl+U로 업로드 모달 열기
+    }
+});
+```
+
+#### ESC 키 처리
+```javascript
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        // 모든 모달 닫기
+    }
+});
+```
+
+### 9. 디버깅 및 개발 도구
+
+#### 전역 디버깅 변수
+```javascript
+window.mediaManager = mediaManagerInstance;
+window.toggleLike = function(mediaId, button) { /* 전역 접근 */ };
+window.downloadMedia = function(mediaId) { /* 전역 접근 */ };
+window.shareMedia = function(mediaId) { /* 전역 접근 */ };
+window.addComment = function(mediaId) { /* 전역 접근 */ };
+```
+
+### 10. 성능 최적화 요소
+
+#### 중복 초기화 방지
+```javascript
+if (window.mediaManager) {
+    console.log('미디어 매니저가 이미 초기화되었습니다.');
+    return;
+}
+```
+
+#### 스크롤 디바운싱
+```javascript
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+        this.handleScroll();
+    }, 100);
+});
+```
+
+## 완전한 메서드 목록 (58개)
+
+### MediaManager 클래스 메서드들
+1. **초기화**: `init()`, `getCurrentUser()`, `initializeAuth()`
+2. **이벤트**: `setupEventListeners()`, `handleScroll()`, `switchTab()`
+3. **데이터 로딩**: `loadCategories()`, `loadMediaItems()`, `loadUserMediaItems()`, `loadMoreItems()`
+4. **렌더링**: `renderMediaItems()`, `createMediaElement()`, `renderMyMedia()`, `createMyMediaElement()`
+5. **미디어 상세**: `openMediaDetail()`, `showMediaModal()`, `playVideo()`
+6. **업로드**: `showUploadModal()`, `setupUploadModal()`, `handleFileSelect()`, `validateFile()`, `uploadMediaFile()`, `uploadMediaUrl()`
+7. **상호작용**: `toggleLike()`, `downloadMedia()`, `shareMedia()`, `incrementViews()`, `incrementDownloads()`
+8. **댓글**: `loadComments()`, `renderComments()`, `addComment()`
+9. **개인 미디어**: `showMyMedia()`, `editMedia()`, `updateMedia()`, `deleteMedia()`, `performDelete()`
+10. **검색**: `showAdvancedSearch()`, `performAdvancedSearch()`, `displaySearchResults()`, `createSearchResultElement()`
+11. **통계**: `showMediaStats()`, `loadUserStats()`
+12. **유틸리티**: `formatDate()`, `formatDuration()`, `escapeHtml()`, `showError()`, `showSuccessMessage()`, `getCategoryIcon()`, `extractYouTubeId()`, `handleUrlPreview()`, `isValidUrl()`, `formatFileSize()`
+13. **기타**: `logout()`, `checkUrlParams()`, `openMediaDetailById()`, `setupViewMode()`, `switchViewMode()`, `debugMediaItem()`
+
+## 결론
+
+이 게임 포털 미디어 시스템은 완전한 미디어 관리 솔루션을 제공합니다. 
+
+**전체 시스템 구성:**
+- **MediaManager 클래스**: 58개 메서드로 모든 핵심 기능 구현
+- **HTML 구조**: 완전한 반응형 UI 및 모달 시스템
+- **전역 함수들**: 브라우저 호환성 및 백업 기능
+- **CSS 애니메이션**: 12가지 키프레임 애니메이션
+- **이벤트 시스템**: 키보드 단축키, ESC 처리, 드래그&드롭
+- **성능 최적화**: 디바운싱, 중복 방지, 메모리 관리
+
+**핵심 특징:**
+- 58개 메서드로 구성된 완전한 기능 세트
+- YouTube/Vimeo 등 외부 플랫폼 완벽 지원
+- 파일 업로드 + URL 업로드 듀얼 시스템
+- 실시간 상호작용 (좋아요, 댓글, 공유)
+- 개인 미디어 관리 및 통계 시스템
+- 고급 검색 및 필터링
+- 완전한 모달 기반 UX
+- 반응형 디자인 및 모바일 최적화
+
+이 문서는 1,800줄의 복잡한 코드를 완전히 분석하여 누락 없이 정리한 완전한 가이드입니다.

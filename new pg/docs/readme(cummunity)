@@ -1,0 +1,630 @@
+# 게임 커뮤니티 페이지 README
+
+## 개요
+게임 포털 사이트의 커뮤니티 페이지로, 플레이어들이 소통하고 정보를 공유할 수 있는 종합적인 커뮤니티 기능을 제공합니다.
+
+## 파일 구조
+```
+community.html    # 메인 HTML 구조
+community.js      # JavaScript 로직 및 동적 기능
+styles.css        # CSS 스타일시트 (별도 파일)
+common-auth.js    # 공통 인증 로직 (별도 파일)
+```
+
+## 주요 기능
+
+### 1. 게시판 시스템
+- **카테고리별 게시판**: 인기, 자유, 질문, 공략, 창작, 건의
+- **게시글 작성/조회**: 로그인 사용자 게시글 작성, 모든 사용자 조회 가능
+- **페이지네이션**: 게시글 목록 페이지 단위 표시
+- **필터링**: 카테고리별 게시글 필터링
+
+### 2. 상호작용 기능
+- **좋아요 시스템**: 게시글에 좋아요/취소 기능
+- **댓글 시스템**: 게시글별 댓글 작성/조회
+- **실시간 채팅**: 사이드바 실시간 채팅 기능
+
+### 3. 사이드바 정보
+- **공지사항**: 중요 공지사항 표시
+- **인기 게시글**: 조회수/좋아요 기준 인기 게시글
+- **이달의 회원**: 포인트 기준 상위 회원 랭킹
+- **실시간 채팅**: 로그인 사용자 간 실시간 소통
+
+### 4. 통계 정보
+- **커뮤니티 현황**: 총 회원수, 오늘 접속자, 온라인 사용자
+- **카테고리별 통계**: 각 카테고리별 게시글 수, 신규 게시글 수
+
+## HTML 구조 분석
+
+### 헤더 네비게이션
+```html
+<header class="header">
+    <div class="nav-container">
+        <a href="index.html" class="logo">게임 포털 로고</a>
+        <nav class="nav">게임, 게임정보, 공지사항, 가챠샵, 커뮤니티, 미디어, 고객센터</nav>
+        <div class="auth-buttons">로그인/회원가입 버튼 (동적 업데이트)</div>
+        <button class="mobile-menu-toggle">모바일 메뉴 토글</button>
+    </div>
+</header>
+```
+
+### 메인 컨텐츠 영역
+```html
+<main class="main">
+    <!-- 페이지 헤더: 커뮤니티 제목, 설명, 통계 -->
+    <section class="page-header community-header">
+        <h1>커뮤니티</h1>
+        <p>플레이어들과 함께 소통하고 정보를 공유하세요</p>
+        <div class="community-stats">회원수, 오늘 접속, 온라인 통계</div>
+    </section>
+    
+    <!-- 메인 컨텐츠 -->
+    <section class="content-section">
+        <div class="community-layout">
+            <!-- 메인 컨텐츠 영역 -->
+            <div class="main-content">
+                <!-- 게시판 카테고리 그리드 -->
+                <div class="board-categories">
+                    <div class="category-grid">카테고리별 게시판 카드</div>
+                </div>
+                
+                <!-- 최신 게시글 목록 -->
+                <div class="recent-posts">
+                    <div class="section-header">
+                        <h3>최신 게시글</h3>
+                        <div class="board-controls">
+                            <select id="categoryFilter">카테고리 필터</select>
+                            <button id="writeBtn">글쓰기</button>
+                        </div>
+                    </div>
+                    <div class="post-list">게시글 목록</div>
+                    <div class="pagination">페이지네이션</div>
+                </div>
+            </div>
+            
+            <!-- 사이드바 -->
+            <aside class="community-sidebar">
+                <div class="sidebar-section">공지사항</div>
+                <div class="sidebar-section">인기 게시글</div>
+                <div class="sidebar-section">이달의 회원</div>
+                <div class="sidebar-section">실시간 채팅</div>
+            </aside>
+        </div>
+    </section>
+</main>
+```
+
+### 모달 창
+```html
+<!-- 글쓰기 모달 -->
+<div id="writeModal" class="modal">
+    <div class="modal-content">
+        <form id="writeForm">
+            <select id="writeCategory">카테고리 선택</select>
+            <input id="writeTitle" type="text">제목</input>
+            <textarea id="writeContent">내용</textarea>
+            <button type="submit">작성하기</button>
+        </form>
+    </div>
+</div>
+
+<!-- 게시글 상세 모달 -->
+<div id="postDetailModal" class="modal">
+    <div class="modal-content large">
+        <div class="post-info">작성자, 날짜, 조회수, 좋아요</div>
+        <div class="post-content">게시글 내용</div>
+        <div class="post-actions">좋아요 버튼</div>
+        <div class="comments-section">
+            <div class="comment-write">댓글 작성 폼</div>
+            <div class="comments-list">댓글 목록</div>
+        </div>
+    </div>
+</div>
+```
+
+## JavaScript 기능 분석
+
+### 전역 변수
+```javascript
+let currentUser = null;        // 현재 로그인 사용자
+let currentPage = 1;           // 현재 페이지
+let currentCategory = '전체';   // 현재 선택된 카테고리
+let currentPostId = null;      // 현재 열린 게시글 ID
+let totalPages = 1;            // 총 페이지 수
+let totalPosts = 0;            // 총 게시글 수
+```
+
+### 핵심 함수들
+
+#### 페이지 초기화
+```javascript
+async function initializePage() {
+    // 사용자 정보 확인
+    currentUser = getCurrentUser();
+    
+    // 이벤트 리스너 설정
+    setupEventListeners();
+    
+    // 데이터 로드
+    await loadCategoryStats();    // 카테고리 통계
+    await loadPosts();            // 게시글 목록
+    await loadPopularPosts();     // 인기 게시글
+    
+    // 채팅 활성화 (로그인 시)
+    if (currentUser) enableChat();
+}
+```
+
+#### 게시글 관련 함수
+```javascript
+// 게시글 목록 로드
+async function loadPosts() {
+    const response = await fetch(`/api/posts?category=${currentCategory}&page=${currentPage}&limit=10`);
+    const result = await response.json();
+    // 게시글 목록 렌더링 및 페이지네이션 생성
+}
+
+// 게시글 작성
+async function submitPost(e) {
+    e.preventDefault();
+    const postData = {
+        user_id: currentUser.id,
+        category: writeCategory.value,
+        title: writeTitle.value,
+        content: writeContent.value
+    };
+    // API 호출로 게시글 저장
+}
+
+// 게시글 상세 보기
+async function openPostDetail(postId) {
+    const response = await fetch(`/api/posts/${postId}`);
+    const post = await response.json();
+    // 모달에 게시글 정보 표시
+}
+```
+
+#### 상호작용 함수
+```javascript
+// 좋아요 토글
+async function toggleLike() {
+    const response = await fetch(`/api/posts/${currentPostId}/like`, {
+        method: 'POST',
+        body: JSON.stringify({ user_id: currentUser.id })
+    });
+    // 좋아요 상태 업데이트
+}
+
+// 댓글 작성
+async function submitComment() {
+    const response = await fetch(`/api/posts/${currentPostId}/comments`, {
+        method: 'POST',
+        body: JSON.stringify({ user_id: currentUser.id, content: content })
+    });
+    // 댓글 목록 새로고침
+}
+```
+
+#### 유틸리티 함수
+```javascript
+// HTML 이스케이프
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// 시간 경과 표시
+function getTimeAgo(date) {
+    const diff = new Date() - date;
+    // "방금 전", "5분 전", "2시간 전" 등 반환
+}
+
+// 날짜 포맷팅
+function formatDate(date) {
+    return date.toLocaleDateString('ko-KR', {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+// 컨텐츠 포맷팅 (줄바꿈 처리)
+function formatContent(content) {
+    return escapeHtml(content).replace(/\n/g, '<br>');
+}
+```
+
+## API 엔드포인트
+
+### 게시글 관련
+- `GET /api/posts?category={category}&page={page}&limit={limit}` - 게시글 목록 조회
+- `GET /api/posts/{postId}` - 특정 게시글 조회
+- `POST /api/posts` - 새 게시글 작성
+- `GET /api/posts/popular?limit={limit}` - 인기 게시글 조회
+- `GET /api/posts/stats/categories` - 카테고리별 통계
+
+### 좋아요 관련
+- `POST /api/posts/{postId}/like` - 좋아요 토글
+- `GET /api/posts/{postId}/like/status?user_id={userId}` - 좋아요 상태 확인
+
+### 댓글 관련
+- `GET /api/posts/{postId}/comments` - 댓글 목록 조회
+- `POST /api/posts/{postId}/comments` - 새 댓글 작성
+
+## 주요 CSS 클래스
+
+### 레이아웃 클래스
+- `.header` - 헤더 스타일
+- `.nav-container` - 네비게이션 컨테이너
+- `.community-layout` - 커뮤니티 메인 레이아웃 (메인 + 사이드바)
+- `.main-content` - 메인 컨텐츠 영역
+- `.community-sidebar` - 사이드바 영역
+
+### 컴포넌트 클래스
+- `.category-grid` - 카테고리 그리드 레이아웃
+- `.category-card` - 개별 카테고리 카드
+- `.post-list` - 게시글 목록
+- `.post-item` - 개별 게시글 아이템
+- `.modal` - 모달 창 기본 스타일
+- `.sidebar-section` - 사이드바 섹션
+
+### 상태 클래스
+- `.active` - 활성 상태
+- `.hot` - 인기 게시글 표시
+- `.popular` - 인기 카테고리 표시
+- `.disabled` - 비활성 상태
+- `.scrolled` - 스크롤 시 헤더 변화
+
+## 보안 고려사항
+
+### XSS 방지
+```javascript
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+```
+
+### 인증 확인
+```javascript
+if (!currentUser) {
+    alert('로그인이 필요합니다.');
+    return;
+}
+```
+
+## 반응형 디자인
+- 모바일 메뉴 토글 기능
+- 미디어 쿼리를 통한 반응형 레이아웃
+- 터치 기기 대응 인터페이스
+
+## 이벤트 리스너 상세
+
+### 메인 이벤트 리스너
+```javascript
+function setupEventListeners() {
+    // 모바일 메뉴 토글
+    mobileToggle.addEventListener('click', function() {
+        this.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+    
+    // 글쓰기 버튼
+    writeBtn.addEventListener('click', openWriteModal);
+    
+    // 카테고리 필터
+    categoryFilter.addEventListener('change', function() {
+        currentCategory = this.value;
+        currentPage = 1;
+        loadPosts();
+    });
+    
+    // 스크롤 효과 (헤더 변화)
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 100) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+}
+```
+
+### 모달 이벤트
+```javascript
+// 글쓰기 모달 관련
+writeModalClose.addEventListener('click', closeWriteModal);
+writeCancelBtn.addEventListener('click', closeWriteModal);
+writeForm.addEventListener('submit', submitPost);
+
+// 게시글 상세 모달 관련
+postDetailClose.addEventListener('click', closePostDetailModal);
+likeBtn.addEventListener('click', toggleLike);
+commentSubmitBtn.addEventListener('click', submitComment);
+
+// 모달 외부 클릭 시 닫기
+window.addEventListener('click', function(e) {
+    if (e.target === writeModal) closeWriteModal();
+    if (e.target === postDetailModal) closePostDetailModal();
+});
+```
+
+### 채팅 이벤트
+```javascript
+// 엔터키로 메시지 전송
+chatInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') sendChatMessage();
+});
+
+// 채팅 전송 버튼
+chatSendBtn.addEventListener('click', sendChatMessage);
+```
+
+## 데이터 구조
+
+### 게시글 데이터 구조
+```javascript
+const postData = {
+    post_id: number,
+    user_id: number,
+    category: string,
+    title: string,
+    content: string,
+    nickname: string,
+    views: number,
+    likes: number,
+    comment_count: number,
+    created_at: timestamp
+};
+```
+
+### 댓글 데이터 구조
+```javascript
+const commentData = {
+    comment_id: number,
+    post_id: number,
+    user_id: number,
+    content: string,
+    nickname: string,
+    created_at: timestamp
+};
+```
+
+### 카테고리 통계 구조
+```javascript
+const categoryStats = {
+    category: string,
+    post_count: number,
+    new_posts: number
+};
+```
+
+## 인라인 HTML 생성 로직
+
+### 카테고리 카드 생성
+```javascript
+categoryGrid.innerHTML = categories.map(category => {
+    const stat = stats.find(s => s.category === category.name) || { post_count: 0, new_posts: 0 };
+    const isPopular = category.name === '인기';
+    
+    return `
+        <div class="category-card ${isPopular ? 'popular' : ''}" data-category="${category.name}">
+            <div class="category-icon">${category.icon}</div>
+            <div class="category-info">
+                <h4>${category.name} 게시판</h4>
+                <p class="category-desc">${category.desc}</p>
+                <div class="category-stats">
+                    <span class="post-count">${stat.post_count}개 글</span>
+                    <span class="new-posts">+${stat.new_posts} 새글</span>
+                </div>
+            </div>
+        </div>
+    `;
+}).join('');
+```
+
+### 게시글 목록 생성
+```javascript
+postList.innerHTML = posts.map(post => {
+    const isHot = (post.likes || 0) > 10 || (post.views || 0) > 100;
+    const timeAgo = getTimeAgo(new Date(post.created_at));
+    const commentCount = post.comment_count || 0;
+    
+    return `
+        <div class="post-item ${isHot ? 'hot' : ''}" data-post-id="${post.post_id}">
+            ${isHot ? '<div class="post-badge">HOT</div>' : ''}
+            <div class="post-category">${post.category || '일반'}</div>
+            <div class="post-content">
+                <h4 class="post-title">${escapeHtml(post.title || '')}</h4>
+                <div class="post-meta">
+                    <span class="author">${escapeHtml(post.nickname || '익명')}</span>
+                    <span class="date">${timeAgo}</span>
+                    <span class="views">◉ ${post.views || 0}</span>
+                    <span class="comments">💬 ${commentCount}</span>
+                    <span class="likes">❤️ ${post.likes || 0}</span>
+                </div>
+            </div>
+        </div>
+    `;
+}).join('');
+```
+
+### 페이지네이션 생성
+```javascript
+function generatePagination() {
+    let paginationHTML = '';
+    
+    // 이전 버튼
+    if (currentPage > 1) {
+        paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">‹ 이전</button>`;
+    } else {
+        paginationHTML += `<button class="page-btn disabled">‹ 이전</button>`;
+    }
+    
+    // 페이지 번호들
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, startPage + 4);
+    
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+            paginationHTML += `<button class="page-btn active">${i}</button>`;
+        } else {
+            paginationHTML += `<button class="page-btn" onclick="changePage(${i})">${i}</button>`;
+        }
+    }
+    
+    // 다음 버튼
+    if (currentPage < totalPages) {
+        paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">다음 ›</button>`;
+    } else {
+        paginationHTML += `<button class="page-btn disabled">다음 ›</button>`;
+    }
+    
+    pagination.innerHTML = paginationHTML;
+}
+```
+
+## 에러 처리
+
+### API 호출 에러 처리
+```javascript
+try {
+    const response = await fetch('/api/posts');
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+} catch (error) {
+    console.error('API 호출 실패:', error);
+    // 사용자에게 에러 메시지 표시
+    postList.innerHTML = '<div class="error">게시글을 불러오는데 실패했습니다.</div>';
+}
+```
+
+### 폼 검증
+```javascript
+// 게시글 작성 시 검증
+if (!category || !title || !content) {
+    alert('모든 필드를 입력해주세요.');
+    return;
+}
+
+// 댓글 작성 시 검증
+if (!content.trim()) {
+    alert('댓글 내용을 입력해주세요.');
+    return;
+}
+```
+
+## 특수 기능 상세
+
+### HOT 게시글 판정 로직
+```javascript
+const isHot = (post.likes || 0) > 10 || (post.views || 0) > 100;
+```
+
+### 실시간 채팅 메시지 추가
+```javascript
+function sendChatMessage() {
+    const messageElement = document.createElement('div');
+    messageElement.className = 'chat-message';
+    messageElement.innerHTML = `
+        <span class="chat-user">${currentUser.nickname}:</span>
+        <span class="chat-text">${escapeHtml(message)}</span>
+    `;
+    
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // 자동 스크롤
+}
+```
+
+### 좋아요 상태 UI 업데이트
+```javascript
+if (result.liked) {
+    likeIcon.textContent = '💖';
+    likeText.textContent = '좋아요 취소';
+} else {
+    likeIcon.textContent = '❤️';
+    likeText.textContent = '좋아요';
+}
+```
+
+## 하드코딩된 데이터
+
+### 고정 공지사항
+```html
+<div class="notice-list">
+    <div class="notice-item">
+        <span class="notice-title">[필독] 커뮤니티 이용 규칙</span>
+        <span class="notice-date">08.20</span>
+    </div>
+    <!-- 추가 공지사항들 -->
+</div>
+```
+
+### 고정 랭킹 데이터
+```html
+<div class="popular-members">
+    <div class="member-item">
+        <div class="member-rank">1</div>
+        <div class="member-info">
+            <span class="member-name">드래곤마스터</span>
+            <span class="member-points">1,234 포인트</span>
+        </div>
+    </div>
+    <!-- 추가 회원들 -->
+</div>
+```
+
+### 기본 채팅 메시지
+```html
+<div class="chat-messages">
+    <div class="chat-message">
+        <span class="chat-user">플레이어A:</span>
+        <span class="chat-text">누구 같이 레이드 할 사람?</span>
+    </div>
+    <!-- 추가 메시지들 -->
+</div>
+```
+
+## 설치 및 사용법
+
+### 1. 파일 구조 설정
+```
+project/
+├── community.html
+├── community.js
+├── styles.css
+├── common-auth.js
+└── api/ (백엔드 API 서버)
+```
+
+### 2. 필수 의존성
+- 백엔드 API 서버 (Node.js, Express 등)
+- 데이터베이스 (MySQL, PostgreSQL 등)
+- 사용자 인증 시스템
+
+### 3. 환경 설정
+1. API 서버 엔드포인트 설정
+2. 데이터베이스 연결 설정
+3. 사용자 인증 로직 구현
+
+### 4. 실행
+1. 웹 서버에 파일 업로드
+2. API 서버 실행
+3. 브라우저에서 community.html 접속
+
+## 확장 가능한 기능
+- 게시글 검색 기능
+- 이미지/파일 첨부 기능
+- 멘션(@사용자) 기능
+- 게시글 북마크 기능
+- 실시간 알림 시스템
+- 관리자 기능 (게시글/댓글 관리)
+
+## 주의사항
+- 모든 사용자 입력은 서버사이드에서 검증 필요
+- 파일 업로드 시 보안 검사 필수
+- 스팸 방지 메커니즘 구현 권장
+- 정기적인 데이터베이스 백업 필요

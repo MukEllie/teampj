@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 - 게임 포털</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="common-auth.js"></script>
+    <style>
+        /* 공지사항 전용 스타일 */
+        .news-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .news-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            border-bottom: 2px solid #eee;
+        }
+
+        .news-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .news-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .news-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .news-grid {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: 1fr;
+        }
+
+        .news-item {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .news-item.important {
+            border-left: 5px solid #e74c3c;
+        }
+
+        .news-item.important .news-meta {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .news-meta {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .news-category {
+            background: #3498db;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .news-category.notice {
+            background: #e74c3c;
+        }
+
+        .news-category.update {
+            background: #27ae60;
+        }
+
+        .news-category.event {
+            background: #f39c12;
+        }
+
+        .news-category.maintenance {
+            background: #95a5a6;
+        }
+
+        .news-category.dev {
+            background: #9b59b6;
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-item-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .news-item.important .news-item-title {
+            color: #e74c3c;
+        }
+
+        .news-preview {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .news-stats {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        .news-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .important-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+
+        .no-news {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 3rem 0;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            color: #666;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .pagination-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .news-container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            .news-title {
+                font-size: 2rem;
+            }
+
+            .news-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .news-meta {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .news-item-title {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 네비게이션 -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-text">GAME PORTAL</span>
+            </a>
+            
+            <nav class="nav">
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="game.html" class="nav-link">게임</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="game-info.html" class="nav-link">게임정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="news.html" class="nav-link active">공지사항</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="gacha-shop.html" class="nav-link">가챠샵</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="community.html" class="nav-link">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="media.html" class="nav-link">미디어</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="customer-service.html" class="nav-link">고객센터</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="auth-buttons">
+                <a href="/login" class="auth-btn login-btn" id="loginBtn">로그인</a>
+                <a href="/signup" class="auth-btn signup-btn" id="signupBtn">회원가입</a>
+            </div>
+
+            <button class="mobile-menu-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main">
+        <div class="news-container">
+            <!-- 헤더 -->
+            <div class="news-header">
+                <h1 class="news-title">공지사항</h1>
+                <p class="news-subtitle">게임 관련 최신 소식과 중요 공지사항을 확인하세요</p>
+            </div>
+
+            <!-- 필터 -->
+            <div class="news-filters">
+                <div class="filter-item">
+                    <label for="categoryFilter">카테고리:</label>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="all">전체</option>
+                        <option value="1">공지사항</option>
+                        <option value="2">업데이트</option>
+                        <option value="3">이벤트</option>
+                        <option value="4">점검</option>
+                        <option value="5">개발자노트</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label for="sortFilter">정렬:</label>
+                    <select id="sortFilter" class="filter-select">
+                        <option value="latest">최신순</option>
+                        <option value="views">조회수순</option>
+                        <option value="important">중요 공지 우선</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 로딩 상태 -->
+            <div id="newsLoading" class="loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>공지사항을 불러오는 중...</p>
+            </div>
+
+            <!-- 뉴스 목록 -->
+            <div class="news-grid" id="newsGrid">
+                <!-- 뉴스 항목들이 동적으로 추가됨 -->
+            </div>
+
+            <!-- 데이터 없음 상태 -->
+            <div id="noNews" class="no-news" style="display: none;">
+                <h3>등록된 공지사항이 없습니다</h3>
+                <p>관리자가 새로운 소식을 준비하고 있습니다.</p>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div class="pagination" id="pagination">
+                <!-- 페이지 버튼들이 동적으로 추가됨 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>게임 포털</h4>
+                    <p>최고의 게임 경험을 제공합니다</p>
+                </div>
+                <div class="footer-section">
+                    <h4>지원</h4>
+                    <a href="#">FAQ</a>
+                    <a href="#">고객센터</a>
+                    <a href="#">버그 신고</a>
+                </div>
+                <div class="footer-section">
+                    <h4>커뮤니티</h4>
+                    <a href="#">공식 포럼</a>
+                    <a href="#">디스코드</a>
+                    <a href="#">유튜브</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Game Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 전역 변수
+        let currentPage = 1;
+        let currentCategory = 'all';
+        let currentSort = 'latest';
+        const itemsPerPage = 10;
+
+        // DOM 요소
+        const newsGrid = document.getElementById('newsGrid');
+        const newsLoading = document.getElementById('newsLoading');
+        const noNews = document.getElementById('noNews');
+        const pagination = document.getElementById('pagination');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const sortFilter = document.getElementById('sortFilter');
+
+        // 카테고리 매핑
+        const categoryNames = {
+            '1': '공지사항',
+            '2': '업데이트', 
+            '3': '이벤트',
+            '4': '점검',
+            '5': '개발자노트'
+        };
+
+        const categoryClasses = {
+            '1': 'notice',
+            '2': 'update',
+            '3': 'event', 
+            '4': 'maintenance',
+            '5': 'dev'
+        };
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            loadNews();
+        });
+
+        // 이벤트 리스너 설정
+        function setupEventListeners() {
+            // 모바일 메뉴 토글
+            const mobileToggle = document.getElementById('mobileToggle');
+            const navMenu = document.getElementById('navMenu');
+
+            if (mobileToggle && navMenu) {
+                mobileToggle.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+            }
+
+            // 필터 변경 이벤트
+            categoryFilter.addEventListener('change', function() {
+                currentCategory = this.value;
+                currentPage = 1;
+                loadNews();
+            });
+
+            sortFilter.addEventListener('change', function() {
+                currentSort = this.value;
+                currentPage = 1;
+                loadNews();
+            });
+
+            // 스크롤 헤더 효과
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('.header');
+                if (header) {
+                    if (window.scrollY > 100) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                }
+            });
+        }
+
+        // 뉴스 로드
+        async function loadNews() {
+            showLoading(true);
+
+            try {
+                let url = `/api/admin/news?page=${currentPage}&limit=${itemsPerPage}`;
+                
+                if (currentCategory !== 'all') {
+                    url += `&category=${currentCategory}`;
+                }
+
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('뉴스 데이터를 불러올 수 없습니다');
+                }
+
+                const newsData = await response.json();
+                
+                // 정렬 적용
+                let sortedNews = [...newsData];
+                switch (currentSort) {
+                    case 'views':
+                        sortedNews.sort((a, b) => (b.views || 0) - (a.views || 0));
+                        break;
+                    case 'important':
+                        sortedNews.sort((a, b) => {
+                            if (a.is_important && !b.is_important) return -1;
+                            if (!a.is_important && b.is_important) return 1;
+                            return new Date(b.created_at) - new Date(a.created_at);
+                        });
+                        break;
+                    default: // latest
+                        sortedNews.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                }
+
+                renderNews(sortedNews);
+                renderPagination(sortedNews.length);
+
+            } catch (error) {
+                console.error('뉴스 로드 오류:', error);
+                showError('뉴스를 불러올 수 없습니다.');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 뉴스 렌더링
+        function renderNews(newsData) {
+            if (!newsData || newsData.length === 0) {
+                showNoNews(true);
+                return;
+            }
+
+            showNoNews(false);
+
+            // 게시된 뉴스만 필터링
+            const publishedNews = newsData.filter(news => news.is_published);
+
+            if (publishedNews.length === 0) {
+                showNoNews(true);
+                return;
+            }
+
+            const newsHTML = publishedNews.map(news => {
+                const categoryClass = categoryClasses[news.category_id] || '';
+                const categoryName = categoryNames[news.category_id] || '기타';
+                const isImportant = news.is_important;
+                const createdDate = new Date(news.created_at);
+                const formattedDate = createdDate.toLocaleDateString('ko-KR');
+                
+                // 내용 미리보기 생성 (HTML 태그 제거)
+                const preview = stripHtml(news.content).substring(0, 150) + '...';
+
+                return `
+                    <article class="news-item ${isImportant ? 'important' : ''}" onclick="viewNews(${news.news_id})">
+                        <div class="news-meta">
+                            <div class="news-category ${categoryClass}">
+                                ${categoryName}
+                                ${isImportant ? '<span class="important-badge">중요</span>' : ''}
+                            </div>
+                            <span class="news-date">${formattedDate}</span>
+                        </div>
+                        <div class="news-content">
+                            <h2 class="news-item-title">${escapeHtml(news.title)}</h2>
+                            <p class="news-preview">${escapeHtml(preview)}</p>
+                            <div class="news-stats">
+                                <span class="news-stat">
+                                    👁 조회수 ${news.views || 0}
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            newsGrid.innerHTML = newsHTML;
+        }
+
+        // 페이지네이션 렌더링
+        function renderPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '';
+
+            // 이전 페이지
+            if (currentPage > 1) {
+                paginationHTML += `<a href="#" class="pagination-btn" onclick="changePage(${currentPage - 1})">이전</a>`;
+            }
+
+            // 페이지 번호들
+            for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+                paginationHTML += `<a href="#" class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</a>`;
+            }
+
+            // 다음 페이지
+            if (currentPage < totalPages) {
+                paginationHTML += `<a href="#" class="pagination-btn" onclick="changePage(${currentPage + 1})">다음</a>`;
+            }
+
+            pagination.innerHTML = paginationHTML;
+        }
+
+        // 페이지 변경
+        function changePage(page) {
+            currentPage = page;
+            loadNews();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 뉴스 상세보기
+        function viewNews(newsId) {
+            // 조회수 증가
+            fetch(`/api/admin/news/${newsId}/view`, { method: 'POST' })
+                .catch(error => console.log('조회수 업데이트 실패:', error));
+
+            // 상세페이지로 이동하거나 모달 표시
+            // 현재는 간단히 알림으로 표시
+            alert(`뉴스 상세보기: ${newsId}\n(상세페이지 구현 예정)`);
+        }
+
+        // 유틸리티 함수들
+        function showLoading(show) {
+            newsLoading.style.display = show ? 'block' : 'none';
+            newsGrid.style.display = show ? 'none' : 'grid';
+        }
+
+        function showNoNews(show) {
+            noNews.style.display = show ? 'block' : 'none';
+            newsGrid.style.display = show ? 'none' : 'grid';
+        }
+
+        function showError(message) {
+            newsGrid.innerHTML = `
+                <div class="no-news">
+                    <h3>오류가 발생했습니다</h3>
+                    <p>${message}</p>
+                    <button onclick="loadNews()" class="filter-select" style="margin-top: 1rem;">다시 시도</button>
+                </div>
+            `;
+        }
+
+        function stripHtml(html) {
+            const tmp = document.createElement('DIV');
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || '';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

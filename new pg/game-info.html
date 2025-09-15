@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게임정보 - 게임 포털</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="common-auth.js"></script>
+</head>
+<body>
+    <!-- 헤더 네비게이션 -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🎮</span>
+                <span class="logo-text">GAME PORTAL</span>
+            </a>
+            
+            <nav class="nav">
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="game.html" class="nav-link">게임</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="game-info.html" class="nav-link">게임정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="news.html" class="nav-link">공지사항</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="gacha-shop.html" class="nav-link">가챠샵</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="community.html" class="nav-link">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="media.html" class="nav-link">미디어</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="customer-service.html" class="nav-link">고객센터</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="auth-buttons">
+                <a href="#" class="auth-btn login-btn" id="loginBtn">로그인</a>
+                <a href="#" class="auth-btn signup-btn" id="signupBtn">회원가입</a>
+            </div>
+
+            <button class="mobile-menu-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main">
+        <!-- 페이지 헤더 -->
+        <section class="page-header">
+            <div class="container">
+                <div class="page-header-content">
+                    <h1 class="page-title">게임 정보</h1>
+                    <p class="page-subtitle">EPIC ADVENTURE에 대한 모든 정보를 확인하세요</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 게임 정보 섹션 -->
+        <section class="content-section">
+            <div class="container">
+                <!-- 게임 개요 -->
+                <div class="game-overview">
+                    <div class="game-overview-content">
+                        <div class="game-cover">
+                            <div class="game-image-placeholder">
+                                <span class="placeholder-icon">🎮</span>
+                                <p>게임 커버 이미지</p>
+                            </div>
+                        </div>
+                        <div class="game-details">
+                            <h2>EPIC ADVENTURE</h2>
+                            <div class="game-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label">장르:</span>
+                                    <span class="meta-value">RPG, 액션</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">플랫폼:</span>
+                                    <span class="meta-value">PC, Mobile</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">출시일:</span>
+                                    <span class="meta-value">2024년 12월</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">개발사:</span>
+                                    <span class="meta-value">Game Portal Studio</span>
+                                </div>
+                            </div>
+                            <div class="rating-section">
+                                <div class="rating">
+                                    <span class="rating-score">4.8</span>
+                                    <div class="stars">★★★★★</div>
+                                    <span class="rating-count">(50,234 리뷰)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 게임 설명 -->
+                <div class="game-description-section">
+                    <h3>게임 소개</h3>
+                    <div class="description-content">
+                        <p>환상의 세계에서 펼쳐지는 대서사시! EPIC ADVENTURE는 플레이어가 영웅이 되어 다양한 모험을 떠나는 RPG 게임입니다.</p>
+                        <p>독창적인 스토리라인과 아름다운 그래픽, 그리고 다양한 캐릭터들과 함께 잊을 수 없는 모험을 경험하세요.</p>
+                    </div>
+                </div>
+
+                <!-- 게임 특징 -->
+                <div class="game-features">
+                    <h3>주요 특징</h3>
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">⚔️</div>
+                            <h4>액션 전투</h4>
+                            <p>실시간 액션 전투 시스템으로 박진감 넘치는 배틀을 즐기세요</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🏰</div>
+                            <h4>오픈 월드</h4>
+                            <p>광활한 오픈 월드를 자유롭게 탐험하고 숨겨진 비밀을 발견하세요</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">👥</div>
+                            <h4>멀티플레이</h4>
+                            <p>친구들과 함께 협력하여 강력한 보스를 물리치세요</p>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🎨</div>
+                            <h4>커스터마이징</h4>
+                            <p>캐릭터와 장비를 자유롭게 커스터마이징하세요</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 시스템 요구사항 -->
+                <div class="system-requirements">
+                    <h3>시스템 요구사항</h3>
+                    <div class="requirements-grid">
+                        <div class="requirement-card">
+                            <h4>최소 사양</h4>
+                            <ul>
+                                <li><strong>OS:</strong> Windows 10 64-bit</li>
+                                <li><strong>프로세서:</strong> Intel Core i5-8400 / AMD Ryzen 5 2600</li>
+                                <li><strong>메모리:</strong> 8 GB RAM</li>
+                                <li><strong>그래픽:</strong> GeForce GTX 1060 6GB / Radeon RX 580</li>
+                                <li><strong>저장공간:</strong> 50 GB 사용 가능 공간</li>
+                            </ul>
+                        </div>
+                        <div class="requirement-card recommended">
+                            <h4>권장 사양</h4>
+                            <ul>
+                                <li><strong>OS:</strong> Windows 11 64-bit</li>
+                                <li><strong>프로세서:</strong> Intel Core i7-10700K / AMD Ryzen 7 3700X</li>
+                                <li><strong>메모리:</strong> 16 GB RAM</li>
+                                <li><strong>그래픽:</strong> GeForce RTX 3070 / Radeon RX 6800 XT</li>
+                                <li><strong>저장공간:</strong> 50 GB SSD 공간</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 최신 업데이트 -->
+                <div class="latest-updates">
+                    <h3>최신 업데이트</h3>
+                    <div class="update-list">
+                        <div class="update-item">
+                            <div class="update-date">2025.08.20</div>
+                            <div class="update-content">
+                                <h5>v1.2.5 업데이트</h5>
+                                <ul>
+                                    <li>새로운 던전 '드래곤의 성' 추가</li>
+                                    <li>캐릭터 밸런싱 조정</li>
+                                    <li>버그 수정 및 성능 최적화</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="update-item">
+                            <div class="update-date">2025.08.10</div>
+                            <div class="update-content">
+                                <h5>v1.2.0 대형 업데이트</h5>
+                                <ul>
+                                    <li>새로운 지역 '얼음 왕국' 오픈</li>
+                                    <li>전설급 장비 시스템 도입</li>
+                                    <li>길드 시스템 개선</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>게임 포털</h4>
+                    <p>최고의 게임 경험을 제공합니다</p>
+                </div>
+                <div class="footer-section">
+                    <h4>지원</h4>
+                    <a href="#">FAQ</a>
+                    <a href="customer-service.html">고객센터</a>
+                    <a href="#">버그 신고</a>
+                </div>
+                <div class="footer-section">
+                    <h4>커뮤니티</h4>
+                    <a href="community.html">공식 포럼</a>
+                    <a href="#">디스코드</a>
+                    <a href="#">유튜브</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Game Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 모바일 메뉴 토글
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        mobileToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // 인증 버튼 클릭 이벤트
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+
+        loginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('로그인 페이지로 이동합니다.\n(현재는 데모 버전입니다)');
+        });
+
+        signupBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('회원가입 페이지로 이동합니다.\n(현재는 데모 버전입니다)');
+        });
+
+        // 스크롤 효과
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
