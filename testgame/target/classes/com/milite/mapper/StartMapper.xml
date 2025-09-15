@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.milite.mapper.StartMapper">
+
+  <!-- 사용자 존재 여부 확인 -->
+  <select id="existsUserId" resultType="int">
+    SELECT COUNT(1)
+    FROM UserDB
+    WHERE ID = #{userId}
+  </select>
+
+  <!-- 플레이어 신규 생성 -->
+  <insert id="insertPlayerBaseStats">
+    INSERT INTO PlayerDB
+      (Player_ID, Using_Character, curr_hp, max_hp, atk, luck)
+    VALUES
+      (#{playerId}, #{name}, #{hp}, #{hp}, #{atk}, #{luck})
+  </insert>
+
+  <!-- Warrior, Mage, Thief 순서 조회 -->
+  <select id="getFixedClasses" resultType="com.milite.dto.CharacterDto">
+    SELECT name, hp, atk, luck
+    FROM CharacterDB
+    WHERE name IN ('Warrior','Mage','Thief')
+    ORDER BY FIELD(name,'Warrior','Mage','Thief')
+  </select>
+
+  <!-- 직업 단건 조회 -->
+  <select id="getClassByName" resultType="com.milite.dto.CharacterDto">
+    SELECT name, hp, atk, luck
+    FROM CharacterDB
+    WHERE name = #{name}
+  </select>
+
+</mapper>

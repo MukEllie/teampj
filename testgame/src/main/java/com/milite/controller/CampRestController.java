@@ -1,6 +1,7 @@
 package com.milite.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.milite.dto.PlayerDto;
+import com.milite.dto.SkillDto;
 import com.milite.mapper.CharacterStatusMapper;
 import com.milite.service.CampService;
+import com.milite.service.SkillService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +28,7 @@ public class CampRestController {
 
 	private final CampService campService;
 	private final CharacterStatusMapper characterStatusMapper;
+	private final SkillService skillService;
 
 	/** 정비소 초기 상태 (Battle 스타일: PlayerID 파라미터) */
 	@GetMapping
@@ -94,5 +98,59 @@ public class CampRestController {
 		body.put("whereSession", p != null ? p.getWhereSession() : null);
 		body.put("canAdvanceLayer", p != null && p.getWhereStage() == 10);
 		return ResponseEntity.ok(body);
+	}
+
+	@GetMapping("/skill-management")
+	public ResponseEntity<Map<String, Object>> getSkillManagementData(@RequestParam("PlayerID") String PlayerID) {
+		try {
+			PlayerDto player = characterStatusMapper.getPlayerInfo(PlayerID);
+			if (player == null) {
+				Map<String, Object> error = new HashMap<>();
+				error.put("success", false);
+				error.put("message", "플레이어 정보를 찾을 수 없습니다.");
+				return ResponseEntity.badRequest().body(error);
+			}
+
+			List<SkillDto> ownedSkills = skillService.getOwnSkillList(PlayerID);
+			List<SkillDto> usingSkills = skillService.getUsingSkillList(PlayerID);
+
+			Map<String, Object> data = new HashMap<>();
+			data.put("success", true);
+			data.put("playerId", PlayerID);
+			data.put("ownedSkills", ownedSkills);
+			data.put("usingSkills", usingSkills);
+			data.put("ownedSkillCount", ownedSkills.size());
+			data.put("usingSkillCount", usingSkills.size());
+			data.put("maxOwnedSkills", 10);
+			data.put("maxUsingSkills", 4);
+
+			return ResponseEntity.ok(data);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> error = new HashMap<>();
+			error.put("success", false);
+			error.put("message", "스킬 관리 데이터 로딩 중 오류가 발생했습니다: " + e.getMessage());
+			return ResponseEntity.badRequest().body(error);
+		}
+	}
+
+	@PostMapping("/skill-management/selectUsingSkill")
+	public ResponseEntity<Map<String, Object>> selectUsingSkill(@RequestParam("PlayerID") String PlayerID,
+			@RequestParam String skillIDs) {
+		try {
+			Map<String, Object> result = skillService.setUsingSkill(PlayerID, skillIDs);
+
+			if ((Boolean) result.get("success")) {
+				return ResponseEntity.ok(result);
+			} else {
+				return ResponseEntity.badRequest().body(result);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> error = new HashMap<>();
+			error.put("success", false);
+			error.put("message", "사용 스킬 설정 중 오류가 발생했습니다: " + e.getMessage());
+			return ResponseEntity.badRequest().body(error);
+		}
 	}
 }

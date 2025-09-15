@@ -37,7 +37,7 @@ public interface SkillService {
 	
 	public boolean isOwnSkill(String playerID, String skillID);
 	
-	public Map<String, Object> setUsingSkill(String playerID, String skillID);
+	public Map<String, Object> setUsingSkill(String playerID, String skillIDs);
 	
 	public Map<String, Object> validateUsingSkill(String playerID, List<String> skillIDs);
 }

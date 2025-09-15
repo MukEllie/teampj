@@ -18,6 +18,12 @@ import com.milite.service.SkillService;
 import lombok.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PreDestroy;
 
 import lombok.extern.log4j.Log4j;
 
@@ -38,6 +44,13 @@ public class BattleController {
 
 	@Setter(onMethod_ = @Autowired)
 	private CharacterStatusMapper mapper;
+
+	private final Map<String, Long> recentBattleEnds = new ConcurrentHashMap<>();
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+	public BattleController() {
+		scheduler.scheduleAtFixedRate(this::cleanupOldRecords, 5, 5, TimeUnit.MINUTES);
+	}
 
 	@PostMapping("/start")
 	@ResponseBody
@@ -71,11 +84,11 @@ public class BattleController {
 
 	@PostMapping("/event")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> startEventBattle(@RequestParam("PlayerID") String PlayerID){
+	public ResponseEntity<Map<String, Object>> startEventBattle(@RequestParam("PlayerID") String PlayerID) {
 		System.out.println("이벤트 전용 배틀 시작 단계 Player : " + PlayerID);
 		try {
 			BattleResultDto initResult = service.battleEvent(PlayerID);
-			
+
 			Map<String, Object> battleStatus = service.getBattleStatus(PlayerID);
 			Map<String, Object> responseMap = new HashMap<>();
 			responseMap.put("stage", "battleReady");
@@ -88,15 +101,15 @@ public class BattleController {
 			responseMap.put("aliveMonsters", battleStatus.get("aliveMonsters"));
 
 			return ResponseEntity.ok(responseMap);
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			Map<String, Object> errorMap = new HashMap<>();
 			errorMap.put("error", "이벤트 전투 시작 중 오류 발생: " + e.getMessage());
 			return ResponseEntity.badRequest().body(errorMap);
 		}
-		
-	} 
-	
+
+	}
+
 	@PostMapping("/battle")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> executeBattle(@RequestParam("PlayerID") String PlayerID,
@@ -152,6 +165,16 @@ public class BattleController {
 	public ResponseEntity<Map<String, Object>> endBattle(@RequestParam("PlayerID") String PlayerID) {
 		System.out.println("=== 전투 종료 단계 - Player : " + PlayerID + " ===");
 		try {
+			if (isDuplicateCall(PlayerID)) {
+				log.warn("중복 호출 감지됨");
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "중복 호출 방지");
+				errorMap.put("message", "이미 처리 중이거나 최근에 처리된 요청입니다. 잠시 후 다시 시도해주세요.");
+				errorMap.put("retryAfter", 5); // 5분 후 재시도 가능
+				return ResponseEntity.badRequest().body(errorMap);
+			}
+			recordBattleEndCall(PlayerID);
+
 			Map<String, Object> finalStatus = service.getBattleStatus(PlayerID);
 
 			boolean playerAlive = (Integer) finalStatus.get("playerHp") > 0;
@@ -231,13 +254,47 @@ public class BattleController {
 		}
 	}
 
-	/*
-	 * @GetMapping("/test")
-	 * 
-	 * @ResponseBody public ResponseEntity<String> test() {
-	 * System.out.println("=== TEST 메서드 호출됨 ==="); System.out.println("현재 시간: " +
-	 * new java.util.Date()); return ResponseEntity.ok("테스트 성공! 컨트롤러가 정상 작동합니다."); }
-	 */
+	private boolean isDuplicateCall(String PlayerID) {
+		Long lastCallTime = recentBattleEnds.get(PlayerID);
+		if (lastCallTime == null) {
+			return false;
+		}
+
+		long currentTime = System.currentTimeMillis();
+		long timeDiff = currentTime - lastCallTime;
+
+		return timeDiff < 300000;
+	}
+
+	private void recordBattleEndCall(String PlayerID) {
+		recentBattleEnds.put(PlayerID, System.currentTimeMillis());
+	}
+
+	private void cleanupOldRecords() {
+		long currentTime = System.currentTimeMillis();
+		long tenMinutesAgo = currentTime - 600000;
+
+		recentBattleEnds.entrySet().removeIf(entry -> entry.getValue() < tenMinutesAgo);
+
+		if (!recentBattleEnds.isEmpty()) {
+			log.debug("중복 호출 방지 기록 정리 완료. 남은 수 : " + recentBattleEnds.size());
+		}
+	}
+
+	@PreDestroy
+	public void cleanup() {
+		if (scheduler != null && !scheduler.isShutdown()) {
+			scheduler.shutdown();
+			try {
+				if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+					scheduler.shutdownNow();
+				}
+			} catch (InterruptedException e) {
+				scheduler.shutdownNow();
+				Thread.currentThread().interrupt();
+			}
+		}
+	}
 
 	@GetMapping("/status")
 	@ResponseBody
@@ -841,7 +898,7 @@ public class BattleController {
 
 			responseMap.put("skills", skillsList);
 			responseMap.put("message", "현재 보유 스킬 목록 조회 완료");
-			
+
 			return ResponseEntity.ok(responseMap);
 		} catch (Exception e) {
 			e.printStackTrace();
