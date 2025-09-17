@@ -1,0 +1,153 @@
+/* FailureScreen.css - 피그마 명세 완전 적용 */
+
+/* 실패 - 메인 컨테이너 */
+.failure-wrapper {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  background: #FFFFFF;
+  margin: 0 auto;
+}
+
+.failure-container {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  background: #FFFFFF;
+}
+
+/* game - 배경 이미지 */
+.failure-background {
+  position: absolute;
+  width: 1280px;
+  height: 800px;
+  left: 0px;
+  top: 0px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Game Over → 타이틀 화면 */
+.failure-title {
+  position: absolute;
+  width: 459px;
+  height: 100px;
+  left: 410.81px;
+  top: 310px;
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 100px;
+  line-height: 100px;
+  text-align: center;
+  letter-spacing: -0.05em;
+  color: #FF6EE6;
+  text-shadow: 0px 0px 5px #17181A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Vector - 좌측 대각선 */
+.failure-vector-left {
+  position: absolute;
+  left: 25.7%;
+  right: 69.84%;
+  top: 40.66%;
+  bottom: 52.22%;
+  background: #F5F3FF;
+  transform: rotate(-15deg);
+}
+
+/* Vector - 우측 대각선 */
+.failure-vector-right {
+  position: absolute;
+  left: 68.89%;
+  right: 26.66%;
+  top: 40.62%;
+  bottom: 52.25%;
+  background: #F5F3FF;
+  transform: rotate(15deg);
+}
+
+/* Line 1 - 좌측 선 */
+.failure-line-left {
+  position: absolute;
+  width: 339px;
+  height: 0px;
+  left: 0px;
+  top: calc(50% - 0px/2 - 40px);
+  border: 3px solid #EEEFF2;
+}
+
+/* Line 2 - 우측 선 */
+.failure-line-right {
+  position: absolute;
+  width: 337px;
+  height: 0px;
+  left: 943px;
+  top: calc(50% - 0px/2 - 40px);
+  border: 3px solid #EEEFF2;
+}
+
+/* button_1_1 - 재시도 버튼 */
+.failure-button {
+  position: absolute;
+  width: 232px;
+  height: 64px;
+  left: calc(50% - 232px/2);
+  top: 440px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+/* button_line */
+.failure-button-line {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #F5F3FF;
+  border: 2px solid #F5F3FF;
+  filter: blur(0.5px);
+  border-radius: 15px;
+}
+
+/* button */
+.failure-button-inner {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0.86%;
+  right: 0.86%;
+  top: 3.12%;
+  bottom: 3.12%;
+  background: linear-gradient(180deg, #FFA5EF 0%, #FF6EE6 100%);
+  border: 1.5px solid #C040AA;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 버튼 텍스트 */
+.failure-button-text {
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  letter-spacing: -0.05em;
+  color: #F5F3FF;
+  text-shadow: 0px 1px 0px #C040AA;
+}
+
+/* 호버 효과 */
+.failure-button:hover .failure-button-inner {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}

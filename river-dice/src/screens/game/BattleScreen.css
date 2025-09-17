@@ -1,0 +1,729 @@
+/* BattleScreen.css - 1280x800 비율 최적화 버전 */
+
+/* 기본 초기화 */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'SeoulNamsan', 'Malgun Gothic', sans-serif;
+    background-color: #2a2a2a;
+    color: white;
+    overflow: hidden;
+}
+
+/* 게임 컨테이너 - 1280x800 고정 비율 */
+.game-container {
+    position: relative;
+    width: 1280px;
+    height: 800px;
+    background-color: #87CEEB;
+    overflow: hidden;
+    margin: 0 auto;
+    transform-origin: center;
+    
+    /* 화면 크기에 맞춰 자동 스케일링 */
+    transform: scale(
+        min(
+            calc(100vw / 1280),
+            calc(100vh / 800)
+        )
+    );
+}
+
+/* 배경 이미지 */
+.battle-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* === 상단 UI === */
+/* 아티팩트 바 - 좌상단 */
+.artifact-bar {
+    position: absolute;
+    width: 345px;
+    height: 30px;
+    left: 20px;
+    top: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 5px;
+    z-index: 10;
+}
+
+.artifact-item {
+    width: 30px;
+    height: 30px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* 나가기 버튼 - 우상단 */
+.exit-button {
+    position: absolute;
+    width: 60px;
+    height: 22px;
+    right: 20px;
+    top: 20px;
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 22px;
+    text-align: right;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+    text-shadow: 0px 0px 5px #17181A;
+    cursor: pointer;
+    z-index: 10;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* === 좌측 플레이어 정보 === */
+/* 플레이어 캐릭터 */
+.player-character {
+    position: absolute;
+    width: 294px;
+    height: 367px;
+    left: 126px;
+    top: 198px;
+    z-index: 5;
+}
+
+.player-character img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 플레이어 스탯 */
+.player-stats {
+    position: absolute;
+    left: 20px;
+    top: 500px;
+    z-index: 10;
+}
+
+.stat-item {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.stat-label {
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 15px;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+    text-shadow: 0px 0px 5px #17181A;
+    width: 60px;
+}
+
+.stat-value {
+    font-family: '머니그라피';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 15px;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+    text-shadow: 0px 0px 5px #17181A;
+    margin-left: 30px;
+}
+
+/* 플레이어 체력바 */
+.player-health-bar {
+    position: absolute;
+    width: 140px;
+    height: 20px;
+    left: 20px;
+    top: 590px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+.hp-icon {
+    width: 22px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.hp-text {
+    font-family: '머니그라피';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 20px;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+    text-shadow: 0px 0px 5px #17181A;
+    margin-left: 8px;
+}
+
+.status-icons {
+    margin-left: auto;
+    display: flex;
+    gap: 5px;
+}
+
+.status-icon {
+    width: 14px;
+    height: 14px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* === 중앙 몬스터들 === */
+/* 몬스터 1마리일 때 - 우측 배치 */
+.monster-single {
+    position: absolute;
+    width: 320px;
+    height: 400px;
+    left: 75%;
+    top: 150px;
+    transform: translateX(-50%);
+    z-index: 5;
+}
+
+.monster-single img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 몬스터 1마리일 때 - 이름 */
+.monster-name-single {
+    position: absolute;
+    width: 100px;
+    height: 22px;
+    left: 75%;
+    top: 550px;
+    transform: translateX(-50%);
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+    text-shadow: 0px 0px 5px #17181A;
+    z-index: 10;
+    text-align: center;
+}
+
+/* 몬스터 1마리일 때 - 체력바 */
+.monster-health-bar-single {
+    position: absolute;
+    width: 140px;
+    height: 20px;
+    left: 75%;
+    top: 575px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+/* 몬스터 3마리일 때 - 첫 번째 몬스터 (좌측, 일반 크기) */
+.monster-triple-1 {
+    position: absolute;
+    width: 220px;
+    height: 280px;
+    left: 600px;
+    top: 280px;
+    z-index: 5;
+}
+
+.monster-triple-1 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 몬스터 3마리일 때 - 두 번째 몬스터 (중앙, 일반 크기) */
+.monster-triple-2 {
+    position: absolute;
+    width: 220px;
+    height: 280px;
+    left: 800px;
+    top: 280px;
+    z-index: 5;
+}
+
+.monster-triple-2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 몬스터 3마리일 때 - 세 번째 몬스터 (우측, 보스 크기) */
+.monster-triple-3 {
+    position: absolute;
+    width: 320px;
+    height: 400px;
+    left: 960px;
+    top: 150px;
+    z-index: 5;
+}
+
+.monster-triple-3 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 몬스터 3마리일 때 - 이름들 */
+.monster-name-triple-1 {
+    position: absolute;
+    width: 100px;
+    height: 22px;
+    left: 660px;
+    top: 580px;
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+    text-shadow: 0px 0px 5px #17181A;
+    z-index: 10;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.monster-name-triple-2 {
+    position: absolute;
+    width: 100px;
+    height: 22px;
+    left: 860px;
+    top: 580px;
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+    text-shadow: 0px 0px 5px #17181A;
+    z-index: 10;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.monster-name-triple-3 {
+    position: absolute;
+    width: 120px;
+    height: 22px;
+    left: 1080px;
+    top: 570px;
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+    text-shadow: 0px 0px 5px #17181A;
+    z-index: 10;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 몬스터 3마리일 때 - 체력바들 */
+.monster-health-bar-triple-1 {
+    position: absolute;
+    width: 140px;
+    height: 20px;
+    left: 640px;
+    top: 605px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+.monster-health-bar-triple-2 {
+    position: absolute;
+    width: 140px;
+    height: 20px;
+    left: 840px;
+    top: 605px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+.monster-health-bar-triple-3 {
+    position: absolute;
+    width: 140px;
+    height: 20px;
+    left: 1060px;
+    top: 595px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+/* 첫 번째 몬스터 (2마리 모드) */
+.monster-1 {
+    position: absolute;
+    width: 295px;
+    height: 368px;
+    left: 630px;
+    top: 150px;
+    z-index: 5;
+}
+
+.monster-1 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 두 번째 몬스터 (2마리 모드) */
+.monster-2 {
+    position: absolute;
+    width: 294px;
+    height: 368px;
+    left: 946px;
+    top: 150px;
+    z-index: 5;
+}
+
+.monster-2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 몬스터 이름들 */
+.monster-name-1 {
+    position: absolute;
+    width: 72px;
+    height: 22px;
+    left: 742px;
+    top: 550px;
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+    text-shadow: 0px 0px 5px #17181A;
+    z-index: 10;
+}
+
+.monster-name-2 {
+    position: absolute;
+    width: 72px;
+    height: 22px;
+    left: 1057px;
+    top: 550px;
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+    text-shadow: 0px 0px 5px #17181A;
+    z-index: 10;
+}
+
+/* 몬스터 체력바들 */
+.monster-health-bar-1 {
+    position: absolute;
+    width: 140px;
+    height: 20px;
+    left: 708px;
+    top: 575px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+.monster-health-bar-2 {
+    position: absolute;
+    width: 140px;
+    height: 20px;
+    left: 1023px;
+    top: 575px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+/* === 하단 카드들 === */
+.cards-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 16px;
+    z-index: 10;
+}
+
+/* 기본 카드 스타일 */
+.card {
+    position: relative;
+    width: 130px;
+    height: 155px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 8px #17181A;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+/* 카드 배경 그라데이션 */
+.card-grass {
+    background: linear-gradient(180deg, #0B2108 0%, #235D1A 100%);
+}
+
+.card-water {
+    background: linear-gradient(180deg, #082436 0%, #0F5481 100%);
+}
+
+.card-fire {
+    background: linear-gradient(180deg, #3C050C 0%, #840B1A 100%);
+}
+
+.card-none {
+    background: linear-gradient(180deg, #171717 0%, #494949 100%);
+}
+
+/* 카드 내부 요소들 */
+.card-border-1 {
+    position: absolute;
+    left: 2.31%;
+    right: 2.31%;
+    top: 1.94%;
+    bottom: 1.94%;
+    border-radius: 4px;
+    border: 1px solid;
+    box-sizing: border-box;
+}
+
+.card-border-2 {
+    position: absolute;
+    left: 4.62%;
+    right: 4.62%;
+    top: 3.87%;
+    bottom: 3.87%;
+    border-radius: 2px;
+    border: 0.5px solid;
+    box-sizing: border-box;
+}
+
+.card-grass .card-border-1,
+.card-grass .card-border-2 {
+    border-color: #7ED471;
+}
+
+.card-water .card-border-1,
+.card-water .card-border-2 {
+    border-color: #6DC5FF;
+}
+
+.card-fire .card-border-1,
+.card-fire .card-border-2 {
+    border-color: #FF8080;
+}
+
+.card-none .card-border-1,
+.card-none .card-border-2 {
+    border-color: #EEEFF2;
+}
+
+/* 카드 아이콘 */
+.card-icon {
+    position: absolute;
+    left: 26.15%;
+    right: 26.15%;
+    top: 32.26%;
+    bottom: 25.81%;
+    border: 2px solid;
+}
+
+.card-grass .card-icon {
+    border-color: #7ED471;
+}
+
+.card-water .card-icon {
+    border-color: #6DC5FF;
+}
+
+.card-fire .card-icon {
+    border-color: #FF8080;
+}
+
+.card-none .card-icon {
+    border-color: #EEEFF2;
+}
+
+/* 카드 제목 */
+.card-title {
+    position: absolute;
+    left: 50%;
+    top: 15px;
+    transform: translateX(-50%);
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: -0.06em;
+    text-shadow: 0px 0px 5px #000000;
+}
+
+.card-grass .card-title {
+    color: #7ED471;
+}
+
+.card-water .card-title {
+    color: #6DC5FF;
+}
+
+.card-fire .card-title {
+    color: #FF8080;
+}
+
+.card-none .card-title {
+    color: #EEEFF2;
+}
+
+/* 카드 랭크 */
+.card-rank {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    left: 11px;
+    bottom: 11px;
+    border-radius: 20px;
+    border: 1px solid;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-rank-text {
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 15px;
+    text-align: center;
+    letter-spacing: -0.06em;
+}
+
+.card-grass .card-rank {
+    border-color: #7ED471;
+}
+
+.card-grass .card-rank-text {
+    color: #7ED471;
+}
+
+.card-water .card-rank {
+    border-color: #6DC5FF;
+}
+
+.card-water .card-rank-text {
+    color: #6DC5FF;
+}
+
+.card-fire .card-rank {
+    border-color: #FF8080;
+}
+
+.card-fire .card-rank-text {
+    color: #FF8080;
+}
+
+.card-none .card-rank {
+    border-color: #EEEFF2;
+}
+
+.card-none .card-rank-text {
+    color: #EEEFF2;
+}
+
+/* === 전투 로그 === */
+.battle-log {
+    position: absolute;
+    width: 656px;
+    height: 155px;
+    left: 604px;
+    top: 625px;
+    background: #17181A;
+    box-shadow: 0px 0px 6px #17181A;
+    border-radius: 7px;
+    padding: 15px 20px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.log-content {
+    font-family: 'SeoulNamsan';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.05em;
+    color: #EEEFF2;
+}
+
+/* === 반응형 스케일링 === */
+.game-container-wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    overflow: hidden;
+}
+
+/* 작은 화면에서 최소 크기 보장 */
+@media (max-width: 640px) {
+    .game-container {
+        transform: scale(0.4);
+    }
+}
+
+@media (max-height: 480px) {
+    .game-container {
+        transform: scale(0.4);
+    }
+}

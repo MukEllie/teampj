@@ -1,0 +1,369 @@
+/* LobbyScreen.css - 피그마 명세 완전 적용 */
+
+/* 정비 - 메인 컨테이너 */
+.lobby-wrapper {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  background: #FFFFFF;
+  margin: 0 auto;
+}
+
+.lobby-container {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  background: #FFFFFF;
+}
+
+/* game 1 - 배경 이미지 */
+.lobby-background {
+  position: absolute;
+  width: 1280px;
+  height: 800px;
+  left: 0px;
+  top: 0px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 201 - 캐릭터 */
+.character-display {
+  position: absolute;
+  width: 294px;
+  height: 367px;
+  left: 126px;
+  top: 190px;
+}
+
+.character-image {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 텐트 영역 - 중앙 */
+.tent-area {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+}
+
+/* skill - 스킬 카드 컨테이너 */
+.skill-container {
+  position: absolute;
+  width: 584px;
+  height: 171px;
+  left: 12px;
+  top: 617px;
+  display: flex;
+  gap: 0px;
+}
+
+/* 각각의 스킬 카드들 */
+.skill-card {
+  width: 146px;
+  height: 171px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* artifact - 아티팩트 컨테이너 */
+.artifact-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+  position: absolute;
+  width: 390px;
+  height: 30px;
+  left: 20px;
+  top: 20px;
+}
+
+/* 각각의 아티팩트 아이템들 */
+.artifact-item {
+  width: 30px;
+  height: 30px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  flex: none;
+  flex-grow: 0;
+}
+
+/* 나가기 */
+.exit-button {
+  position: absolute;
+  width: 39px;
+  height: 22px;
+  left: 1221px;
+  top: 20px;
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 22px;
+  text-align: right;
+  letter-spacing: -0.05em;
+  color: #EEEFF2;
+  text-shadow: 0px 0px 5px #17181A;
+  cursor: pointer;
+}
+
+.exit-button:hover {
+  color: #FFFFFF;
+}
+
+/* 게임 버튼들 */
+.game-buttons {
+  position: absolute;
+  right: 20px;
+  bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* button_2_1 - 상단 버튼 */
+.game-button {
+  position: relative;
+  width: 232px;
+  height: 64px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+/* button_line */
+.button-line {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #F5F3FF;
+  border: 2px solid #F5F3FF;
+  filter: blur(0.5px);
+  border-radius: 15px;
+}
+
+/* button */
+.button-inner {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0.86%;
+  right: 0.86%;
+  top: 3.12%;
+  bottom: 3.12%;
+  border-radius: 13px;
+  border: 1.5px solid #564AC3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 15px;
+}
+
+/* 첫 번째 버튼 (보라색) */
+.button-1 .button-inner {
+  background: linear-gradient(180deg, #B7A6FF 0%, #9480E9 100%);
+  border: 1.5px solid #564AC3;
+}
+
+/* 두 번째 버튼 (파란색) */
+.button-2 .button-inner {
+  background: linear-gradient(180deg, #8BD1FF 0%, #6DC5FF 100%);
+  border: 1.5px solid #487FC3;
+}
+
+/* 버튼 텍스트 */
+.button-text {
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.3;
+  text-align: center;
+  letter-spacing: -0.05em;
+  color: #F5F3FF;
+  word-break: keep-all;
+  max-width: 100%;
+  display: inline-block;
+}
+
+.button-1 .button-text {
+  text-shadow: 0px 1px 0px #6A39D4;
+}
+
+.button-2 .button-text {
+  text-shadow: 0px 1px 0px #487FC3;
+}
+
+/* 캐릭터 정보 */
+.character-info {
+  position: absolute;
+  width: 409px;
+  height: 155px;
+  left: 604px;
+  top: 625px;
+}
+
+/* log box */
+.info-background {
+  position: absolute;
+  width: 409px;
+  height: 155px;
+  left: 0px;
+  top: 0px;
+  background: #17181A;
+  opacity: 0.9;
+  box-shadow: 0px 0px 6px #17181A;
+  border-radius: 7px;
+}
+
+/* 체력+상태이상 */
+.health-status {
+  position: absolute;
+  width: 140px;
+  height: 20px;
+  left: 21px;
+  top: 20px;
+}
+
+/* 100 / 100 */
+.hp-text {
+  position: absolute;
+  width: 75px;
+  height: 20px;
+  left: 22px;
+  top: 0px;
+  font-family: '머니그라피';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 20px;
+  letter-spacing: -0.05em;
+  color: #EEEFF2;
+  text-shadow: 0px 0px 5px #17181A;
+}
+
+/* HP */
+.hp-icon {
+  position: absolute;
+  width: 22px;
+  height: 20px;
+  left: 0px;
+  top: 0px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Stun */
+.status-stun {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 126px;
+  top: 3px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Burn */
+.status-burn {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 107px;
+  top: 3px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* 정보 행들 */
+.info-row {
+  position: absolute;
+  display: flex;
+  align-items: center;
+}
+
+/* 스테이지 */
+.info-stage {
+  left: 21px;
+  top: 70px;
+}
+
+/* 공격력 */
+.info-attack {
+  left: 21px;
+  top: 95px;
+}
+
+/* 행운 */
+.info-luck {
+  left: 21px;
+  top: 120px;
+}
+
+/* 정보 라벨들 */
+.info-label {
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 15px;
+  letter-spacing: -0.05em;
+  color: #EEEFF2;
+  text-shadow: 0px 0px 5px #17181A;
+  width: 60px;
+}
+
+/* 정보 값들 */
+.info-value {
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 15px;
+  letter-spacing: -0.05em;
+  color: #EEEFF2;
+  text-shadow: 0px 0px 5px #17181A;
+  margin-left: 31px;
+}
+
+/* 호버 효과 */
+.game-button:hover .button-inner {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.artifact-item:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1280px) {
+  .lobby-wrapper {
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  .lobby-container {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .lobby-background {
+    width: 100%;
+    height: 100%;
+  }
+}

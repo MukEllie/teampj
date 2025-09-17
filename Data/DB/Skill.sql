@@ -1,8 +1,8 @@
-use my_cat;
+use testgame;
 
 show tables;
 
-create table skills (
+create table skillDB (
     skill_id int primary key auto_increment,
     skill_job enum('Warrior', 'Thief', 'Mage', 'Common') not null,
     skill_type enum('Basic', 'Battle', 'Event') not null,

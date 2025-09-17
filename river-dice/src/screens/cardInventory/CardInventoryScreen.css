@@ -1,0 +1,393 @@
+/* CardInventoryScreen.css */
+
+.card-inventory-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'SeoulNamsan', sans-serif;
+}
+
+.card-inventory-container {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  background: #FFFFFF;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* 배경 */
+.card-inventory-background {
+  position: absolute;
+  width: 1280px;
+  height: 800px;
+  left: 0px;
+  top: 0px;
+  background: #C4C4C4;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 선택된 스킬 섹션 */
+.selected-skill-section {
+  position: absolute;
+  width: 610px;
+  height: 230px;
+  left: 125px;
+  top: 20px;
+}
+
+.selected-skill-title {
+  position: absolute;
+  width: 80px;
+  height: 22px;
+  left: 0px;
+  top: 8px;
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  letter-spacing: -0.05em;
+  color: #EEEFF2;
+  text-shadow: 0px 0px 5px #17181A;
+  z-index: 10;
+}
+
+.my-skill-area {
+  position: absolute;
+  width: 610px;
+  height: 190px;
+  left: 0px;
+  top: 40px;
+}
+
+.skill-card-box {
+  position: absolute;
+  width: 610px;
+  height: 190px;
+  left: calc(50% - 610px/2);
+  top: calc(50% - 190px/2);
+  background: #17181A;
+  opacity: 0.7;
+  box-shadow: 0px 0px 6px #17181A;
+  border-radius: 10px;
+}
+
+.skill-slot {
+  position: absolute;
+  width: 146px;
+  height: 171px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.skill-slot.has-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  border-color: #FFD700;
+}
+
+.skill-slot.empty {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px dashed #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-slot-text {
+  color: #999;
+  font-size: 14px;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* 스킬 목록 섹션 */
+.skill-list-section {
+  position: absolute;
+  width: 755px;
+  height: 405px;
+  left: 125px;
+  top: 100px;
+  transform: translateZ(0);
+  will-change: auto;
+}
+
+.skill-list-title {
+  position: absolute;
+  width: 67px;
+  height: 22px;
+  left: 0px;
+  top: 8px;
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  letter-spacing: -0.05em;
+  color: #EEEFF2;
+  text-shadow: 0px 0px 5px #17181A;
+  z-index: 10;
+}
+
+.my-card-area {
+  position: absolute;
+  width: 755px;
+  height: 360px;
+  left: 0px;
+  top: 40px;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.card-box-container {
+  position: absolute;
+  width: 755px;
+  height: 360px;
+  left: 0px;
+  top: 0px;
+  transform: none;
+  will-change: auto;
+}
+
+.card-slot {
+  position: absolute;
+  width: 146px;
+  height: 171px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  border: 3px solid transparent;
+  transform: translateZ(0);
+}
+
+.card-slot:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  border-color: #00BFFF;
+  z-index: 5;
+}
+
+.card-slot.selected {
+  border-color: #FFD700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+.card-slot.selected:hover {
+  border-color: #FFA500;
+}
+
+.card-slot.hovered {
+  border-color: #00BFFF;
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.4);
+}
+
+/* 저장 버튼 */
+.save-button {
+  position: absolute;
+  width: 232px;
+  height: 64px;
+  left: 1028px;
+  top: 706px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save-button:hover {
+  transform: translateY(-2px);
+}
+
+.save-button .button-line {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #F5F3FF;
+  border: 2px solid #F5F3FF;
+  filter: blur(0.5px);
+  border-radius: 15px;
+}
+
+.save-button .button-body {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0.86%;
+  right: 0.86%;
+  top: 3.12%;
+  bottom: 3.12%;
+  background: linear-gradient(180deg, #B7A6FF 0%, #9480E9 100%);
+  border: 1.5px solid #564AC3;
+  border-radius: 13px;
+}
+
+.save-button .button-text {
+  position: absolute;
+  left: 39.66%;
+  right: 40.09%;
+  top: 34.38%;
+  bottom: 31.25%;
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 22px;
+  text-align: center;
+  letter-spacing: -0.05em;
+  color: #F5F3FF;
+  text-shadow: 0px 1px 0px #6A39D4;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 뒤로가기 버튼 */
+.back-button {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #666;
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-family: 'SeoulNamsan', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 15;
+}
+
+.back-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+  border-color: #999;
+  transform: translateY(-2px);
+}
+
+/* 자동 정렬 버튼 */
+.auto-arrange-button {
+  position: absolute;
+  top: 30px;
+  right: 150px;
+  padding: 10px 18px;
+  background: rgba(255, 215, 0, 0.8);
+  border: 2px solid #FFD700;
+  border-radius: 8px;
+  color: #000000;
+  font-family: 'SeoulNamsan', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 15;
+}
+
+.auto-arrange-button:hover {
+  background: rgba(255, 215, 0, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
+}
+
+/* 도움말 텍스트 */
+.help-text {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #444;
+  opacity: 0.8;
+}
+
+/* 상태 정보 강화 */
+.status-info {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 15px;
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-size: 14px;
+  line-height: 1.4;
+  z-index: 10;
+  min-width: 200px;
+}
+
+.status-info p {
+  margin: 5px 0;
+}
+
+/* 반응형 */
+@media (max-width: 1280px) {
+  .card-inventory-container {
+    transform: scale(0.8);
+    transform-origin: top left;
+  }
+}
+
+@media (max-width: 1024px) {
+  .card-inventory-container {
+    transform: scale(0.6);
+    transform-origin: top left;
+  }
+}
+
+/* 애니메이션 */
+@keyframes cardSelect {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.card-slot.selected {
+  animation: cardSelect 0.3s ease;
+}
+
+/* 카드 번호 표시 */
+.card-number {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(255, 215, 0, 0.9);
+  color: black;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+/* 슬롯 번호 표시 */
+.skill-slot::after {
+  content: attr(data-slot);
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* 기존 after 제거 */

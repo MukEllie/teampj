@@ -1,0 +1,153 @@
+/* ClearScreen.css - 피그마 명세 완전 적용 */
+
+/* 클리어 - 메인 컨테이너 */
+.clear-wrapper {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  background: #FFFFFF;
+  margin: 0 auto;
+}
+
+.clear-container {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  background: #FFFFFF;
+}
+
+/* game - 배경 이미지 */
+.clear-background {
+  position: absolute;
+  width: 1280px;
+  height: 800px;
+  left: 0px;
+  top: 0px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* VICTORY → 타이틀 화면 */
+.clear-title {
+  position: absolute;
+  width: 360px;
+  height: 100px;
+  left: 460px;
+  top: 310px;
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 100px;
+  line-height: 100px;
+  text-align: center;
+  letter-spacing: -0.05em;
+  color: #6DC5FF;
+  text-shadow: 0px 0px 5px #17181A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Vector - 좌측 대각선 */
+.victory-vector-left {
+  position: absolute;
+  left: 29.3%;
+  right: 66.25%;
+  top: 40.66%;
+  bottom: 52.22%;
+  background: #F5F3FF;
+  transform: rotate(-15deg);
+}
+
+/* Vector - 우측 대각선 */
+.victory-vector-right {
+  position: absolute;
+  left: 64.86%;
+  right: 30.68%;
+  top: 40.62%;
+  bottom: 52.25%;
+  background: #F5F3FF;
+  transform: rotate(15deg);
+}
+
+/* Line 1 - 좌측 선 */
+.victory-line-left {
+  position: absolute;
+  width: 384px;
+  height: 0px;
+  left: 0px;
+  top: calc(50% - 0px/2 - 40px);
+  border: 3px solid #EEEFF2;
+}
+
+/* Line 2 - 우측 선 */
+.victory-line-right {
+  position: absolute;
+  width: 387px;
+  height: 0px;
+  left: 893px;
+  top: calc(50% - 0px/2 - 40px);
+  border: 3px solid #EEEFF2;
+}
+
+/* button_3_1 - 계속하기 버튼 */
+.clear-button {
+  position: absolute;
+  width: 232px;
+  height: 64px;
+  left: calc(50% - 232px/2);
+  top: calc(50% - 64px/2 + 72px);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+/* button_line */
+.clear-button-line {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #F5F3FF;
+  border: 2px solid #F5F3FF;
+  filter: blur(0.5px);
+  border-radius: 15px;
+}
+
+/* button */
+.clear-button-inner {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0.86%;
+  right: 0.86%;
+  top: 3.12%;
+  bottom: 3.12%;
+  background: linear-gradient(180deg, #8BD1FF 0%, #6DC5FF 100%);
+  border: 1.5px solid #487FC3;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 버튼 텍스트 */
+.clear-button-text {
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+  letter-spacing: -0.05em;
+  color: #F5F3FF;
+  text-shadow: 0px 1px 0px #487FC3;
+}
+
+/* 호버 효과 */
+.clear-button:hover .clear-button-inner {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}

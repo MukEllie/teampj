@@ -1,0 +1,391 @@
+/* CardExchangeScreen.css - 피그마 디자인 기반 */
+
+/* 전체 래퍼 */
+.card-exchange-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 메인 컨테이너 */
+.card-exchange-container {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+
+/* 배경 이미지 */
+.card-exchange-background {
+  position: absolute;
+  width: 1280px;
+  height: 800px;
+  left: 0px;
+  top: 0px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+/* 제목 */
+.exchange-title {
+  position: absolute;
+  width: 242px;
+  height: 22px;
+  left: calc(50% - 242px/2);
+  top: 160px;
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 22px;
+  text-align: center;
+  letter-spacing: -0.05em;
+  color: #EEEFF2;
+  text-shadow: 0px 0px 5px #17181A;
+  z-index: 10;
+}
+
+/* 내 카드 영역 */
+.my-card-area {
+  position: absolute;
+  width: 755px;
+  height: 360px;
+  left: 125px;
+  top: 220px;
+  z-index: 5;
+}
+
+/* 카드 박스 컨테이너 */
+.card-box-container {
+  position: absolute;
+  width: 755px;
+  height: 360px;
+  left: 0px;
+  top: calc(50% - 360px/2);
+  background: #17181A;
+  opacity: 0.7;
+  box-shadow: 0px 0px 6px #17181A;
+  border-radius: 10px;
+}
+
+/* 개별 카드 슬롯 */
+.card-slot {
+  position: absolute;
+  width: 146px;
+  height: 171px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  border: 2px solid transparent;
+}
+
+.card-slot:hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.card-slot.selected {
+  border-color: #FFD700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+  transform: scale(1.08);
+}
+
+/* 교체될 카드 영역 */
+.exchange-card-area {
+  position: absolute;
+  width: 270px;
+  height: 360px;
+  left: 900px;
+  top: 220px;
+  z-index: 5;
+}
+
+/* 교체 카드 박스 */
+.exchange-card-box {
+  position: absolute;
+  width: 270px;
+  height: 360px;
+  left: 0px;
+  top: calc(50% - 360px/2);
+  background: #17181A;
+  opacity: 0.7;
+  box-shadow: 0px 0px 6px #17181A;
+  border-radius: 10px;
+}
+
+/* 교체될 카드 슬롯 */
+.exchange-card-slot {
+  position: absolute;
+  width: 146px;
+  height: 171px;
+  left: 62px;
+  top: 53px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+  border: 2px solid #FFD700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* 교체 카드 설명 */
+.exchange-card-description {
+  position: absolute;
+  width: 181px;
+  height: 60px;
+  left: 45px;
+  top: 256px;
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 30px;
+  text-align: center;
+  letter-spacing: -0.05em;
+  color: #EEEFF2;
+  text-shadow: 0px 0px 3px #17181A;
+}
+
+/* 교체 버튼 */
+.exchange-button {
+  position: absolute;
+  width: 232px;
+  height: 64px;
+  left: 1028px;
+  top: 706px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* 버튼 라인 (외곽선) */
+.button-line {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #F5F3FF;
+  border: 2px solid #F5F3FF;
+  filter: blur(0.5px);
+  border-radius: 15px;
+}
+
+/* 버튼 바디 */
+.button-body {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0.86%;
+  right: 0.86%;
+  top: 3.12%;
+  bottom: 3.12%;
+  background: linear-gradient(180deg, #B7A6FF 0%, #9480E9 100%);
+  border: 1.5px solid #564AC3;
+  border-radius: 13px;
+  transition: all 0.3s ease;
+}
+
+/* 버튼 텍스트 */
+.button-text {
+  position: absolute;
+  left: 35%;
+  right: 35%;
+  top: 34.38%;
+  bottom: 31.25%;
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 22px;
+  text-align: center;
+  letter-spacing: -0.05em;
+  color: #F5F3FF;
+  text-shadow: 0px 1px 0px #6A39D4;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 버튼 호버 효과 */
+.exchange-button:hover .button-body {
+  background: linear-gradient(180deg, #C7B6FF 0%, #A490F9 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.exchange-button:active .button-body {
+  transform: translateY(0px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 뒤로가기 버튼 */
+.back-button {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-family: 'SeoulNamsan', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 15;
+}
+
+.back-button:hover {
+  background: rgba(0, 0, 0, 0.9);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .card-exchange-container {
+    width: 100vw;
+    height: 100vh;
+    transform: scale(0.8);
+    transform-origin: center center;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-exchange-container {
+    transform: scale(0.6);
+  }
+  
+  .exchange-title {
+    font-size: 18px;
+    top: 120px;
+  }
+  
+  .my-card-area {
+    left: 50px;
+    top: 180px;
+    width: 600px;
+    height: 300px;
+  }
+  
+  .card-box-container {
+    width: 600px;
+    height: 300px;
+  }
+  
+  .card-slot {
+    width: 110px;
+    height: 128px;
+  }
+  
+  .exchange-card-area {
+    left: 680px;
+    top: 180px;
+    width: 220px;
+    height: 300px;
+  }
+  
+  .exchange-card-box {
+    width: 220px;
+    height: 300px;
+  }
+  
+  .exchange-card-slot {
+    width: 110px;
+    height: 128px;
+    left: 55px;
+    top: 40px;
+  }
+  
+  .exchange-card-description {
+    width: 150px;
+    left: 35px;
+    top: 200px;
+    font-size: 16px;
+    line-height: 24px;
+  }
+  
+  .exchange-button {
+    left: 800px;
+    top: 550px;
+    width: 180px;
+    height: 50px;
+  }
+  
+  .button-text {
+    font-size: 20px;
+  }
+}
+
+/* 새 카드 뽑기 버튼 */
+.new-card-button {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  padding: 12px 20px;
+  background: rgba(255, 215, 0, 0.8);
+  border: 2px solid #FFD700;
+  border-radius: 10px;
+  color: #000000;
+  font-family: 'SeoulNamsan', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 15;
+  text-shadow: none;
+}
+
+.new-card-button:hover {
+  background: rgba(255, 215, 0, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
+}
+
+/* 도움말 텍스트 */
+.help-text {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  z-index: 10;
+}
+
+.help-text p {
+  font-family: 'SeoulNamsan';
+  font-size: 16px;
+  color: #EEEFF2;
+  margin: 0;
+  text-align: center;
+  text-shadow: 0px 0px 3px #17181A;
+}
+
+/* 접근성 */
+@media (prefers-reduced-motion: reduce) {
+  .card-slot,
+  .button-body,
+  .back-button {
+    transition: none;
+  }
+}

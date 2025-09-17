@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.milite.mapper.SkinGachaMapper">
+
+	<!-- DB 이름 매치 -->
+	<resultMap id="SkinGachaResultMap" type="com.milite.dto.SkinGachaDto">
+		<result property="skinId" column="Skin_ID"/>
+    	<result property="skinName" column="Skin_name"/>
+    	<result property="job" column="Job"/>
+    	<result property="imageId" column="image_ID"/>
+	</resultMap>
+	
+	<!-- 스킨 뽑기 -->
+	<select id="GetRandomSkin" resultMap="SkinGachaResultMap">
+		select * from SkinDB order by rand() limit 1
+ 	</select>
+ 	
+	<!-- 유저DB에 스킨 저장 -->
+	<update id="UpdateUserOwnedSkin" parameterType="map">
+		update UserDB set Owned_SkinID = case
+		when Owned_SkinID is null then json_array(#{skin.skinId})
+		when json_contains(Owned_SkinID, cast(#{skin.skinId} as json), '$') then Owned_SkinID
+		else json_array_append(Owned_SkinID, '$', #{skin.skinId}) end where id = #{userId}
+	</update>
+
+	<!-- 보유 스킨 조회 -->
+	<select id="ViewUserSkin" parameterType="string" resultMap="SkinGachaResultMap">
+		select s.* from SkinDB s join UserDB u on
+		json_contains(u.Owned_SkinID, cast(s.Skin_ID as json), '$') where u.ID = #{userId}
+	</select>
+	
+	<!-- 보유 골드 조회 -->
+	<select id="ViewUserGold" parameterType="string" resultType="int">
+		select gold from UserDB where ID = #{userId}
+	</select>
+
+	<!-- 골드 차감 -->
+	<update id="PayGold" parameterType="string">
+		update UserDB set gold = gold - 3000 where ID = #{userId} and gold >= 3000
+	</update>
+	
+	<!-- 골드 충전 -->
+	<update id="BuyGold" parameterType="string">
+		update UserDB set gold = gold + 3000 where ID = #{userId}
+	</update>
+</mapper>

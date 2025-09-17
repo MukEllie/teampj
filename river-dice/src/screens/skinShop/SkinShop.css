@@ -1,0 +1,278 @@
+/* 스킨 상점 전용 스타일 - 1280x800 고정 해상도 */
+
+/* 전체 래퍼 */
+.skin-shop-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 스킨 상점 컨테이너 */
+.skin-shop-container {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  background: #FFFFFF;
+  overflow: hidden;
+}
+
+/* 스킨 배경 이미지 */
+.skin-background {
+  position: absolute;
+  width: 1280px;
+  height: 800px;
+  left: 0px;
+  top: 0px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+/* 골드 상자 */
+.gold-box {
+  box-sizing: border-box;
+  position: absolute;
+  width: 232px;
+  height: 40px;
+  left: 1028px;
+  top: 20px;
+  background: #17181A;
+  opacity: 0.9;
+  border: 1px solid #F5F3FF;
+  border-radius: 30px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+}
+
+/* 골드 텍스트 */
+.gold-label {
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 30px;
+  letter-spacing: -0.05em;
+  color: #F5F3FF;
+}
+
+/* 골드 값 */
+.gold-value {
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 30px;
+  text-align: right;
+  letter-spacing: -0.05em;
+  color: #F5F3FF;
+}
+
+/* 화면 선택으로 돌아가기 버튼 */
+.skin-back-to-selector {
+  position: absolute;
+  top: 20px;
+  left: 100px;
+  z-index: 1000;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'SeoulNamsan';
+}
+
+.skin-back-to-selector:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 뒤로가기 버튼 */
+.skin-back-button {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  left: 17px;
+  top: 20px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* 뒤로가기 버튼 레이어들 */
+.back-button-layer-1 {
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #EEEFF2;
+  border-radius: 10px;
+}
+
+.back-button-layer-2 {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  border: 5px solid #C4C9D6;
+  border-radius: 10px;
+}
+
+.back-button-layer-3 {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  border: 1.5px solid #9480E9;
+  border-radius: 10px;
+}
+
+/* 뒤로가기 화살표 */
+.back-arrow {
+  position: absolute;
+  left: 13.33%;
+  right: 21.67%;
+  top: 16.67%;
+  bottom: 11.67%;
+  background: #9480E9;
+  transform: rotate(-90deg);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* 하단 버튼 */
+.skin-shop-button {
+  position: absolute;
+  width: 232px;
+  height: 64px;
+  left: 1028px;
+  top: 706px;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s ease;
+}
+
+.skin-shop-button:hover {
+  transform: scale(1.05);
+}
+
+.skin-shop-button:active {
+  transform: scale(0.98);
+}
+
+/* 버튼 라인 */
+.skin-button-line {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #F5F3FF;
+  border: 2px solid #F5F3FF;
+  filter: blur(0.5px);
+  border-radius: 15px;
+}
+
+/* 버튼 본체 */
+.skin-button-body {
+  box-sizing: border-box;
+  position: absolute;
+  left: 0.86%;
+  right: 0.86%;
+  top: 3.12%;
+  bottom: 3.12%;
+  background: linear-gradient(180deg, #B7A6FF 0%, #9480E9 100%);
+  border: 1.5px solid #564AC3;
+  border-radius: 13px;
+}
+
+/* 버튼 텍스트 */
+.skin-button-text {
+  position: absolute;
+  left: 31.47%;
+  right: 31.9%;
+  top: 34.38%;
+  bottom: 31.25%;
+  font-family: 'SeoulNamsan';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 22px;
+  text-align: center;
+  letter-spacing: -0.05em;
+  color: #F5F3FF;
+  text-shadow: 0px 1px 0px #6A39D4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 스킨 그리드 컨테이너 (미래 확장용) */
+.skin-grid {
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  right: 350px;
+  bottom: 100px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  z-index: 5;
+}
+
+/* 스킨 카드 */
+.skin-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.skin-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.skin-card-image {
+  width: 100%;
+  height: 150px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-bottom: 10px;
+}
+
+.skin-card-name {
+  font-family: 'SeoulNamsan';
+  font-size: 16px;
+  font-weight: 400;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.skin-card-price {
+  font-family: 'SeoulNamsan';
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+}
