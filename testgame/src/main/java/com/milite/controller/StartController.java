@@ -20,8 +20,8 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/start")
-public class StartRestController {
+@RequestMapping("/start")
+public class StartController {
 
 	private final StartService startService;
 
