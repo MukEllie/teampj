@@ -2,7 +2,8 @@ use testgame;
 
 show tables;
 
-create table skillDB (
+drop table skills;
+create table skills (
     skill_id int primary key auto_increment,
     skill_job enum('Warrior', 'Thief', 'Mage', 'Common') not null,
     skill_type enum('Basic', 'Battle', 'Event') not null,
@@ -20,7 +21,7 @@ create table skillDB (
     
     -- 이름&설명 --
 	skill_name varchar(10) not null,
-    skill_text varchar(20) not null
+    skill_text varchar(30) not null
 );
 
 insert into skills (skill_job, skill_type, rarity, element, min_damage, max_damage, hit_time, hit_target,

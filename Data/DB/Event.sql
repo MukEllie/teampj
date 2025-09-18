@@ -4,11 +4,11 @@ use team1;
 use testgame;
 
 /* normalevent */
-drop table normalevent;
+drop table IF EXISTS normalevent;
 CREATE TABLE normalevent (
     ne_id INT UNIQUE,
     ne_name CHAR(50),
-    ne_session VARCHAR(20),	-- none, water, fire, grass
+    ne_session VARCHAR(20),	-- None, Water, Fire, Grass
     ne_dice INT,
     ne_php INT,
     ne_mhp INT,
@@ -19,22 +19,22 @@ CREATE TABLE normalevent (
 );
 select * from normalevent;
 INSERT INTO normalevent VALUES
-(0, '신비의 샘', 'none', 0, 30, 0, 0, 0, 0, 0),
-(1, '잊혀진 훈련교본', 'none', 10, 0, 0, 1, 0, 0, 0),
-(3, '쓰나미 예언', 'water', 0, 0, -15, 0, 0, 0, 0),
-(4, '밀물의 휴식처', 'water', 5, 10, 0, 0, -1, 0, 0),
-(5, '열사의 망상', 'fire', 1, -25, 0, 5, 0, 0, 0),
-(6, '불꽃 축제', 'fire', 3, 30, 0, 1, 1, 0, 0),
-(7, '독버섯 밀림', 'grass', -15, 0, 0, 0, 0, 0, 1),
-(8, '자연의 분노', 'grass', 3, 0, 0, 0, -1, 0, 0);
+(0, '신비의 샘', 'None', 0, 30, 0, 0, 0, 0, 0),
+(1, '잊혀진 훈련교본', 'None', 10, 0, 0, 1, 0, 0, 0),
+(3, '쓰나미 예언', 'Water', 0, 0, -15, 0, 0, 0, 0),
+(4, '밀물의 휴식처', 'Water', 5, 10, 0, 0, -1, 0, 0),
+(5, '열사의 망상', 'Fire', 1, -25, 0, 5, 0, 0, 0),
+(6, '불꽃 축제', 'Fire', 3, 30, 0, 1, 1, 0, 0),
+(7, '독버섯 밀림', 'Grass', -15, 0, 0, 0, 0, 0, 1),
+(8, '자연의 분노', 'Grass', 3, 0, 0, 0, -1, 0, 0);
 
 
 /* rollevent */
-drop table rollevent;
+drop table IF EXISTS rollevent;
 CREATE TABLE rollevent (
     re_id INT UNIQUE,
     re_name CHAR(50),
-    re_session VARCHAR(20),
+    re_session VARCHAR(20), -- None, Water, Fire, Grass
     re_dice INT,
     re_dicelimit INT,
     re_php INT,
@@ -48,22 +48,22 @@ CREATE TABLE rollevent (
 );
 select * from rollevent;
 INSERT INTO rollevent VALUES
-(0, '길 잃은 축복', 'none', 15, 11, 0, 10, 0, 10, 0, 0, 0, 0),
-(1, '고대의 저주', 'none', 15, 11, 0, -10, 0, -10, 0, 0, 0, 0),
-(2, '바다 정령의 시련', 'water', 12, 9, 0, 0, 0, 0, 0, 5, 0, 1),
-(3, '수상한 보물상자', 'water', 15, 10, -10, 0, 0, 0, 0, 0, 100, 0),
-(4, '용암 강 레이스', 'fire', 20, 12, -40, 0, -40, 0, 0, 0, 0, 0),
-(5, '불타는 정수', 'fire', 15, 10, 0, 0, 0, 0, 5, 5, 0, 0),
-(6, '나무 밑 무덤', 'grass', 10, 6, 0, 0, 0, 10, 0, 0, 50, 0),
-(7, '성스런 숲의 의식', 'grass', 15, 10, -20, 20, 0, 0, 0, 0, 0, 0);
+(0, '길 잃은 축복', 'None', 15, 11, 0, 10, 0, 10, 0, 0, 0, 0),
+(1, '고대의 저주', 'None', 15, 11, 0, -10, 0, -10, 0, 0, 0, 0),
+(2, '바다 정령의 시련', 'Water', 12, 9, 0, 0, 0, 0, 0, 5, 0, 1),
+(3, '수상한 보물상자', 'Water', 15, 10, -10, 0, 0, 0, 0, 0, 100, 0),
+(4, '용암 강 레이스', 'Fire', 20, 12, -40, 0, -40, 0, 0, 0, 0, 0),
+(5, '불타는 정수', 'Fire', 15, 10, 0, 0, 0, 0, 5, 5, 0, 0),
+(6, '나무 밑 무덤', 'Grass', 10, 6, 0, 0, 0, 10, 0, 0, 50, 0),
+(7, '성스런 숲의 의식', 'Grass', 15, 10, -20, 20, 0, 0, 0, 0, 0, 0);
 
 
 /* cardevent */
-drop table cardevent;
+drop table IF EXISTS cardevent;
 CREATE TABLE cardevent (
     ce_id INT UNIQUE,
     ce_name CHAR(50),
-    ce_session VARCHAR(20)  -- none, water, fire, grass
+    ce_session VARCHAR(20)  -- None, Water, Fire, Grass
 );
 select * from cardevent;
 INSERT INTO cardevent VALUES
@@ -75,7 +75,7 @@ INSERT INTO cardevent VALUES
 (5, '세계수의 선물', 'Grass');
 
 /* artifactevent */
-drop table artifactevent;
+drop table IF EXISTS artifactevent;
 CREATE TABLE artifactevent (
     ae_id INT UNIQUE,
     ae_name CHAR(50),
@@ -89,22 +89,22 @@ INSERT INTO artifactevent VALUES
 
 
 /* selectevent */
-drop table selectevent;
+drop table IF EXISTS selectevent;
 CREATE TABLE selectevent (
     se_id INT UNIQUE,
     se_name CHAR(50),
-    se_session VARCHAR(20)
+    se_session VARCHAR(20) -- None, Water, Fire, Grass
 );
 select * from selectevent;
 INSERT INTO selectevent VALUES
-(0, '영혼의 거래소', 'none'),
-(1, '대해적의 보물상자', 'water'),
-(2, '불사조의 3색 깃털', 'fire'),
-(3, '숲의 갈림길', 'grass');
+(0, '영혼의 거래소', 'None'),
+(1, '대해적의 보물상자', 'Water'),
+(2, '불사조의 3색 깃털', 'Fire'),
+(3, '숲의 갈림길', 'Grass');
 
 
 /* selectevent_choice */
-drop table selectevent_choice;
+drop table IF EXISTS selectevent_choice;
 CREATE TABLE selectevent_choice (
     sec_id INT UNIQUE,
     se_id INT,
@@ -137,11 +137,11 @@ INSERT INTO selectevent_choice VALUES
 
 
 /* trapevent */
-drop table trapevent;
+drop table IF EXISTS trapevent;
 CREATE TABLE trapevent (
     te_id INT UNIQUE,
     te_name CHAR(50),
-    te_session VARCHAR(20), -- none, water, fire, grass
+    te_session VARCHAR(20), -- None, Water, Fire, Grass
     te_dice INT,            -- 주사위 눈금
     te_dicelimit INT,       -- 성공 기준
     te_php INT,             -- 플레이어 현재 체력 변화
@@ -151,18 +151,18 @@ CREATE TABLE trapevent (
 );
 select * from trapevent;
 INSERT INTO trapevent VALUES
-(0, '저주받은 함정', 'none', 12, 7, -20, 0, 0, 0),
-(1, '세이렌의 노래', 'water', 16, 9, 0, 0, 0, -2),
-(2, '화산재 폭풍', 'fire', 18, 10, 0, 0, -10, 0),
-(3, '식인식물의 독가시 공격', 'grass', 20, 11, 0, -10, 0, 0);
+(0, '저주받은 함정', 'None', 12, 7, -20, 0, 0, 0),
+(1, '세이렌의 노래', 'Water', 16, 9, 0, 0, 0, -2),
+(2, '화산재 폭풍', 'Fire', 18, 10, 0, 0, -10, 0),
+(3, '식인식물의 독가시 공격', 'Grass', 20, 11, 0, -10, 0, 0);
 
 
-
-drop table bossevent;
+/* bossevent */
+drop table IF EXISTS bossevent;
 create table bossevent (
 	be_id INT UNIQUE,
     be_name CHAR(50),
-    be_session VARCHAR(20),
+    be_session VARCHAR(20), -- None, Water, Fire, Grass
     MonsterID INT,
     FOREIGN KEY (MonsterID) REFERENCES MonsterDB(MonsterID)
 );
