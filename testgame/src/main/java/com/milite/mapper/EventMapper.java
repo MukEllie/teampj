@@ -43,18 +43,22 @@ public interface EventMapper {
 
 	SelectChoiceDto getSelectChoiceById(@Param("sec_id") int secId); // ← @Param 추가
 
+	SelectEventDto getSelectById(@Param("se_id") int seId); // markeventused에 session 불러오기용
+
 	/* ===== Card ===== */
 	CardEventDto pickOneUnusedCard(@Param("session") String session, @Param("playerId") String playerId,
 			@Param("layer") String layer);
 
 	List<SkillDto> getEventSkillsFromDB(@Param("playerId") String playerId, @Param("limit") int limit);
 
+	CardEventDto getCardById(@Param("ce_id") int ceId); // markeventused에 session 불러오기용
+
 	/* ===== Artifact ===== */
 	ArtifactEventDto pickOneUnusedArtifactEvent(@Param("layer") String layer, @Param("playerId") String playerId,
 			@Param("session") String session);
 
 	List<ArtifactDto> getArtifactsBySession(@Param("session") String session, @Param("job") String job,
-			@Param("limit") int limit);
+			@Param("limit") int limit, @Param("playerId") String playerId);
 
 	/** 아티팩트 단건 조회 (이름/효과 메시지용) */
 	ArtifactDto getArtifactById(@Param("artifactId") int artifactId);

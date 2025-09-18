@@ -19,4 +19,8 @@ public interface CharacterStatusMapper {
 
 	void updatePlayerSkills(@Param("playerId") String playerId, @Param("usingSkills") String usingSkills,
 			@Param("ownedSkills") String ownedSkills);
+
+	int applyAllDeltas(@Param("playerId") String playerId, @Param("dPMaxHp") int dPMaxHp, @Param("dPHp") int dPHp,
+			@Param("dPAtk") int dPAtk, @Param("dPLuck") int dPLuck, @Param("dMMaxHp") int dMMaxHp,
+			@Param("dMHp") int dMHp, @Param("dMAtk") int dMAtk);
 }

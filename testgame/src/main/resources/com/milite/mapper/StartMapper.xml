@@ -35,4 +35,10 @@
     WHERE name = #{name}
   </select>
 
+  <update id="decrementStageClamp0">
+    UPDATE PlayerDB
+    SET WhereStage = GREATEST(0, WhereStage - 1)
+    WHERE Player_ID = #{playerId}
+  </update>
+
 </mapper>

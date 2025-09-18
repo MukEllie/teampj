@@ -122,5 +122,22 @@
 		where
 		Player_ID = #{playerId}
 	</update>
+	
+	<update id="applyAllDeltas">
+	    UPDATE PlayerDB
+	    SET
+	      /* Player side */
+	      max_hp  = max_hp + #{dPMaxHp},
+	      curr_hp = LEAST(max_hp + #{dPMaxHp}, GREATEST(0, curr_hp + #{dPHp})),
+	      atk     = atk  + #{dPAtk},
+	      luck    = luck + #{dPLuck},
+	
+	      /* Monster side (event-only stats kept in PlayerDB) */
+	      EventMaxHp  = EventMaxHp + #{dMMaxHp},
+	      EventCurrHp = LEAST(EventMaxHp + #{dMMaxHp}, GREATEST(0, EventCurrHp + #{dMHp})),
+	      EventAtk    = EventAtk + #{dMAtk}
+	    WHERE Player_ID = #{playerId}
+	</update>
+	
 </mapper>
 	

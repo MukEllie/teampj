@@ -80,7 +80,7 @@ public class CampController {
 			body.put("battleStart", battle);
 		} else {
 			body.put("decision", "event");
-			body.put("eventRouter", "/api/event/trigger/non-boss");
+			body.put("eventRouter", "/api/event/trigger");
 		}
 		return ResponseEntity.ok(body);
 	}

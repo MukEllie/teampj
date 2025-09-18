@@ -10,6 +10,9 @@ public interface StartService {
 	/** 시작 상태 조회 */
 	StartState getStartState(String userId);
 
+	/** 세이브가 있으면 WhereStage-1(최소 0) 보정 후 캠프로 이동할 경로 반환 */
+	String continueRun(String userId);
+
 	/** 직업 선택지 3개 조회 */
 	List<CharacterDto> getFixedClassOptions();
 

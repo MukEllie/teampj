@@ -22,4 +22,7 @@ public interface StartMapper {
 
 	/** 직업 단건 조회 */
 	CharacterDto getClassByName(@Param("name") String name);
+
+	/** 세이브가 있으면 WhereStage-1(최소 0) 보정 후 캠프로 이동할 경로 반환 */
+	int decrementStageClamp0(@Param("playerId") String playerId);
 }

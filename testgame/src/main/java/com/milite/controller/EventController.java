@@ -40,13 +40,6 @@ public class EventController {
 		return ResponseEntity.ok(ApiResponse.ok("랜덤 이벤트 트리거 완료", next));
 	}
 
-	/** 보스 제외 랜덤 트리거 */
-	@GetMapping("/trigger/non-boss/{playerId}")
-	public ResponseEntity<ApiResponse<String>> triggerNonBoss(@PathVariable String playerId) {
-		String next = eventService.triggerRandomNonBoss(playerId);
-		return ResponseEntity.ok(ApiResponse.ok("보스 제외 트리거 완료", next));
-	}
-
 	/* Normal */
 	/** 일반 이벤트 조회 */
 	@GetMapping("/normal")

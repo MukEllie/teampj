@@ -40,6 +40,25 @@ public class StartServiceImpl implements StartService {
 		return s;
 	}
 
+	@Override
+	@Transactional
+	public String continueRun(String userId) {
+		// 1) User 존재 확인
+		if (startMapper.existsUserId(userId) == 0)
+			return null;
+
+		// 2) Player 존재 확인
+		PlayerDto p = characterStatusMapper.getPlayerInfo(userId);
+		if (p == null)
+			return null;
+
+		// 3) WhereStage = max(0, WhereStage-1)
+		startMapper.decrementStageClamp0(userId);
+
+		// 4) 캠프로 이동 경로 반환
+		return "forward:/camp?playerId=" + userId;
+	}
+
 	/** Warrior, Mage, Thief 순서 반환 */
 	@Override
 	public List<CharacterDto> getFixedClassOptions() {

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class CampServiceImpl implements CampService {
 
 	private final CharacterStatusMapper characterStatusMapper;
+	private final EventService eventService;
 
 	// 세션 표기 규칙: 프로젝트 전반과 맞추세요. (예: "Water", "Fire", "Grass")
 	private static final String SESSION_WATER = "Water";
@@ -70,13 +71,13 @@ public class CampServiceImpl implements CampService {
 		String current = p.getWhereSession();
 		String next = nextSession(current);
 
-		// 계층 전환 + 스테이지 1 리셋
+		// 계층 전환 + 스테이지 0 리셋
 		p.setWhereSession(next);
-		p.setWhereStage(1);
+		p.setWhereStage(0);
 		characterStatusMapper.updateStatus(p);
 
-		// (선택) 계층 이동 시 used_events 레코드 초기화가 필요하다면 여기서 호출:
-		// eventMapper.resetLayerUsed(playerId, next);
+		// 계층 이동 시 used_events 레코드 초기화 여기서 호출:
+		eventService.resetLayerUsed(playerId, next);
 
 		return next;
 	}

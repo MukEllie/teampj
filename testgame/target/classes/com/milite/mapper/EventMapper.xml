@@ -2,14 +2,33 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.milite.mapper.EventMapper">
 
-  <!-- ======= Normal ======= -->
-  <select id="pickOneUnusedNormal" resultType="com.milite.dto.NormalEventDto">
-    SELECT
-      ne_id, ne_name, ne_session, ne_dice, ne_php, ne_mhp, ne_patk, ne_matk, ne_gold, ne_luck
+  <!-- =========================
+       공통: 사용 처리 / 초기화
+       ========================= -->
+  <insert id="markEventUsed">
+    INSERT INTO used_events (player_id, layer, event_type, event_id)
+    VALUES (#{playerId}, #{layer}, #{eventType}, #{eventId})
+  </insert>
+
+  <!-- layer는 다음 세션과 'None' 둘 다 리셋 (보스 제외) -->
+  <delete id="resetLayerUsed">
+    DELETE FROM used_events
+    WHERE player_id = #{playerId}
+      AND layer IN (#{layer}, 'None')
+      AND event_type != 'boss'
+  </delete>
+
+  <!-- =========================
+       Normal
+       ========================= -->
+  <!-- 현재 세션과 None에서 아직 사용하지 않은 것 중 랜덤 1개 -->
+  <select id="pickOneUnusedNormal" parameterType="map" resultType="com.milite.dto.NormalEventDto">
+    SELECT ne_id, ne_name, ne_session, ne_dice, ne_php, ne_mhp, ne_patk, ne_matk, ne_gold, ne_luck
     FROM normalevent
-    WHERE (LOWER(ne_session)='none' OR LOWER(ne_session)=LOWER(#{session}))
+    WHERE (ne_session = 'None' OR ne_session = #{session})
       AND ne_id NOT IN (
         SELECT event_id FROM used_events
         WHERE player_id = #{playerId}
@@ -26,13 +45,14 @@
     LIMIT 1
   </select>
 
-  <!-- ======= Roll ======= -->
-  <select id="pickOneUnusedRoll" resultType="com.milite.dto.RollEventDto">
-    SELECT
-      re_id, re_name, re_session, re_dice, re_dicelimit,
-      re_php, re_pmaxhp, re_mhp, re_mmaxhp, re_patk, re_matk, re_gold, re_luck
+  <!-- =========================
+       Roll
+       ========================= -->
+  <select id="pickOneUnusedRoll" parameterType="map" resultType="com.milite.dto.RollEventDto">
+    SELECT re_id, re_name, re_session, re_dice, re_dicelimit,
+           re_php, re_pmaxhp, re_mhp, re_mmaxhp, re_patk, re_matk, re_gold, re_luck
     FROM rollevent
-    WHERE (LOWER(re_session)='none' OR LOWER(re_session)=LOWER(#{session}))
+    WHERE (re_session = 'None' OR re_session = #{session})
       AND re_id NOT IN (
         SELECT event_id FROM used_events
         WHERE player_id = #{playerId}
@@ -43,19 +63,20 @@
   </select>
 
   <select id="getRollById" parameterType="int" resultType="com.milite.dto.RollEventDto">
-    SELECT
-      re_id, re_name, re_session, re_dice, re_dicelimit,
-      re_php, re_pmaxhp, re_mhp, re_mmaxhp, re_patk, re_matk, re_gold, re_luck
+    SELECT re_id, re_name, re_session, re_dice, re_dicelimit,
+           re_php, re_pmaxhp, re_mhp, re_mmaxhp, re_patk, re_matk, re_gold, re_luck
     FROM rollevent
     WHERE re_id = #{re_id}
     LIMIT 1
   </select>
 
-  <!-- ======= Trap ======= -->
-  <select id="pickOneUnusedTrap" resultType="com.milite.dto.TrapEventDto">
+  <!-- =========================
+       Trap
+       ========================= -->
+  <select id="pickOneUnusedTrap" parameterType="map" resultType="com.milite.dto.TrapEventDto">
     SELECT te_id, te_name, te_session, te_dice, te_dicelimit, te_php, te_maxhp, te_patk, te_luck
     FROM trapevent
-    WHERE (LOWER(te_session)='none' OR LOWER(te_session)=LOWER(#{session}))
+    WHERE (te_session = 'None' OR te_session = #{session})
       AND te_id NOT IN (
         SELECT event_id FROM used_events
         WHERE player_id = #{playerId}
@@ -72,11 +93,13 @@
     LIMIT 1
   </select>
 
-  <!-- ======= Select (부모) ======= -->
-  <select id="pickOneUnusedSelect" resultType="com.milite.dto.SelectEventDto">
+  <!-- =========================
+       Select
+       ========================= -->
+  <select id="pickOneUnusedSelect" parameterType="map" resultType="com.milite.dto.SelectEventDto">
     SELECT se_id, se_name, se_session
     FROM selectevent
-    WHERE (LOWER(se_session)='none' OR LOWER(se_session)=LOWER(#{session}))
+    WHERE (se_session = 'None' OR se_session = #{session})
       AND se_id NOT IN (
         SELECT event_id FROM used_events
         WHERE player_id = #{playerId}
@@ -86,146 +109,128 @@
     ORDER BY RAND() LIMIT 1
   </select>
 
+  <select id="getSelectById" parameterType="int" resultType="com.milite.dto.SelectEventDto">
+    SELECT se_id, se_name, se_session
+    FROM selectevent
+    WHERE se_id = #{se_id}
+    LIMIT 1
+  </select>
+
   <select id="getSelectChoices" parameterType="int" resultType="com.milite.dto.SelectChoiceDto">
-    SELECT
-      sec_id, se_id, sec_opt,
-      sec_php, sec_pmaxhp, sec_mhp, sec_mmaxhp, sec_patk, sec_matk, sec_gold, sec_luck,sec_text
+    SELECT sec_id, se_id, sec_opt,
+           sec_php, sec_pmaxhp, sec_mhp, sec_mmaxhp, sec_patk, sec_matk, sec_gold, sec_luck, sec_text
     FROM selectevent_choice
     WHERE se_id = #{se_id}
-    ORDER BY sec_id
+    ORDER BY sec_opt ASC
   </select>
 
   <select id="getSelectChoiceById" parameterType="int" resultType="com.milite.dto.SelectChoiceDto">
-    SELECT
-      sec_id, se_id, sec_opt,
-      sec_php, sec_pmaxhp, sec_mhp, sec_mmaxhp, sec_patk, sec_matk, sec_gold, sec_luck,sec_text
+    SELECT sec_id, se_id, sec_opt,
+           sec_php, sec_pmaxhp, sec_mhp, sec_mmaxhp, sec_patk, sec_matk, sec_gold, sec_luck, sec_text
     FROM selectevent_choice
     WHERE sec_id = #{sec_id}
     LIMIT 1
   </select>
 
-  <!-- ======= Card ======= -->
-  <select id="pickOneUnusedCard" resultType="com.milite.dto.CardEventDto">
-	  SELECT
-	    ce_id,
-	    ce_name,
-	    ce_session
-	  FROM cardevent
-	  WHERE (LOWER(ce_session)='none' OR LOWER(ce_session)=LOWER(#{session}))
-	    AND ce_id NOT IN (
-	      SELECT event_id FROM used_events
-	      WHERE player_id = #{playerId}
-	        AND layer     = #{layer}
-	        AND event_type = 'card'
-	    )
-	  ORDER BY RAND()
-	  LIMIT 1
+  <!-- =========================
+       Card
+       ========================= -->
+  <select id="pickOneUnusedCard" parameterType="map" resultType="com.milite.dto.CardEventDto">
+    SELECT ce_id, ce_name, ce_session
+    FROM cardevent
+    WHERE (ce_session = 'None' OR ce_session = #{session})
+      AND ce_id NOT IN (
+        SELECT event_id FROM used_events
+        WHERE player_id = #{playerId}
+          AND layer = #{layer}
+          AND event_type = 'card'
+      )
+    ORDER BY RAND() LIMIT 1
   </select>
 
-  <!-- SkillDB에서 skill_type='event' 카드 3장 -->
-  <select id="getEventSkillsFromDB" resultType="com.milite.dto.SkillDto">
-	  SELECT
-	    s.skill_id,
-	    s.skill_name,
-	    s.skill_job,
-	    s.element,
-	    s.rarity,
-	    s.skill_type,
-	    s.skill_text
-	  FROM PlayerDB p
-	  JOIN SkillDB s
-	       ON TRUE
-	  WHERE p.Player_ID = #{playerId}
-	    -- 보유(Own_Skill)에는 없는 카드만 (CSV: "11,12,13")
-	    AND (p.Own_Skill IS NULL OR p.Own_Skill = '' OR FIND_IN_SET(s.skill_id, p.Own_Skill) = 0)
-	    -- 카드 이벤트 스킬만 필요하면 유지(원본에 있었다면 유지; 필요 없으면 이 줄 지워도 무방)
-	    AND LOWER(s.skill_type) = 'event'
-	    -- 직업/세션만 반영 (희귀도 제외)
-	    AND (LOWER(s.skill_job) = 'common' OR LOWER(s.skill_job) = LOWER(p.Using_Character))
-	    AND (LOWER(s.element)   = 'none'   OR LOWER(s.element)   = LOWER(p.WhereSession))
-	  ORDER BY RAND()
-	  LIMIT #{limit}
-  </select>
-
-
-  <!-- ======= Artifact ======= -->
-  <!-- 미사용 아티팩트 인트로 1개 -->
-  <select id="pickOneUnusedArtifactEvent" resultType="com.milite.dto.ArtifactEventDto">
-    SELECT ae.*
-    FROM artifactevent ae
-    LEFT JOIN used_events ue
-      ON ue.player_id = #{playerId}
-     AND ue.layer     = #{layer}
-     AND ue.event_type= 'artifact'
-     AND ue.event_id  = ae.ae_id
-    WHERE ue.id IS NULL
-    ORDER BY RAND()
+  <select id="getCardById" parameterType="int" resultType="com.milite.dto.CardEventDto">
+    SELECT ce_id, ce_name, ce_session
+    FROM cardevent
+    WHERE ce_id = #{ce_id}
     LIMIT 1
   </select>
 
-  <!-- 세션/직업 기준 후보 3개 (원본 함수 유지) -->
-  <select id="getArtifactsBySession" resultType="com.milite.dto.ArtifactDto">
-    SELECT
-      a.ID          AS artifactId,
-      a.Name        AS artifactName,
-      a.Job         AS artifactJob,
-      a.Session     AS artifactSession,
-      a.Effect      AS artifactEffect,
-      a.Description AS artifactText
-    FROM ArtifactDB a
-    WHERE (LOWER(a.Session) = 'none' OR LOWER(a.Session) = LOWER(#{session}))
-      AND (LOWER(a.Job)     = 'common' OR LOWER(a.Job)     = LOWER(#{job}))
+  <!-- 카드 후보 스킬 3장 (보유 중복 제외, 직업/세션 적합 우선) -->
+  <select id="getEventSkillsFromDB" parameterType="map" resultType="com.milite.dto.SkillDto">
+    /* playerId로 PlayerDB를 붙여 Using_Character / WhereSession / Own_Skill 사용 */
+    SELECT s.*
+    FROM skills s
+    JOIN PlayerDB p ON p.Player_ID = #{playerId}
+    WHERE s.skill_type = 'Event'
+      AND (s.skill_job = 'Common' OR s.skill_job = p.Using_Character)
+      AND (s.element = 'None' OR s.element = p.WhereSession)
+      AND (
+        p.Own_Skill IS NULL OR p.Own_Skill = '' OR FIND_IN_SET(s.skill_id, p.Own_Skill) = 0
+      )
     ORDER BY RAND()
     LIMIT #{limit}
   </select>
 
-  <!-- 단건 조회 (원본 함수 유지) -->
-  <select id="getArtifactById" resultType="com.milite.dto.ArtifactDto">
-    SELECT
-      a.ID          AS artifactId,
-      a.Name        AS artifactName,
-      a.Job         AS artifactJob,
-      a.Session     AS artifactSession,
-      a.Effect      AS artifactEffect,
-      a.Description AS artifactText
+  <!-- =========================
+       Artifact
+       ========================= -->
+  <select id="pickOneUnusedArtifactEvent" parameterType="map" resultType="com.milite.dto.ArtifactEventDto">
+    SELECT ae_id, ae_name, ae_session
+    FROM artifactevent
+    WHERE (ae_session = 'None' OR ae_session = #{session})
+      AND ae_id NOT IN (
+        SELECT event_id FROM used_events
+        WHERE player_id = #{playerId}
+          AND layer = #{layer}
+          AND event_type = 'artifact'
+      )
+    ORDER BY RAND() LIMIT 1
+  </select>
+
+  <!-- 아티팩트 후보 N개 (보유 중복 제외, 직업 적합 우선)
+       ArtifactDB 스키마: (artifact_id, artifact_name, Job, ArtifactSession, effect, description) 가정 -->
+  <select id="getArtifactsBySession" parameterType="map" resultType="com.milite.dto.ArtifactDto">
+    SELECT a.*
     FROM ArtifactDB a
-    WHERE a.ID = #{artifactId}
+    JOIN PlayerDB p ON p.Player_ID = #{playerId}
+    WHERE (a.Job = 'Common' OR a.Job = #{job})
+      AND (a.ArtifactSession IN ('Event','None'))   <!-- 세션성 필드 사용: Event/NONE 위주 제공 -->
+      AND (
+        p.Own_Artifact IS NULL OR p.Own_Artifact = '' OR FIND_IN_SET(a.Artifact_ID, p.Own_Artifact) = 0
+      )
+    ORDER BY RAND()
+    LIMIT #{limit}
+  </select>
+
+  <select id="getArtifactById" parameterType="int" resultType="com.milite.dto.ArtifactDto">
+    SELECT *
+    FROM ArtifactDB
+    WHERE Artifact_ID = #{artifactId}
     LIMIT 1
   </select>
 
-  <!-- ======= Boss ======= -->
-  <select id="pickOneUnusedBoss" resultType="com.milite.dto.BossEventDto">
-    SELECT be_id, be_name, be_session, MonsterID
+  <!-- =========================
+       Boss
+       ========================= -->
+  <!-- 보스 이벤트가 별도 테이블에 있지 않은 경우, 보스 “진입 이벤트”를 관리 테이블로 운용한다면
+       pickOneUnusedBoss/getBossById의 실제 테이블명/컬럼명에 맞춰 아래를 교체하세요. -->
+  <select id="pickOneUnusedBoss" parameterType="map" resultType="com.milite.dto.BossEventDto">
+    SELECT be_id, be_name, be_session
     FROM bossevent
-    WHERE (LOWER(be_session)='none' OR LOWER(be_session)=LOWER(#{session}))
+    WHERE (be_session = 'None' OR be_session = #{session})
       AND be_id NOT IN (
         SELECT event_id FROM used_events
         WHERE player_id = #{playerId}
-          AND layer = 'GLOBAL'
           AND event_type = 'boss'
       )
     ORDER BY RAND() LIMIT 1
   </select>
 
   <select id="getBossById" parameterType="int" resultType="com.milite.dto.BossEventDto">
-    SELECT be_id, be_name, be_session, MonsterID
+    SELECT be_id, be_name, be_session
     FROM bossevent
     WHERE be_id = #{be_id}
     LIMIT 1
   </select>
-
-  <!-- ======= used_events 공통 ======= -->
-  <insert id="markEventUsed">
-    INSERT INTO used_events (player_id, layer, event_type, event_id)
-    VALUES (#{playerId}, #{layer}, #{type}, #{eventId})
-    ON DUPLICATE KEY UPDATE used_at = CURRENT_TIMESTAMP
-  </insert>
-
-  <delete id="resetLayerUsed">
-    DELETE FROM used_events
-    WHERE player_id = #{playerId}
-      AND layer = #{layer}
-      AND event_type != 'boss'
-  </delete>
 
 </mapper>

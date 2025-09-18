@@ -18,9 +18,6 @@ public interface EventService {
 	/** 랜덤 이벤트 트리거 */
 	String triggerRandomEvent(String playerId);
 
-	/** 보스 제외 랜덤 트리거 */
-	String triggerRandomNonBoss(String playerId);
-
 	/* Normal */
 	/** 일반 이벤트 준비 */
 	NormalEventDto prepareNormal(String playerId);

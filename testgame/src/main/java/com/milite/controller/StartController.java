@@ -38,6 +38,15 @@ public class StartController {
 		return ResponseEntity.ok(ApiResponse.ok("상태 조회 완료", dto));
 	}
 
+	@PostMapping("/continue")
+	public ResponseEntity<?> continueRun(@RequestParam String userId) {
+		String next = startService.continueRun(userId);
+		if (next == null) {
+			return ResponseEntity.badRequest().body("유저 또는 플레이어 데이터가 없습니다.");
+		}
+		return ResponseEntity.ok(next); // 프론트가 forward 경로를 받아 처리
+	}
+
 	/** Warrior, Mage, Thief 3개 반환 */
 	@GetMapping("/options")
 	public ResponseEntity<ApiResponse<List<CharacterDto>>> options() {
