@@ -57,9 +57,17 @@ public class BattleController {
 	public ResponseEntity<Map<String, Object>> startBattle(@RequestParam("PlayerID") String PlayerID) {
 		System.out.println("=== 전투 시작 단계 - Player : " + PlayerID + " ===");
 		try {
+			System.out.println("1. service.battle() 호출 전");
 			BattleResultDto initResult = service.battle(PlayerID);
+			System.out.println(
+					"2. service.battle() 호출 완료 - Result: " + (initResult != null ? initResult.getMessage() : "null"));
+
+			System.out.println("3. service.getBattleStatus() 호출 전");
 
 			Map<String, Object> battleStatus = service.getBattleStatus(PlayerID);
+			System.out
+					.println("4. service.getBattleStatus() 호출 완료 - Status: " + (battleStatus != null ? "OK" : "null"));
+
 			Map<String, Object> responseMap = new HashMap<>();
 			responseMap.put("stage", "battleReady");
 			responseMap.put("message", "전투가 시작되었습니다. 스킬을 선택해주세요");
@@ -69,18 +77,45 @@ public class BattleController {
 			responseMap.put("currentUnit", battleStatus.get("currentUnit"));
 			responseMap.put("playerHp", battleStatus.get("playerHp"));
 			responseMap.put("aliveMonsters", battleStatus.get("aliveMonsters"));
+			System.out.println("5. 응답 준비 완료");
+
+			return ResponseEntity.ok(responseMap);
+		} catch (Exception e) {
+			System.err.println("=== 전투 시작 중 오류 발생 ===");
+			System.err.println("PlayerID: " + PlayerID);
+			System.err.println("Exception Type: " + e.getClass().getSimpleName());
+			System.err.println("Exception Message: " + e.getMessage());
+			e.printStackTrace();
+			System.err.println("=== 오류 정보 끝 ===");
+
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "전투 시작 중 오류 발생: " + e.getMessage());
+			errorMap.put("playerID", PlayerID);
+			errorMap.put("exceptionType", e.getClass().getSimpleName());
+			return ResponseEntity.badRequest().body(errorMap);
+		}
+	}
+
+	@GetMapping("/skills/battle")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getBattleSkill(@RequestParam("PlayerID") String PlayerID) {
+		try {
+			List<SkillDto> usingSkills = skillservice.getUsingSkillList(PlayerID);
+
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("success", true);
+			responseMap.put("skillCount", usingSkills.size());
+			responseMap.put("skills", createSkillListMap(usingSkills));
+			responseMap.put("message", "전투용 스킬 목록 조회 완료");
 
 			return ResponseEntity.ok(responseMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Map<String, Object> errorMap = new HashMap<>();
-			errorMap.put("error", "전투 시작 중 오류 발생: " + e.getMessage());
+			errorMap.put("error", "전투용 스킬 조회 중 오류 발생: " + e.getMessage());
 			return ResponseEntity.badRequest().body(errorMap);
 		}
 	}
-
-	// 혼령의 인도인 전투는 battle/event로 연결하게 만들기. 이 경우 몹 생성까지 전부 여기서 만들고 세션 저장을 시켜야함. 전투의
-	// 경우 이미 battle/battle에서 혼령까지 되어있으니 문제 없을 것으로 보임
 
 	@PostMapping("/event")
 	@ResponseBody

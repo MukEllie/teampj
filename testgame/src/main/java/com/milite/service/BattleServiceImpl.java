@@ -87,18 +87,31 @@ public class BattleServiceImpl implements BattleService {
 
 	@Override
 	public BattleResultDto battle(String PlayerID) {
+		System.out.println("BattleServiceImpl.battle() 시작 - PlayerID: " + PlayerID);
 		// 플레이어 정보 관련
 		if (PlayerID == null) {
+			System.err.println("PlayerID가 null입니다.");
 			return createErrorResult("플레이어 정보가 없습니다.");
 		}
-
+		System.out.println("getPlayerInfo() 호출 전");
 		PlayerDto Player = getPlayerInfo(PlayerID); // 플레이어 정보 불러오기
 		if (Player == null) {
+			System.err.println("getPlayerInfo() 결과가 null입니다. PlayerID: " + PlayerID);
+
 			return createErrorResult("플레이어 정보가 없습니다.");
 		}
 
+		System.out.println("플레이어 정보 조회 성공: " + Player.getPlayerID() + ", 캐릭터: " + Player.getUsing_Character() + ", 세션: "
+				+ Player.getWhereSession() + ", 스테이지: " + Player.getWhereStage());
+
+		System.out.println("몬스터 생성 시작");
 		// 몬스터 생성 및 배열
 		ArrayList<MonsterDto> EnemyData = generateEnemies(Player.getWhereSession(), Player.getWhereStage());
+		if (EnemyData == null || EnemyData.isEmpty()) {
+			System.err.println("몬스터 생성 실패 - EnemyData가 null이거나 비어있습니다.");
+			return createErrorResult("몬스터 생성에 실패했습니다.");
+		}
+		System.out.println("몬스터 생성 성공 - 몬스터 수: " + EnemyData.size());
 		ArrayList<BattleMonsterUnit> enemy = new ArrayList<>();
 		for (MonsterDto dto : EnemyData) {
 			enemy.add(new BattleMonsterUnit(dto));
@@ -117,7 +130,7 @@ public class BattleServiceImpl implements BattleService {
 
 		log.info("=== 전투 시작 ===");
 		logActionOrder(actionOrder);
-
+		System.out.println("전투 세션 초기화 완료");
 		return new BattleResultDto("전투 시작", 0, 0, false, false, new ArrayList<>());
 	}
 
