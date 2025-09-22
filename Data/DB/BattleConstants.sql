@@ -1,5 +1,6 @@
-USE testgame;
+USE tesplayerdbplayerdbcharacterdbcharacterdbartifactdbartifactdbtgame;
 
+select * from Battle_Constants;
 -- 테이블 생성
 CREATE TABLE Battle_Constants (
     name VARCHAR(50) PRIMARY KEY,

@@ -1,6 +1,4 @@
-CREATE DATABASE team1 default CHARACTER SET UTF8MB4;
 CREATE DATABASE testgame default CHARACTER SET UTF8MB4;
-use team1;
 use testgame;
 
 /* normalevent */

@@ -1,4 +1,3 @@
-use team1;
 use testgame;
 
 drop table ArtifactDB;
@@ -10,6 +9,8 @@ CREATE TABLE ArtifactDB (
     Effect TEXT NOT NULL,
     Description TEXT NOT NULL
 );
+
+select * from ArtifactDB;
 
 INSERT INTO ArtifactDB (ID, Name, Job, Session, Effect, Description) VALUES
 (101, '파이터 길드 메달', 'Common', 'None', '무속성 스킬 카드의 데미지 2 증가', '격투 길드의 싸움에서 이긴자에게 주어지는 증표'),

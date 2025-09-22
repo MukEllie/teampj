@@ -1,7 +1,7 @@
 use testgame;
 
 show tables;
-
+select * from skills;
 drop table skills;
 create table skills (
     skill_id int primary key auto_increment,
