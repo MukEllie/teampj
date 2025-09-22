@@ -87,25 +87,6 @@
   border: 3px solid #9480E9;
 }
 
-/* 왼쪽 카드 제목 */
-.card-title-left {
-  position: absolute;
-  width: 38px;
-  height: 22px;
-  left: 301px;
-  top: 389px;
-  font-family: 'SeoulNamsan';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 22px;
-  line-height: 22px;
-  text-align: center;
-  letter-spacing: -0.05em;
-  color: #EEEFF2;
-  text-shadow: 0px 0px 5px #17181A;
-  z-index: 10;
-}
-
 /* 중앙 카드 박스 */
 .card-box-center {
   position: absolute;
@@ -132,37 +113,6 @@
   transform: translateY(-10px);
   box-shadow: 0px 10px 20px rgba(148, 128, 233, 0.5);
   border: 3px solid #9480E9;
-}
-
-/* 중앙 카드 이미지 */
-.card-image-center {
-  position: absolute;
-  width: 146px;
-  height: 171px;
-  left: 567px;
-  top: 273px;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: 10;
-}
-
-/* 중앙 카드 설명 */
-.card-description-center {
-  position: absolute;
-  width: 237px;
-  height: 30px;
-  left: 522px;
-  top: 476px;
-  font-family: 'SeoulNamsan';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 30px;
-  text-align: center;
-  letter-spacing: -0.05em;
-  color: #EEEFF2;
-  z-index: 10;
 }
 
 /* 우측 카드 박스 */
@@ -193,35 +143,152 @@
   border: 3px solid #9480E9;
 }
 
-/* 우측 카드 이미지 */
-.card-image-right {
+/* 세부 선택 화면 - 왼쪽 카드 */
+.detail-card-left {
   position: absolute;
-  width: 146px;
-  height: 171px;
-  left: 867px;
-  top: 273px;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  width: 270px;
+  height: 360px;
+  left: calc(50% - 270px/2 - 300px);
+  top: calc(50% - 360px/2 - 30px);
+  background: #17181A;
+  opacity: 0.8;
+  box-shadow: 0px 0px 8px #17181A;
+  border-radius: 10px;
+  z-index: 5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-card-left:hover {
+  opacity: 0.9;
+  transform: translateY(-5px);
+  border-color: rgba(148, 128, 233, 0.5);
+}
+
+.detail-card-left.selected {
+  opacity: 1;
+  transform: translateY(-10px);
+  box-shadow: 0px 15px 25px rgba(148, 128, 233, 0.6);
+  border: 3px solid #9480E9;
+}
+
+/* 세부 선택 화면 - 중앙 카드 */
+.detail-card-center {
+  position: absolute;
+  width: 270px;
+  height: 360px;
+  left: 505px;
+  top: calc(50% - 360px/2 - 30px);
+  background: #17181A;
+  opacity: 0.8;
+  box-shadow: 0px 0px 8px #17181A;
+  border-radius: 10px;
+  z-index: 5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-card-center:hover {
+  opacity: 0.9;
+  transform: translateY(-5px);
+  border-color: rgba(148, 128, 233, 0.5);
+}
+
+.detail-card-center.selected {
+  opacity: 1;
+  transform: translateY(-10px);
+  box-shadow: 0px 15px 25px rgba(148, 128, 233, 0.6);
+  border: 3px solid #9480E9;
+}
+
+/* 세부 선택 화면 - 우측 카드 */
+.detail-card-right {
+  position: absolute;
+  width: 270px;
+  height: 360px;
+  left: 805px;
+  top: calc(50% - 360px/2 - 30px);
+  background: #17181A;
+  opacity: 0.8;
+  box-shadow: 0px 0px 8px #17181A;
+  border-radius: 10px;
+  z-index: 5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-card-right:hover {
+  opacity: 0.9;
+  transform: translateY(-5px);
+  border-color: rgba(148, 128, 233, 0.5);
+}
+
+.detail-card-right.selected {
+  opacity: 1;
+  transform: translateY(-10px);
+  box-shadow: 0px 15px 25px rgba(148, 128, 233, 0.6);
+  border: 3px solid #9480E9;
+}
+
+/* 세부 선택 확인 버튼 */
+.detail-confirm-button {
+  position: absolute;
+  width: 140px;
+  height: 50px;
+  left: 1080px;
+  top: 680px;
+  background: linear-gradient(180deg, #B7A6FF 0%, #9480E9 100%);
+  border: 2px solid #564AC3;
+  border-radius: 13px;
+  color: #F5F3FF;
+  font-family: 'SeoulNamsan';
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  text-shadow: 0px 1px 0px #6A39D4;
+}
+
+.detail-confirm-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0px 5px 15px rgba(148, 128, 233, 0.4);
+}
+
+.detail-confirm-button:disabled {
+  background: #666;
+  border-color: #444;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* 세부 선택 취소 버튼 */
+.detail-cancel-button {
+  position: absolute;
+  width: 140px;
+  height: 50px;
+  left: 920px;
+  top: 680px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 13px;
+  color: white;
+  font-family: 'SeoulNamsan';
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
   z-index: 10;
 }
 
-/* 우측 카드 설명 */
-.card-description-right {
-  position: absolute;
-  width: 222px;
-  height: 30px;
-  left: 829px;
-  top: 476px;
-  font-family: 'SeoulNamsan';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 30px;
-  text-align: center;
-  letter-spacing: -0.05em;
-  color: #EEEFF2;
-  z-index: 10;
+.detail-cancel-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* 리롤 버튼 */
@@ -244,10 +311,17 @@
   z-index: 10;
 }
 
-.reward-reroll-button:hover {
+.reward-reroll-button:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.reward-reroll-button:disabled {
+  background: rgba(100, 100, 100, 0.1);
+  border-color: rgba(100, 100, 100, 0.3);
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 /* 하단 버튼 - 피그마 스타일 */
@@ -313,4 +387,23 @@
   color: #F5F3FF;
   text-shadow: 0px 1px 0px #6A39D4;
   white-space: nowrap;
+}
+
+/* 반응형 대응 (선택사항) */
+@media (max-width: 1400px) {
+  .reward-wrapper {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 1100px) {
+  .reward-wrapper {
+    transform: scale(0.6);
+  }
+}
+
+@media (max-width: 800px) {
+  .reward-wrapper {
+    transform: scale(0.5);
+  }
 }

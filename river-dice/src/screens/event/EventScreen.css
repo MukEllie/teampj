@@ -73,7 +73,7 @@
 .event-option {
   position: absolute;
   width: 500px;
-  height: 100px;
+  height: 120px; /* 높이 증가 - 설명 텍스트를 위해 */
   left: calc(50% - 500px/2);
   cursor: pointer;
   transition: transform 0.2s ease;
@@ -85,26 +85,26 @@
 
 /* 첫 번째 선택지 - 상단 */
 .option-1 {
-  top: calc(50% - 100px/2 - 140px);
+  top: calc(50% - 120px/2 - 160px);
 }
 
 /* 두 번째 선택지 - 중간 */
 .option-2 {
-  top: calc(50% - 100px/2 + 20px);
+  top: calc(50% - 120px/2);
 }
 
 /* 세 번째 선택지 - 하단 */
 .option-3 {
-  top: calc(50% - 100px/2 + 180px);
+  top: calc(50% - 120px/2 + 160px);
 }
 
 /* 옵션 배경 (space) */
 .option-background {
   position: absolute;
   width: 500px;
-  height: 100px;
+  height: 120px;
   left: 0px;
-  top: calc(50% - 100px/2);
+  top: 0px;
   background: #17181A;
   opacity: 0.9;
   box-shadow: 0px 0px 6px #17181A;
@@ -119,12 +119,12 @@
   left: 0px;
   top: 0px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-family: 'SeoulNamsan';
   font-style: normal;
   font-weight: 400;
-  font-size: 18px;
   line-height: 22px;
   text-align: center;
   letter-spacing: -0.05em;
@@ -165,13 +165,15 @@
   font-family: 'SeoulNamsan';
   font-style: normal;
   font-weight: 400;
-  font-size: 20px;
-  line-height: 22px;
+  font-size: 18px;
+  line-height: 20px;
   text-align: center;
   letter-spacing: -0.05em;
   color: #FFD700;
   text-shadow: 0px 0px 5px #17181A;
   z-index: 10;
+  padding: 0 20px;
+  word-break: keep-all;
 }
 
 /* 호버 효과 개선 */
@@ -198,6 +200,22 @@
 
 .event-option:active .option-text {
   color: #FFFFFF;
+}
+
+/* 카테고리별 색상 구분 */
+.event-option.reward-event:hover .option-background {
+  background: linear-gradient(135deg, #2A4D3A, #1E3A2E);
+  border: 2px solid #4CAF50;
+}
+
+.event-option.trap-event:hover .option-background {
+  background: linear-gradient(135deg, #4D2A2A, #3A1E1E);
+  border: 2px solid #F44336;
+}
+
+.event-option.merchant-event:hover .option-background {
+  background: linear-gradient(135deg, #4D4A2A, #3A371E);
+  border: 2px solid #FF9800;
 }
 
 /* 반응형 디자인 */
@@ -227,6 +245,11 @@
   }
   
   .option-text {
-    left: calc(50% - 58px);
+    font-size: 16px;
+  }
+  
+  .event-description {
+    font-size: 20px;
+    max-width: 80%;
   }
 }

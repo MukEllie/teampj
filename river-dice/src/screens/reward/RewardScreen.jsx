@@ -1,4 +1,4 @@
-// RewardScreen.jsx
+// RewardScreen.jsx - 확률 시스템과 세부 선택 기능 추가
 import React, { useState, useEffect } from 'react';
 import { getBackground, getCard, getArtifact, getSkill } from '../../utils/ImageManager';
 import './RewardScreen.css';
@@ -6,19 +6,20 @@ import './RewardScreen.css';
 const RewardScreen = ({ onNavigate }) => {
   const [selectedCard, setSelectedCard] = useState(null);
   const [availableRewards, setAvailableRewards] = useState([]);
+  const [showDetailSelection, setShowDetailSelection] = useState(false);
+  const [detailSelectionType, setDetailSelectionType] = useState(null);
+  const [detailOptions, setDetailOptions] = useState([]);
+  const [selectedDetailIndex, setSelectedDetailIndex] = useState(null);
 
   // 모든 아티팩트 ID (101~121)
   const artifactIds = [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121];
-  
-  // 모든 스킬 ID (30~70)
-  const skillIds = [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70];
 
-  // 동적 보상 생성 함수
-  const generateAllRewards = () => {
+  // 확률 기반 보상 생성 함수 (항상 2장 + 30% 아티팩트)
+  const generateRewardsByProbability = () => {
     const rewards = [];
     
-    // 회복 보상들 (여러 종류)
-    rewards.push(
+    // 1. 회복 보상 (무조건 포함)
+    const healRewards = [
       {
         id: 'heal_small',
         type: 'heal',
@@ -51,57 +52,39 @@ const RewardScreen = ({ onNavigate }) => {
         effect: { type: 'heal', value: 999 },
         image: null
       }
-    );
+    ];
+    
+    // 랜덤 회복 보상 선택
+    const randomHeal = healRewards[Math.floor(Math.random() * healRewards.length)];
+    rewards.push(randomHeal);
 
-    // 카드 보상들
-    const cardTypes = ['fire', 'grass', 'water', 'none'];
-    cardTypes.forEach(cardType => {
-      rewards.push({
-        id: `card_${cardType}`,
-        type: 'card',
-        title: `${getCardTypeName(cardType)} 카드`,
-        description: `${getCardTypeName(cardType)} 속성의 강력한 카드를 획득합니다`,
-        effect: { type: 'card', element: cardType },
-        image: cardType
-      });
-    });
+    // 2. 스킬 보상 (무조건 포함)
+    const randomSkillPreviewImage = Math.floor(Math.random() * 100) + 1; // 1~100 랜덤 이미지
+    const skillReward = {
+      id: 'skill_selection',
+      type: 'skill',
+      title: '스킬 획득',
+      description: '새로운 스킬을 선택합니다',
+      effect: { type: 'skill_selection' },
+      image: randomSkillPreviewImage
+    };
+    rewards.push(skillReward);
 
-    // 모든 아티팩트 보상들 (101~121)
-    artifactIds.forEach(id => {
-      rewards.push({
-        id: `artifact_${id}`,
+    // 3. 아티팩트 보상 (30% 확률)
+    if (Math.random() < 0.3) {
+      const randomArtifactId = artifactIds[Math.floor(Math.random() * artifactIds.length)];
+      const artifactReward = {
+        id: 'artifact_reward',
         type: 'artifact',
-        title: `아티팩트 ${id}`,
-        description: `신비한 아티팩트의 힘을 얻습니다`,
+        title: `아티팩트 ${randomArtifactId}`,
+        description: '신비한 아티팩트의 힘을 얻습니다',
         effect: { type: 'artifact', stat: getRandomStat(), value: getRandomValue() },
-        image: id
-      });
-    });
-
-    // 모든 스킬 보상들 (30~70)
-    skillIds.forEach(id => {
-      rewards.push({
-        id: `skill_${id}`,
-        type: 'skill',
-        title: `스킬 ${id}`,
-        description: `새로운 스킬을 습득합니다`,
-        effect: { type: 'skill', skillId: id, value: getRandomValue() },
-        image: id
-      });
-    });
+        image: randomArtifactId
+      };
+      rewards.push(artifactReward);
+    }
 
     return rewards;
-  };
-
-  // 카드 타입 이름 변환
-  const getCardTypeName = (type) => {
-    const nameMap = {
-      'fire': '불의',
-      'grass': '풀의',
-      'water': '물의',
-      'none': '무속성'
-    };
-    return nameMap[type] || '알 수 없는';
   };
 
   // 랜덤 스탯 생성
@@ -115,79 +98,64 @@ const RewardScreen = ({ onNavigate }) => {
     return Math.floor(Math.random() * 20) + 5; // 5~25 랜덤 값
   };
 
-  // 랜덤 보상 3개 선택 함수
-  const generateRandomRewards = () => {
-    const allRewards = generateAllRewards();
-    const shuffled = [...allRewards].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 3);
+  // 세부 선택 옵션 생성
+  const generateDetailOptions = (type) => {
+    switch (type) {
+      case 'skill':
+        // 랜덤한 스킬 3개 선택 (1~100)
+        const skillIds = [];
+        while (skillIds.length < 3) {
+          const randomId = Math.floor(Math.random() * 100) + 1;
+          if (!skillIds.includes(randomId)) {
+            skillIds.push(randomId);
+          }
+        }
+        
+        return skillIds.map(id => ({
+          id: `skill_${id}`,
+          type: 'skill',
+          title: `스킬 ${id}`,
+          description: `새로운 스킬을 습득합니다`,
+          effect: { type: 'skill', skillId: id, value: getRandomValue() },
+          image: id
+        }));
+
+      default:
+        return [];
+    }
   };
 
-  // 컴포넌트 마운트 시 랜덤 보상 3개 선택
+  // 컴포넌트 마운트 시 보상 생성
   useEffect(() => {
-    setAvailableRewards(generateRandomRewards());
+    setAvailableRewards(generateRewardsByProbability());
   }, []);
 
   // 리롤 버튼 핸들러
   const handleReroll = () => {
-    setSelectedCard(null); // 선택 초기화
-    setAvailableRewards(generateRandomRewards());
+    setSelectedCard(null);
+    setShowDetailSelection(false);
+    setDetailSelectionType(null);
+    setDetailOptions([]);
+    setSelectedDetailIndex(null);
+    setAvailableRewards(generateRewardsByProbability());
   };
 
   // 카드 선택 핸들러
-  const handleCardSelect = (cardId) => {
-    setSelectedCard(cardId);
+  const handleCardSelect = (rewardId) => {
+    const reward = availableRewards.find(r => r.id === rewardId);
     
-    // 선택된 카드의 효과 적용
-    const card = availableRewards.find(c => c.id === cardId);
-    if (card) {
-      applyReward(card);
-    }
-  };
-
-  // 보상 적용
-  const applyReward = (card) => {
-    switch (card.effect.type) {
-      case 'heal':
-        const currentHealth = parseInt(localStorage.getItem('playerHealth') || '100');
-        const maxHealth = parseInt(localStorage.getItem('playerMaxHealth') || '100');
-        const newHealth = Math.min(currentHealth + card.effect.value, maxHealth);
-        localStorage.setItem('playerHealth', newHealth.toString());
-        break;
-      
-      case 'card':
-        const playerCards = JSON.parse(localStorage.getItem('playerCards') || '[]');
-        playerCards.push({
-          id: Date.now(),
-          type: card.effect.element,
-          name: card.title
-        });
-        localStorage.setItem('playerCards', JSON.stringify(playerCards));
-        break;
-      
-      case 'artifact':
-        const playerStats = JSON.parse(localStorage.getItem('playerStats') || '{"attack": 10, "health": 100, "luck": 3}');
-        playerStats[card.effect.stat] = (playerStats[card.effect.stat] || 0) + card.effect.value;
-        localStorage.setItem('playerStats', JSON.stringify(playerStats));
-        
-        // 체력 아티팩트의 경우 최대 체력도 업데이트
-        if (card.effect.stat === 'health') {
-          const newMaxHealth = playerStats.health;
-          localStorage.setItem('playerMaxHealth', newMaxHealth.toString());
-        }
-        break;
-      
-      case 'skill':
-        const playerSkills = JSON.parse(localStorage.getItem('playerSkills') || '[]');
-        playerSkills.push({
-          id: card.effect.skillId,
-          name: card.title,
-          value: card.effect.value
-        });
-        localStorage.setItem('playerSkills', JSON.stringify(playerSkills));
-        break;
-      
-      default:
-        break;
+    if (reward && reward.type === 'skill') {
+      // 세부 선택이 필요한 경우 (스킬만)
+      setDetailSelectionType(reward.type);
+      setDetailOptions(generateDetailOptions(reward.type));
+      setShowDetailSelection(true);
+      setSelectedCard(rewardId);
+    } else {
+      // 즉시 적용 가능한 보상 (회복, 아티팩트)
+      setSelectedCard(rewardId);
+      if (reward) {
+        applyReward(reward);
+      }
     }
   };
 
@@ -196,9 +164,73 @@ const RewardScreen = ({ onNavigate }) => {
     onNavigate('selector');
   };
 
+  // 세부 선택 핸들러
+  const handleDetailSelect = (index) => {
+    setSelectedDetailIndex(index);
+    const selectedOption = detailOptions[index];
+    if (selectedOption) {
+      applyReward(selectedOption);
+    }
+  };
+
+  // 세부 선택 확인
+  const handleDetailConfirm = () => {
+    if (selectedDetailIndex !== null) {
+      setShowDetailSelection(false);
+    } else {
+      alert('옵션을 선택해주세요!');
+    }
+  };
+
+  // 세부 선택 취소
+  const handleDetailCancel = () => {
+    setShowDetailSelection(false);
+    setSelectedCard(null);
+    setDetailSelectionType(null);
+    setDetailOptions([]);
+    setSelectedDetailIndex(null);
+  };
+
+  // 보상 적용
+  const applyReward = (reward) => {
+    switch (reward.effect.type) {
+      case 'heal':
+        const currentHealth = parseInt(localStorage.getItem('playerHealth') || '100');
+        const maxHealth = parseInt(localStorage.getItem('playerMaxHealth') || '100');
+        const newHealth = Math.min(currentHealth + reward.effect.value, maxHealth);
+        localStorage.setItem('playerHealth', newHealth.toString());
+        break;
+      
+      case 'skill':
+        const playerSkills = JSON.parse(localStorage.getItem('playerSkills') || '[]');
+        playerSkills.push({
+          id: reward.effect.skillId,
+          name: reward.title,
+          value: reward.effect.value
+        });
+        localStorage.setItem('playerSkills', JSON.stringify(playerSkills));
+        break;
+      
+      case 'artifact':
+        const playerStats = JSON.parse(localStorage.getItem('playerStats') || '{"attack": 10, "health": 100, "luck": 3}');
+        playerStats[reward.effect.stat] = (playerStats[reward.effect.stat] || 0) + reward.effect.value;
+        localStorage.setItem('playerStats', JSON.stringify(playerStats));
+        
+        // 체력 아티팩트의 경우 최대 체력도 업데이트
+        if (reward.effect.stat === 'health') {
+          const newMaxHealth = playerStats.health;
+          localStorage.setItem('playerMaxHealth', newMaxHealth.toString());
+        }
+        break;
+      
+      default:
+        break;
+    }
+  };
+
   // 계속하기 버튼
   const handleContinue = () => {
-    if (selectedCard) {
+    if (selectedCard && !showDetailSelection) {
       onNavigate('battle');
     } else {
       alert('보상을 선택해주세요!');
@@ -210,12 +242,10 @@ const RewardScreen = ({ onNavigate }) => {
     if (!reward.image) return null;
     
     switch (reward.type) {
-      case 'card':
-        return getCard(reward.image);
-      case 'artifact':
-        return getArtifact(reward.image);
       case 'skill':
         return getSkill(reward.image);
+      case 'artifact':
+        return getArtifact(reward.image);
       default:
         return null;
     }
@@ -225,6 +255,117 @@ const RewardScreen = ({ onNavigate }) => {
     return <div>로딩 중...</div>;
   }
 
+  // 세부 선택 화면 렌더링
+  if (showDetailSelection) {
+    return (
+      <div className="reward-wrapper">
+        <div className="reward-container">
+          {/* 배경 이미지 */}
+          <div 
+            className="reward-background"
+            style={{ 
+              backgroundImage: `url(${getBackground('game')})`
+            }}
+          />
+
+          {/* 제목 */}
+          <div style={{
+            position: 'absolute',
+            top: '100px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: '32px',
+            color: '#EEEFF2',
+            fontFamily: 'SeoulNamsan',
+            textShadow: '0px 0px 5px #17181A',
+            zIndex: 10
+          }}>
+            스킬 선택
+          </div>
+
+          {/* 3개 옵션 카드 */}
+          {detailOptions.map((option, index) => (
+            <div 
+              key={option.id}
+              className={`detail-card-${index === 0 ? 'left' : index === 1 ? 'center' : 'right'} ${selectedDetailIndex === index ? 'selected' : ''}`}
+              onClick={() => handleDetailSelect(index)}
+            >
+              {/* 옵션 이미지 */}
+              {option.image && (
+                <div 
+                  style={{
+                    position: 'absolute',
+                    width: '146px',
+                    height: '171px',
+                    left: '62px',
+                    top: '50px',
+                    backgroundImage: `url(${getRewardImage(option)})`,
+                    backgroundSize: 'contain',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    pointerEvents: 'none'
+                  }}
+                />
+              )}
+            </div>
+          ))}
+
+          {/* 옵션 설명 텍스트 */}
+          {detailOptions.map((option, index) => (
+            <div 
+              key={`text-${option.id}`}
+              style={{
+                position: 'absolute',
+                width: '270px',
+                left: index === 0 ? 'calc(50% - 270px/2 - 300px)' : 
+                      index === 1 ? '505px' : '805px',
+                top: 'calc(50% + 200px)',
+                textAlign: 'center',
+                pointerEvents: 'none',
+                zIndex: 10
+              }}
+            >
+              <div style={{ 
+                fontFamily: 'SeoulNamsan', 
+                fontSize: '22px', 
+                color: '#EEEFF2', 
+                textShadow: '0px 0px 5px #17181A',
+                marginBottom: '8px'
+              }}>
+                {option.title}
+              </div>
+              <div style={{ 
+                fontFamily: 'SeoulNamsan', 
+                fontSize: '16px', 
+                color: '#EEEFF2',
+                textShadow: '0px 0px 3px #17181A'
+              }}>
+                {option.description}
+              </div>
+            </div>
+          ))}
+
+          {/* 확인/취소 버튼 */}
+          <button 
+            className="detail-confirm-button"
+            onClick={handleDetailConfirm}
+            disabled={selectedDetailIndex === null}
+          >
+            확인
+          </button>
+
+          <button 
+            className="detail-cancel-button"
+            onClick={handleDetailCancel}
+          >
+            취소
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 메인 보상 선택 화면
   return (
     <div className="reward-wrapper">
       <div className="reward-container">
@@ -292,31 +433,33 @@ const RewardScreen = ({ onNavigate }) => {
           )}
         </div>
 
-        {/* 우측 카드 */}
-        <div 
-          className={`card-box-right ${selectedCard === availableRewards[2]?.id ? 'selected' : ''}`}
-          onClick={() => handleCardSelect(availableRewards[2]?.id)}
-        >
-          {/* 카드 내부 이미지 (있는 경우) */}
-          {availableRewards[2]?.image && (
-            <div 
-              style={{
-                position: 'absolute',
-                width: '146px',
-                height: '171px',
-                left: '62px',
-                top: '50px',
-                backgroundImage: `url(${getRewardImage(availableRewards[2])})`,
-                backgroundSize: 'contain',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                pointerEvents: 'none'
-              }}
-            />
-          )}
-        </div>
+        {/* 우측 카드 (아티팩트 30% 확률) */}
+        {availableRewards[2] && (
+          <div 
+            className={`card-box-right ${selectedCard === availableRewards[2]?.id ? 'selected' : ''}`}
+            onClick={() => handleCardSelect(availableRewards[2]?.id)}
+          >
+            {/* 카드 내부 이미지 (있는 경우) */}
+            {availableRewards[2]?.image && (
+              <div 
+                style={{
+                  position: 'absolute',
+                  width: '146px',
+                  height: '171px',
+                  left: '62px',
+                  top: '50px',
+                  backgroundImage: `url(${getRewardImage(availableRewards[2])})`,
+                  backgroundSize: 'contain',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  pointerEvents: 'none'
+                }}
+              />
+            )}
+          </div>
+        )}
 
-        {/* 통일된 텍스트 위치 - 각 카드 하단 중앙 */}
+        {/* 텍스트 위치 - 각 카드 하단 중앙 */}
         <div 
           style={{
             position: 'absolute',
@@ -377,35 +520,37 @@ const RewardScreen = ({ onNavigate }) => {
           </div>
         </div>
 
-        <div 
-          style={{
-            position: 'absolute',
-            width: '270px',
-            left: '805px',
-            top: 'calc(50% + 200px)',
-            textAlign: 'center',
-            pointerEvents: 'none',
-            zIndex: 10
-          }}
-        >
-          <div style={{ 
-            fontFamily: 'SeoulNamsan', 
-            fontSize: '22px', 
-            color: '#EEEFF2', 
-            textShadow: '0px 0px 5px #17181A',
-            marginBottom: '8px'
-          }}>
-            {availableRewards[2]?.title}
+        {availableRewards[2] && (
+          <div 
+            style={{
+              position: 'absolute',
+              width: '270px',
+              left: '805px',
+              top: 'calc(50% + 200px)',
+              textAlign: 'center',
+              pointerEvents: 'none',
+              zIndex: 10
+            }}
+          >
+            <div style={{ 
+              fontFamily: 'SeoulNamsan', 
+              fontSize: '22px', 
+              color: '#EEEFF2', 
+              textShadow: '0px 0px 5px #17181A',
+              marginBottom: '8px'
+            }}>
+              {availableRewards[2]?.title}
+            </div>
+            <div style={{ 
+              fontFamily: 'SeoulNamsan', 
+              fontSize: '16px', 
+              color: '#EEEFF2',
+              textShadow: '0px 0px 3px #17181A'
+            }}>
+              {availableRewards[2]?.description}
+            </div>
           </div>
-          <div style={{ 
-            fontFamily: 'SeoulNamsan', 
-            fontSize: '16px', 
-            color: '#EEEFF2',
-            textShadow: '0px 0px 3px #17181A'
-          }}>
-            {availableRewards[2]?.description}
-          </div>
-        </div>
+        )}
 
         {/* 리롤 버튼 */}
         <button 
