@@ -3,10 +3,14 @@ import { getBackground } from '../../utils/ImageManager';
 import './TitleScreen.css';
 import { getStartState, continueRun } from '../../api/client';
 
+// 응답 키 표기 불일치 방어용 헬퍼
+const resolvePlayerId = (p) => p?.playerId ?? p?.PlayerID ?? p?.player_id ?? null;
+const resolveStage    = (p) => p?.whereStage ?? p?.WhereStage ?? 'N/A';
+
 const TitleScreen = ({ onNavigate }) => {
   const [playerStatus, setPlayerStatus] = useState('');
   const getLoggedInUserId = () => localStorage.getItem('userId')?.trim() || '';
-
+/*
   // b123 플레이어 확인 함수 추가
   const checkPlayer = async () => {
     try {
@@ -22,6 +26,26 @@ const TitleScreen = ({ onNavigate }) => {
       setPlayerStatus('서버 연결 실패');
     }
   };
+*/
+  // 로그인된 사용자 기준 확인 (백엔드 /start/state 사용)
+  // 로그인된 사용자 기준 확인 (백엔드 /start/state 사용)
+const checkPlayer = async () => {
+  const userId = getLoggedInUserId();
+  if (!userId) { setPlayerStatus('userId가 설정되지 않았습니다.'); return; }
+  try {
+    const s = await getStartState(userId);
+    const player = s?.player || null;
+    const pid = resolvePlayerId(player);
+    if (s?.userExists && player && pid) {
+      const whereStage = resolveStage(player);
+      setPlayerStatus(`플레이어 ${pid} 발견 - 스테이지: ${whereStage}`);
+    } else {
+      setPlayerStatus(`플레이어 ${userId}를 찾을 수 없습니다.`);
+    }
+  } catch (err) {
+    setPlayerStatus('서버 연결 실패');
+  }
+};
 
   const handleStartGame = async () => {
   const userId = getLoggedInUserId();
@@ -45,7 +69,7 @@ const TitleScreen = ({ onNavigate }) => {
   try {
     const s = await getStartState(userId);
     const player = s?.player || null;
-    const pid = player?.playerId ?? player?.PlayerID ?? player?.player_id ?? null;
+    const pid = resolvePlayerId(player);
     if (s?.userExists && player && pid === userId) {
       const next = await continueRun(userId); // 되감기 수행
       localStorage.setItem('PlayerID', userId);
@@ -95,7 +119,7 @@ const TitleScreen = ({ onNavigate }) => {
           zIndex: 1000
         }}
       >
-        b123 확인
+        내 계정 확인
       </button>
       
       {playerStatus && (
