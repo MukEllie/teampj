@@ -87,7 +87,7 @@ INSERT INTO PlayerDB (
     WhereSession, WhereStage, EventAtk, EventCurrHp, EventMaxHp,
     Using_Skill, Own_Skill, Own_Artifact
 ) VALUES (
-    'testPlayer', 'warrior', 101, 100, 100, 10, 5,
+    'testPlayer', 'Warrior', 101, 100, 100, 10, 5,
     'Fire', 1, 0, 0, 0,
     '11,14,3,4', '1,2,3,4,5,6,11,14', '101,102,103'
 );
