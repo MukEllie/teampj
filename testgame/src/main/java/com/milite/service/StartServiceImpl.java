@@ -68,7 +68,7 @@ public class StartServiceImpl implements StartService {
 	/** 직업 선택 적용 */
 	@Override
 	@Transactional
-	public String chooseClass(String userId, String className) {
+	public String chooseClass(String userId, String className, int skinId) {
 		PlayerDto exists = characterStatusMapper.getPlayerInfo(userId);
 		if (exists != null && exists.getUsing_Character() != null && !exists.getUsing_Character().isEmpty())
 			return "이미 직업이 선택되어 있습니다.";
@@ -77,7 +77,10 @@ public class StartServiceImpl implements StartService {
 		CharacterDto c = startMapper.getClassByName(className);
 		if (c == null)
 			return "존재하지 않는 직업입니다.";
-		startMapper.insertPlayerBaseStats(userId, c.getName(), c.getHp(), c.getAtk(), c.getLuck());
+		startMapper.insertPlayerBaseStats(userId, // playerId 로 사용 (아래 설명)
+				c.getName(), // Using_Character
+				c.getHp(), c.getAtk(), c.getLuck(), skinId // ★ 선택한 스킨 ID 추가
+		);
 		return "직업 선택 완료";
 	}
 

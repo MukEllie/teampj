@@ -56,8 +56,9 @@ public class StartController {
 	/** 직업 선택 적용 */
 	@PostMapping(value = "/choose", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<ApiResponse<String>> choose(@RequestParam String userId, @RequestParam String className) {
-		String msg = startService.chooseClass(userId, className);
+	public ResponseEntity<ApiResponse<String>> choose(@RequestParam String userId, @RequestParam String className,
+			@RequestParam int skinId) {
+		String msg = startService.chooseClass(userId, className, skinId);
 		return ResponseEntity.ok(ApiResponse.ok(msg, null));
 	}
 

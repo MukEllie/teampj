@@ -15,9 +15,9 @@
   <!-- 플레이어 신규 생성 -->
   <insert id="insertPlayerBaseStats">
     INSERT INTO PlayerDB
-      (Player_ID, Using_Character, curr_hp, max_hp, atk, luck)
+      (Player_ID, Using_Character, Using_Skin, curr_hp, max_hp, atk, luck)
     VALUES
-      (#{playerId}, #{name}, #{hp}, #{hp}, #{atk}, #{luck})
+      (#{playerId}, #{name}, #{skinId}, #{hp}, #{hp}, #{atk}, #{luck})
   </insert>
 
   <!-- Warrior, Mage, Thief 순서 조회 -->

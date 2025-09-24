@@ -17,7 +17,7 @@ public interface StartService {
 	List<CharacterDto> getFixedClassOptions();
 
 	/** 직업 선택 적용 */
-	String chooseClass(String userId, String className);
+	String chooseClass(String userId, String className, int skinId);
 
 	/** 플레이어 조회 */
 	PlayerDto getPlayer(String userId);

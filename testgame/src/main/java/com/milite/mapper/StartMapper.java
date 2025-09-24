@@ -15,7 +15,7 @@ public interface StartMapper {
 
 	/** 플레이어 신규 생성 */
 	int insertPlayerBaseStats(@Param("playerId") String playerId, @Param("name") String name, @Param("hp") int hp,
-			@Param("atk") int atk, @Param("luck") int luck);
+			@Param("atk") int atk, @Param("luck") int luck, @Param("skinId") int skinId);
 
 	/** Warrior, Mage, Thief 순서 조회 */
 	List<CharacterDto> getFixedClasses();
