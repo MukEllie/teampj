@@ -140,7 +140,7 @@ const CharacterSelectScreen = ({ onNavigate }) => {
     const className = classNameMap[selectedCharacter];
 
     try {
-      await chooseClass(userId, className); // 원본 client.js 시그니처
+      await chooseClass(userId, className, Number(selectedSkin)); // 원본 client.js 시그니처
       const next = await continueRun(userId);
 
       localStorage.setItem('selectedCharacter', JSON.stringify({

@@ -75,9 +75,9 @@ export const continueRun = async (userId) =>
 export const getStartOptions = async () =>
   unwrap(await getJSON("/start/options"));
 
-/* 직업 선택(세이브 생성) — POST /start/choose (form: userId, className) */
-export const chooseClass = async (userId, className) =>
-  unwrap(await postForm("/start/choose", { userId, className }));
+/* 직업 선택(세이브 생성) — POST /start/choose (form: userId, className, skinId) */
+export const chooseClass = async (userId, className, skinId) =>
+  unwrap(await postForm("/start/choose", { userId, className, skinId: String(skinId) }));
 
 /** =========================
  *  Skin (스킨)
@@ -119,12 +119,14 @@ export const startEventBattle = async (PlayerID) =>
  *  class-level base: /event
  *  ========================= */
 
+/** ==================================================================================================== */
 
 /* Trigger (트리거) — 이벤트 랜덤선택, GET + 경로변수 버전 */
 /* 랜덤 이벤트 트리거 — GET /event/trigger/{playerId} */
 export const triggerEvent = async (playerId) =>
   unwrap(await getJSON(`/event/trigger/${encodeURIComponent(playerId)}`));
 
+/** ==================================================================================================== */
 
 /* Normal (일반) */
 /* 일반 이벤트 조회 — GET /event/normal?playerId=... */
@@ -139,6 +141,7 @@ export const applyNormalEvent = async (playerId, ne_id, choice) =>
     choice: String(choice),
   }));
 
+/** ==================================================================================================== */
 
 /* Roll (주사위) */
 /* 주사위 이벤트 조회 — GET /event/roll?playerId=... */
@@ -153,6 +156,7 @@ export const applyRollEvent = async (playerId, re_id, number) =>
     number: String(number),
   }));
 
+/** ==================================================================================================== */
 
 /* Artifact (유물) */
 /* 유물 이벤트 조회 — GET /event/artifact?playerId=... */
@@ -171,6 +175,7 @@ export const applyArtifactEvent = async (playerId, ae_id, artifactId) =>
     artifactId: String(artifactId),
   }));
 
+/** ==================================================================================================== */
 
 /* Card (카드) */
 /* 카드 이벤트 조회 — GET /event/card?playerId=... */
@@ -189,6 +194,7 @@ export const applyCardEvent = async (playerId, ce_id, skillId) =>
     skillId: String(skillId),
   }));
 
+/** ==================================================================================================== */
 
 /* Select (선택) */
 /* 선택 이벤트 조회 — GET /event/select?playerId=... */
@@ -203,6 +209,7 @@ export const getSelectChoices = async (se_id) =>
 export const applySelectEvent = async (playerId, sec_id) =>
   unwrap(await postForm("/event/select/apply", { playerId, sec_id: String(sec_id) }));
 
+/** ==================================================================================================== */
 
 /* Trap (함정) */
 /* 함정 이벤트 조회 — GET /event/trap?playerId=... */
@@ -213,6 +220,7 @@ export const getTrapEvent = async (playerId) =>
 export const applyTrapEvent = async (playerId, te_id) =>
   unwrap(await postForm("/event/trap/apply", { playerId, te_id: String(te_id) }));
 
+/** ==================================================================================================== */
 
 /* Boss (보스) */
 /* 보스 이벤트 조회 — GET /event/boss?playerId=... */
@@ -225,5 +233,6 @@ export const getBossEvent = async (playerId) =>
 export const fightBossEvent = async (playerId, be_id) =>
   unwrap(await postForm("/event/boss/fight", { playerId, be_id: String(be_id) }));
 
+/** ==================================================================================================== */
 
 export default {};
