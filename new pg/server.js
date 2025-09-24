@@ -958,7 +958,19 @@ app.get('/api/users/:id', (req, res) => {
       });
     }
 
-    res.json(results[0]);
+    const user = results[0];
+    let ownedSkins;
+    try {
+      ownedSkins = JSON.parse(user.Owned_SkinID);
+    } catch (e) {
+      ownedSkins = ['SKIN_001'];
+    }
+
+    res.json({
+      id: user.ID,
+      gold: user.gold,
+      ownedSkins: ownedSkins
+    });
   });
 });
 
@@ -1004,123 +1016,60 @@ app.post('/api/check-nickname', (req, res) => {
   });
 });
 
-// 회원가입 API
-app.post('/api/signup', async (req, res) => {
-  const { id, nickname, email, password, birthDate, gender } = req.body;
+// 회원가입 API (UserDB 기본 구조만 사용)
+app.post('/api/signup', (req, res) => {
+  const { id, password } = req.body;
 
-  if (!id || !nickname || !email || !password) {
+  if (!id || !password) {
     return res.status(400).json({
-      error: '필수 필드를 모두 입력해주세요',
-      required: ['id', 'nickname', 'email', 'password']
+      error: '아이디와 비밀번호를 입력해주세요'
     });
   }
 
-  try {
-    const checkIdQuery = 'SELECT ID FROM UserDB WHERE ID = ?';
-    const checkNicknameQuery = 'SELECT nickname FROM UserDB WHERE nickname = ?';
+  // 아이디 중복 체크
+  db.query('SELECT ID FROM UserDB WHERE ID = ?', [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: '서버 오류' });
+    }
 
-    const [idResults, nicknameResults] = await Promise.all([
-      new Promise((resolve, reject) => {
-        db.query(checkIdQuery, [id], (err, results) => {
-          if (err) reject(err);
-          else resolve(results);
-        });
-      }),
-      new Promise((resolve, reject) => {
-        db.query(checkNicknameQuery, [nickname], (err, results) => {
-          if (err) reject(err);
-          else resolve(results);
-        });
-      })
-    ]);
-
-    if (idResults.length > 0) {
+    if (results.length > 0) {
       return res.status(409).json({ error: '이미 존재하는 아이디입니다' });
     }
 
-    if (nicknameResults.length > 0) {
-      return res.status(409).json({ error: '이미 존재하는 닉네임입니다' });
-    }
+    // UserDB에 저장 (기본 구조만)
+    const insertQuery = 'INSERT INTO UserDB (ID, Password, gold, Owned_SkinID) VALUES (?, ?, ?, ?)';
+    const initialSkins = JSON.stringify(['SKIN_001']);
 
-    try {
-      const hashedPassword = await bcrypt.hash(password, 10);
+    db.query(insertQuery, [id, password, 1000, initialSkins], (err) => {
+      if (err) {
+        console.error('회원가입 오류:', err);
+        return res.status(500).json({ error: '회원가입 실패' });
+      }
 
-      const insertUserQuery = `
-        INSERT INTO UserDB (ID, nickname, email, Password, birth_date, gender, gold, Owned_SkinID) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-      const initialGold = 1000;
-      const initialSkins = JSON.stringify(['SKIN_001']);
-
-      db.query(insertUserQuery, [
-        id, nickname, email, hashedPassword,
-        birthDate || null, gender || null,
-        initialGold, initialSkins
-      ], (err, result) => {
-        if (err) {
-          console.error('UserDB 삽입 오류:', err);
-          return res.status(500).json({
-            error: '회원가입 실패',
-            details: err.message
-          });
+      res.status(201).json({ 
+        message: '회원가입 성공',
+        user: {
+          id: id,
+          gold: 1000
         }
-
-        const insertPlayerQuery = `
-          INSERT INTO PlayerDB 
-          (Player_ID, Using_Character, curr_hp, max_hp, atk, luck, WhereSession, WhereStage, EventAtk, EventCurrHp, EventMaxHp, Using_Skill, Own_Skill) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-
-        const initialSkills = JSON.stringify(['SKILL_001', 'SKILL_002', 'SKILL_003', 'SKILL_004']);
-
-        db.query(insertPlayerQuery, [
-          id, '전사', 100, 100, 20, 8, 'Fire', 1, 0, 0, 0, initialSkills, initialSkills
-        ], (err, playerResult) => {
-          if (err) {
-            console.error('PlayerDB 초기화 실패:', err);
-          }
-
-          res.status(201).json({
-            message: '회원가입이 완료되었습니다',
-            user: {
-              id: id,
-              nickname: nickname,
-              email: email,
-              gold: initialGold
-            }
-          });
-        });
       });
-
-    } catch (hashError) {
-      res.status(500).json({
-        error: '비밀번호 처리 실패',
-        details: hashError.message
-      });
-    }
-
-  } catch (error) {
-    console.error('회원가입 오류:', error);
-    res.status(500).json({
-      error: '서버 오류',
-      details: error.message
     });
-  }
+  });
 });
 
-// 로그인 API
+// 로그인 API (ID 기반, 평문 비밀번호)
 app.post('/api/login', (req, res) => {
-  const { email, password } = req.body;
+  const { id, password } = req.body;
 
-  if (!email || !password) {
+  if (!id || !password) {
     return res.status(400).json({
-      error: '이메일과 비밀번호를 입력해주세요'
+      error: '아이디와 비밀번호를 입력해주세요'
     });
   }
 
-  const query = 'SELECT ID, nickname, email, Password, birth_date, gender, gold, Owned_SkinID, join_date FROM UserDB WHERE email = ?';
+  const query = 'SELECT * FROM UserDB WHERE ID = ?';
 
-  db.query(query, [email], async (err, results) => {
+  db.query(query, [id], (err, results) => {
     if (err) {
       console.error('로그인 쿼리 오류:', err);
       return res.status(500).json({
@@ -1131,61 +1080,35 @@ app.post('/api/login', (req, res) => {
 
     if (results.length === 0) {
       return res.status(401).json({
-        error: '존재하지 않는 이메일입니다'
+        error: '존재하지 않는 아이디입니다'
       });
     }
 
     const user = results[0];
 
-    try {
-      const isValidPassword = await bcrypt.compare(password, user.Password);
-
-      if (!isValidPassword) {
-        return res.status(401).json({
-          error: '비밀번호가 올바르지 않습니다'
-        });
-      }
-
-      const playerQuery = 'SELECT * FROM PlayerDB WHERE Player_ID = ?';
-
-      db.query(playerQuery, [user.ID], (err, playerResults) => {
-        if (err) {
-          console.error('플레이어 데이터 조회 실패:', err);
-        }
-
-        let ownedSkins = [];
-        try {
-          if (user.Owned_SkinID) {
-            ownedSkins = JSON.parse(user.Owned_SkinID);
-          }
-        } catch (jsonError) {
-          console.error('JSON 파싱 오류:', jsonError);
-          ownedSkins = ['SKIN_001'];
-        }
-
-        res.json({
-          message: '로그인 성공',
-          user: {
-            id: user.ID,
-            nickname: user.nickname,
-            email: user.email,
-            birthDate: user.birth_date,
-            gender: user.gender,
-            joinDate: user.join_date,
-            gold: user.gold,
-            ownedSkins: ownedSkins,
-            playerData: playerResults[0] || null
-          }
-        });
-      });
-
-    } catch (compareError) {
-      console.error('비밀번호 비교 오류:', compareError);
-      res.status(500).json({
-        error: '비밀번호 확인 실패',
-        details: compareError.message
+    // 비밀번호 확인 (평문 비교)
+    if (password !== user.Password) {
+      return res.status(401).json({
+        error: '비밀번호가 올바르지 않습니다'
       });
     }
+
+    let ownedSkins;
+    try {
+      ownedSkins = JSON.parse(user.Owned_SkinID);
+    } catch (e) {
+      // JSON이 아닌 경우 기본값 설정
+      ownedSkins = ['SKIN_001'];
+    }
+
+    res.json({
+      message: '로그인 성공',
+      user: {
+        id: user.ID,
+        gold: user.gold,
+        ownedSkins: ownedSkins
+      }
+    });
   });
 });
 
@@ -2028,6 +1951,7 @@ app.post('/api/media/upload-url', async (req, res) => {
     });
   }
 });
+
 // 1. 사용자별 미디어 조회 API
 app.get('/api/media/user/:userId', (req, res) => {
   const { userId } = req.params;

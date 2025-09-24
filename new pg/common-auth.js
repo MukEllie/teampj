@@ -8,11 +8,15 @@ function updateAuthButtons() {
     if (!authButtons) return;
     
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    console.log('현재 사용자:', currentUser); // 디버깅용
     
     if (currentUser) {
-        // 로그인된 상태 - 닉네임, 회원정보, 로그아웃 버튼 표시
+        // 로그인된 상태 - 아이디, 골드, 회원정보, 로그아웃 버튼 표시
         authButtons.innerHTML = `
-            <span class="user-info">${currentUser.nickname}님</span>
+            <span class="user-info">
+                <strong>${currentUser.id}</strong>님 
+                <span class="gold-info">(골드: ${currentUser.gold ? currentUser.gold.toLocaleString() : 0})</span>
+            </span>
             <a href="/profile" class="auth-btn profile-btn">회원정보</a>
             <button class="auth-btn logout-btn" id="headerLogoutBtn">로그아웃</button>
         `;
@@ -38,6 +42,26 @@ function updateAuthButtons() {
 }
 
 /**
+ * 현재 로그인 상태를 콘솔과 화면에 표시하는 디버깅 함수
+ */
+function showCurrentLoginStatus() {
+    const currentUser = getCurrentUser();
+    console.log('=== 현재 로그인 상태 ===');
+    console.log('로그인 여부:', isLoggedIn());
+    console.log('사용자 정보:', currentUser);
+    console.log('localStorage currentUser:', localStorage.getItem('currentUser'));
+    console.log('====================');
+    
+    // 페이지에 현재 상태 표시 (임시 디버깅용)
+    const statusDiv = document.getElementById('debug-login-status');
+    if (statusDiv) {
+        statusDiv.innerHTML = currentUser 
+            ? `로그인됨: <strong>${currentUser.id}</strong> (골드: ${currentUser.gold})`
+            : '로그인되지 않음';
+    }
+}
+
+/**
  * 로그아웃 처리 함수
  */
 function logout() {
@@ -46,7 +70,11 @@ function logout() {
         localStorage.removeItem('currentUser');
         localStorage.removeItem('rememberUser');
         
+        console.log('로그아웃 완료');
         alert('로그아웃되었습니다.');
+        
+        // 헤더 업데이트
+        updateAuthButtons();
         
         // 메인 페이지로 리다이렉트
         window.location.href = '/';
@@ -58,7 +86,13 @@ function logout() {
  * @returns {Object|null} 사용자 정보 객체 또는 null
  */
 function getCurrentUser() {
-    return JSON.parse(localStorage.getItem('currentUser') || 'null');
+    try {
+        const userData = localStorage.getItem('currentUser');
+        return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+        console.error('사용자 정보 파싱 오류:', error);
+        return null;
+    }
 }
 
 /**
@@ -66,7 +100,8 @@ function getCurrentUser() {
  * @returns {boolean} 로그인 여부
  */
 function isLoggedIn() {
-    return getCurrentUser() !== null;
+    const user = getCurrentUser();
+    return user !== null && user.id;
 }
 
 /**
@@ -85,21 +120,29 @@ function requireLogin(message = '로그인이 필요합니다.') {
 
 /**
  * 로그인 성공 후 호출할 함수
- * @param {Object} userData - 서버에서 받은 사용자 데이터
+ * @param {Object} userData - 서버에서 받은 사용자 데이터 { id, gold, ownedSkins }
  */
 function onLoginSuccess(userData) {
+    console.log('로그인 성공 데이터:', userData);
+    
     // 사용자 정보를 localStorage에 저장
     localStorage.setItem('currentUser', JSON.stringify(userData));
+    
+    console.log('localStorage 저장 완료');
     
     // 헤더 업데이트
     updateAuthButtons();
     
+    alert(`${userData.id}님, 환영합니다!`);
+    
     // 메인 페이지로 리다이렉트
-    window.location.href = '/';
+    setTimeout(() => {
+        window.location.href = '/';
+    }, 1000);
 }
 
 /**
- * 사용자 정보를 업데이트하는 함수
+ * 사용자 정보를 업데이트하는 함수 (예: 골드 변경 시)
  * @param {Object} newUserData - 새로운 사용자 데이터
  */
 function updateUserData(newUserData) {
@@ -108,6 +151,7 @@ function updateUserData(newUserData) {
         const updatedUser = { ...currentUser, ...newUserData };
         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
         updateAuthButtons();
+        console.log('사용자 정보 업데이트:', updatedUser);
     }
 }
 
@@ -117,17 +161,30 @@ function updateUserData(newUserData) {
 function initAuthSystem() {
     // DOM이 로드되면 헤더 업데이트
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateAuthButtons);
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthButtons();
+            showCurrentLoginStatus(); // 디버깅용
+        });
     } else {
         updateAuthButtons();
+        showCurrentLoginStatus(); // 디버깅용
     }
     
     // 스토리지 변경 시 다른 탭에서도 업데이트
     window.addEventListener('storage', function(e) {
         if (e.key === 'currentUser') {
             updateAuthButtons();
+            showCurrentLoginStatus();
         }
     });
+    
+    // 디버깅용 전역 함수 등록
+    window.checkLoginStatus = showCurrentLoginStatus;
+    window.debugLogout = function() {
+        localStorage.removeItem('currentUser');
+        updateAuthButtons();
+        console.log('강제 로그아웃 완료');
+    };
 }
 
 /**

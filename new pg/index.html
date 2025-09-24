@@ -1,11 +1,52 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang = "ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>게임 포털</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="common-auth.js"></script>
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+    <title>홈</title>
+    <link rel = "stylesheet" href = "css/common.css">
+    <link rel = "stylesheet" href = "css/index.css">
+    <script src = "common-auth.js"></script>
+</head>
+
+<body>
+    <header>
+        <nav id = "nav_1">
+            <div class = "profile" id = "auth-buttons">
+                <a class = "nav_1_text" href = "/login" id = "loginBtn">로그인</a>
+                <a class = "nav_1_text" href = "/signup" id = "signupBtn">회원가입</a>
+            </div>
+        </nav>
+        <div class = "line"></div>
+        <nav id = "nav_2">
+            <a class = "nav_2_text" href = "game.html">게임</a>
+            <a class = "nav_2_text" href = "game-info.html">게임정보</a>
+            <a class = "nav_2_text" href = "news.html">공지사항</a>
+            <a href = "index.html">
+                <img id = "logo" src = "image/logo/Logo_2_1.png">
+            </a>
+            <a class = "nav_2_text" href = "community.html">커뮤니티</a>
+            <a class = "nav_2_text" href = "media.html">미디어</a>
+            <a class = "nav_2_text" href = "customer-service.html">고객센터</a>
+        </nav>
+    </header>
+    <img id = "banner" src = "image/website/Banner.png">
+    <main id = "main">
+        <div id = "main_1">
+            <div id = "announcement">
+                <p>공지사항</p>
+            </div>
+            <div id = "">
+                <img id = "main_1_img" src = "image/website/Card_1_1.png">
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
+
+
+<!--     
     <style>
         /* 텍스트 가독성 개선 */
         .game-title {
@@ -43,9 +84,7 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,.6);
         }
     </style>
-</head>
-<body>
-    <!-- 헤더 네비게이션 -->
+    헤더 네비게이션 
     <header class="header">
         <div class="nav-container">
             <a href="#" class="logo">
@@ -91,9 +130,9 @@
         </div>
     </header>
 
-    <!-- 메인 컨텐츠 영역 -->
+     메인 컨텐츠 영역 
     <main class="main">
-        <!-- 게임 실행 섹션 (중앙) -->
+         게임 실행 섹션 (중앙) 
         <section class="game-launch-section">
             <div class="game-launch-container">
                 <div class="game-info">
@@ -126,7 +165,7 @@
             </div>
         </section>
 
-        <!-- 하단 흰색 배경 섹션 -->
+        하단 흰색 배경 섹션 
         <section class="content-section">
             <div class="content-container">
                 <div class="feature-grid">
@@ -190,7 +229,7 @@
         </section>
     </main>
 
-    <!-- 푸터 -->
+     푸터 
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-content">
@@ -282,6 +321,4 @@
                 }
             });
         });
-    </script>
-</body>
-</html>
+    </script> -->

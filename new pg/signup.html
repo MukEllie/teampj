@@ -3,702 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입 - 게임 포털</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="common-auth.js"></script>
+    <title>회원가입</title>
     <style>
-        /* 중복체크 관련 스타일 */
-        .input-with-button {
-            display: flex;
-            gap: 0.5rem;
-            align-items: flex-start;
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background: #f5f5f5;
         }
-        
-        .input-with-button .form-input {
-            flex: 1;
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
-        .check-btn {
-            padding: 0.8rem 1rem;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
         }
-        
-        .check-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+        .form-group {
+            margin-bottom: 20px;
         }
-        
-        .check-btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
         }
-        
-        .form-success {
-            color: #28a745;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
             display: block;
         }
-        
-        .form-error.success {
-            color: #28a745;
+        .help-text {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
         }
-        
-        .form-input.success {
-            border-color: #28a745;
-            box-shadow: 0 0 0 3px rgba(40,167,69,0.1);
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .auth-switch a {
+            color: #007bff;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
-    <!-- 헤더 네비게이션 -->
-    <header class="header">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <span class="logo-icon">🎮</span>
-                <span class="logo-text">GAME PORTAL</span>
-            </a>
+    <div class="form-container">
+        <h1>회원가입</h1>
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="id">아이디</label>
+                <input type="text" id="id" maxlength="12" required>
+                <span class="error" id="idError"></span>
+                <div class="help-text">최대 12자까지 입력 가능</div>
+            </div>
             
-            <nav class="nav">
-                <ul class="nav-menu" id="navMenu">
-                    <li class="nav-item">
-                        <a href="game-info.html" class="nav-link">게임정보</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="gacha-shop.html" class="nav-link">갓챠샵</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="community.html" class="nav-link">커뮤니티</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="media.html" class="nav-link">미디어</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="customer-service.html" class="nav-link">고객센터</a>
-                    </li>
-                </ul>
-            </nav>
-
-            <div class="auth-buttons">
-                <!-- common-auth.js에서 동적으로 업데이트됨 -->
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" maxlength="12" required>
+                <span class="error" id="passwordError"></span>
+                <div class="help-text">최대 12자까지 입력 가능</div>
             </div>
-
-            <button class="mobile-menu-toggle" id="mobileToggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            
+            <div class="form-group">
+                <label for="confirmPassword">비밀번호 확인</label>
+                <input type="password" id="confirmPassword" maxlength="12" required>
+                <span class="error" id="confirmPasswordError"></span>
+            </div>
+            
+            <button type="submit" id="signupBtn">회원가입</button>
+        </form>
+        
+        <div class="auth-switch">
+            <p>이미 계정이 있으신가요? <a href="login.html">로그인</a></p>
         </div>
-    </header>
-
-    <!-- 메인 컨텐츠 -->
-    <main class="main">
-        <!-- 인증 섹션 -->
-        <section class="auth-section">
-            <div class="auth-container">
-                <div class="auth-card">
-                    <div class="auth-header">
-                        <h1 class="auth-title">회원가입</h1>
-                        <p class="auth-subtitle">게임 포털의 새로운 모험가가 되어보세요</p>
-                    </div>
-
-                    <form class="auth-form" id="signupForm">
-                        <div class="form-group">
-                            <label class="form-label" for="userId">아이디</label>
-                            <div class="input-with-button">
-                                <input 
-                                    type="text" 
-                                    id="userId" 
-                                    name="userId"
-                                    class="form-input" 
-                                    placeholder="사용할 아이디를 입력해주세요"
-                                    required
-                                >
-                                <button type="button" class="check-btn" id="checkIdBtn">중복확인</button>
-                            </div>
-                            <span class="form-error" id="userIdError"></span>
-                            <span class="form-help">4-12자의 영문, 숫자를 사용할 수 있습니다</span>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="nickname">닉네임</label>
-                            <div class="input-with-button">
-                                <input 
-                                    type="text" 
-                                    id="nickname" 
-                                    name="nickname"
-                                    class="form-input" 
-                                    placeholder="게임에서 사용할 닉네임을 입력해주세요"
-                                    required
-                                >
-                                <button type="button" class="check-btn" id="checkNicknameBtn">중복확인</button>
-                            </div>
-                            <span class="form-error" id="nicknameError"></span>
-                            <span class="form-help">2-12자의 한글, 영문, 숫자를 사용할 수 있습니다</span>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="email">이메일</label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email"
-                                class="form-input" 
-                                placeholder="이메일을 입력해주세요"
-                                required
-                            >
-                            <span class="form-error" id="emailError"></span>
-                            <span class="form-help">로그인 시 사용할 이메일 주소입니다</span>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="password">비밀번호</label>
-                            <div class="password-field">
-                                <input 
-                                    type="password" 
-                                    id="password" 
-                                    name="password"
-                                    class="form-input" 
-                                    placeholder="비밀번호를 입력해주세요"
-                                    required
-                                >
-                                <button type="button" class="password-toggle" id="passwordToggle">
-                                    ◉
-                                </button>
-                            </div>
-                            <span class="form-error" id="passwordError"></span>
-                            <div class="password-strength" id="passwordStrength">
-                                <div class="strength-bar">
-                                    <div class="strength-fill" id="strengthFill"></div>
-                                </div>
-                                <span class="strength-text" id="strengthText">비밀번호 강도</span>
-                            </div>
-                            <span class="form-help">8자 이상, 영문/숫자/특수문자를 포함해주세요</span>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="confirmPassword">비밀번호 확인</label>
-                            <div class="password-field">
-                                <input 
-                                    type="password" 
-                                    id="confirmPassword" 
-                                    name="confirmPassword"
-                                    class="form-input" 
-                                    placeholder="비밀번호를 다시 입력해주세요"
-                                    required
-                                >
-                                <button type="button" class="password-toggle" id="confirmPasswordToggle">
-                                    ◉
-                                </button>
-                            </div>
-                            <span class="form-error" id="confirmPasswordError"></span>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="birthDate">생년월일</label>
-                            <input 
-                                type="date" 
-                                id="birthDate" 
-                                name="birthDate"
-                                class="form-input" 
-                                required
-                            >
-                            <span class="form-error" id="birthDateError"></span>
-                            <span class="form-help">만 14세 이상만 가입 가능합니다</span>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">성별</label>
-                            <div class="radio-group">
-                                <label class="radio-container">
-                                    <input type="radio" name="gender" value="male">
-                                    <span class="radio-mark"></span>
-                                    남성
-                                </label>
-                                <label class="radio-container">
-                                    <input type="radio" name="gender" value="female">
-                                    <span class="radio-mark"></span>
-                                    여성
-                                </label>
-                                <label class="radio-container">
-                                    <input type="radio" name="gender" value="other">
-                                    <span class="radio-mark"></span>
-                                    기타
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-agreements">
-                            <label class="checkbox-container">
-                                <input type="checkbox" id="agreeAll">
-                                <span class="checkmark"></span>
-                                전체 동의
-                            </label>
-                            
-                            <div class="agreement-list">
-                                <label class="checkbox-container required">
-                                    <input type="checkbox" id="agreeTerms" required>
-                                    <span class="checkmark"></span>
-                                    <span>이용약관 동의 <span class="required-mark">(필수)</span></span>
-                                    <a href="#" class="agreement-link">내용보기</a>
-                                </label>
-                                
-                                <label class="checkbox-container required">
-                                    <input type="checkbox" id="agreePrivacy" required>
-                                    <span class="checkmark"></span>
-                                    <span>개인정보 수집/이용 동의 <span class="required-mark">(필수)</span></span>
-                                    <a href="#" class="agreement-link">내용보기</a>
-                                </label>
-                                
-                                <label class="checkbox-container">
-                                    <input type="checkbox" id="agreeMarketing">
-                                    <span class="checkmark"></span>
-                                    <span>마케팅 정보 수신 동의 (선택)</span>
-                                    <a href="#" class="agreement-link">내용보기</a>
-                                </label>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="auth-submit-btn" id="signupBtn">
-                            <span class="btn-text">회원가입</span>
-                            <div class="btn-loading" id="signupLoading">
-                                <div class="loading-spinner"></div>
-                            </div>
-                        </button>
-
-                        <div class="auth-switch">
-                            <p>이미 계정이 있으신가요? <a href="login.html">로그인</a></p>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- 회원가입 혜택 섹션 -->
-                <div class="auth-benefits">
-                    <h3>신규 가입 혜택</h3>
-                    <div class="benefits-list">
-                        <div class="benefit-item">
-                            <div class="benefit-icon">🎁</div>
-                            <div class="benefit-content">
-                                <h4>신규 가입 보상</h4>
-                                <p>다이아몬드 1000개 + 골드 50000개</p>
-                            </div>
-                        </div>
-                        <div class="benefit-item">
-                            <div class="benefit-icon">⭐</div>
-                            <div class="benefit-content">
-                                <h4>전설급 캐릭터</h4>
-                                <p>신규 가입자 전용 전설급 캐릭터 지급</p>
-                            </div>
-                        </div>
-                        <div class="benefit-item">
-                            <div class="benefit-icon">🛡️</div>
-                            <div class="benefit-content">
-                                <h4>7일 부스터</h4>
-                                <p>경험치 +200%, 골드 획득량 +150%</p>
-                            </div>
-                        </div>
-                        <div class="benefit-item">
-                            <div class="benefit-icon">🎮</div>
-                            <div class="benefit-content">
-                                <h4>VIP 체험권</h4>
-                                <p>3일간 VIP 혜택을 무료로 체험</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- 푸터 -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>게임 포털</h4>
-                    <p>최고의 게임 경험을 제공합니다</p>
-                </div>
-                <div class="footer-section">
-                    <h4>지원</h4>
-                    <a href="#">FAQ</a>
-                    <a href="customer-service.html">고객센터</a>
-                    <a href="#">버그 신고</a>
-                </div>
-                <div class="footer-section">
-                    <h4>커뮤니티</h4>
-                    <a href="community.html">공식 포럼</a>
-                    <a href="#">디스코드</a>
-                    <a href="#">유튜브</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Game Portal. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // 중복체크 상태 관리
-        let idChecked = false;
-        let nicknameChecked = false;
-        let isIdValid = false;
-        let isNicknameValid = false;
-
-        // 모바일 메뉴 토글
-        const mobileToggle = document.getElementById('mobileToggle');
-        const navMenu = document.getElementById('navMenu');
-
-        mobileToggle.addEventListener('click', function() {
-            this.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-
-        // 비밀번호 보기/숨기기
-        function setupPasswordToggle(toggleId, fieldId) {
-            const toggle = document.getElementById(toggleId);
-            const field = document.getElementById(fieldId);
-            
-            toggle.addEventListener('click', function() {
-                const type = field.getAttribute('type') === 'password' ? 'text' : 'password';
-                field.setAttribute('type', type);
-                this.textContent = type === 'password' ? '◉' : '●';
-            });
-        }
-
-        setupPasswordToggle('passwordToggle', 'password');
-        setupPasswordToggle('confirmPasswordToggle', 'confirmPassword');
-
-        // 유효성 검사 함수들
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-
-        function validateNickname(nickname) {
-            const re = /^[가-힣a-zA-Z0-9]{2,12}$/;
-            return re.test(nickname);
-        }
-
-        function validateUserId(userId) {
-            const re = /^[a-zA-Z0-9]{4,12}$/;
-            return re.test(userId);
-        }
-
-        function calculateAge(birthDate) {
-            const today = new Date();
-            const birth = new Date(birthDate);
-            let age = today.getFullYear() - birth.getFullYear();
-            const monthDiff = today.getMonth() - birth.getMonth();
-            
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-                age--;
-            }
-            return age;
-        }
-
         function showError(fieldId, message) {
-            const errorElement = document.getElementById(fieldId + 'Error');
-            const inputElement = document.getElementById(fieldId);
-            if (errorElement && inputElement) {
-                errorElement.textContent = message;
-                errorElement.classList.remove('success');
-                inputElement.classList.add('error');
-                inputElement.classList.remove('success');
-            }
-        }
-
-        function showSuccess(fieldId, message) {
-            const errorElement = document.getElementById(fieldId + 'Error');
-            const inputElement = document.getElementById(fieldId);
-            if (errorElement && inputElement) {
-                errorElement.textContent = message;
-                errorElement.classList.add('success');
-                inputElement.classList.remove('error');
-                inputElement.classList.add('success');
-            }
+            document.getElementById(fieldId + 'Error').textContent = message;
         }
 
         function clearError(fieldId) {
-            const errorElement = document.getElementById(fieldId + 'Error');
-            const inputElement = document.getElementById(fieldId);
-            if (errorElement && inputElement) {
-                errorElement.textContent = '';
-                errorElement.classList.remove('success');
-                inputElement.classList.remove('error');
-                inputElement.classList.remove('success');
-            }
+            document.getElementById(fieldId + 'Error').textContent = '';
         }
 
-        // 아이디 중복체크
-        document.getElementById('checkIdBtn').addEventListener('click', async function() {
-            const userId = document.getElementById('userId').value.trim();
-            
-            if (!userId) {
-                showError('userId', '아이디를 입력해주세요.');
-                return;
-            }
-            
-            if (!validateUserId(userId)) {
-                showError('userId', '4-12자의 영문, 숫자만 사용 가능합니다.');
-                return;
-            }
-
-            this.disabled = true;
-            this.textContent = '확인중...';
-
-            try {
-                const response = await fetch('/api/check-id', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: userId })
-                });
-
-                const result = await response.json();
-
-                if (result.available) {
-                    showSuccess('userId', result.message);
-                    idChecked = true;
-                    isIdValid = true;
-                } else {
-                    showError('userId', result.message);
-                    idChecked = false;
-                    isIdValid = false;
-                }
-            } catch (error) {
-                showError('userId', '서버 연결 오류가 발생했습니다.');
-                idChecked = false;
-                isIdValid = false;
-            } finally {
-                this.disabled = false;
-                this.textContent = '중복확인';
-            }
-        });
-
-        // 닉네임 중복체크
-        document.getElementById('checkNicknameBtn').addEventListener('click', async function() {
-            const nickname = document.getElementById('nickname').value.trim();
-            
-            if (!nickname) {
-                showError('nickname', '닉네임을 입력해주세요.');
-                return;
-            }
-            
-            if (!validateNickname(nickname)) {
-                showError('nickname', '2-12자의 한글, 영문, 숫자만 사용 가능합니다.');
-                return;
-            }
-
-            this.disabled = true;
-            this.textContent = '확인중...';
-
-            try {
-                const response = await fetch('/api/check-nickname', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nickname: nickname })
-                });
-
-                const result = await response.json();
-
-                if (result.available) {
-                    showSuccess('nickname', result.message);
-                    nicknameChecked = true;
-                    isNicknameValid = true;
-                } else {
-                    showError('nickname', result.message);
-                    nicknameChecked = false;
-                    isNicknameValid = false;
-                }
-            } catch (error) {
-                showError('nickname', '서버 연결 오류가 발생했습니다.');
-                nicknameChecked = false;
-                isNicknameValid = false;
-            } finally {
-                this.disabled = false;
-                this.textContent = '중복확인';
-            }
-        });
-
-        // 입력값 변경시 중복체크 상태 초기화
-        document.getElementById('userId').addEventListener('input', function() {
-            idChecked = false;
-            isIdValid = false;
-            clearError('userId');
-        });
-
-        document.getElementById('nickname').addEventListener('input', function() {
-            nicknameChecked = false;
-            isNicknameValid = false;
-            clearError('nickname');
-        });
-
-        // 비밀번호 강도 체크
-        const passwordField = document.getElementById('password');
-        const strengthFill = document.getElementById('strengthFill');
-        const strengthText = document.getElementById('strengthText');
-
-        function checkPasswordStrength(password) {
-            let strength = 0;
-            const checks = {
-                length: password.length >= 8,
-                lower: /[a-z]/.test(password),
-                upper: /[A-Z]/.test(password),
-                number: /[0-9]/.test(password),
-                special: /[^A-Za-z0-9]/.test(password)
-            };
-
-            strength = Object.values(checks).filter(Boolean).length;
-            
-            const strengthLevels = ['매우 약함', '약함', '보통', '강함', '매우 강함'];
-            const colors = ['#ff4757', '#ff6348', '#ffa502', '#2ed573', '#20bf6b'];
-            
-            strengthFill.style.width = (strength * 20) + '%';
-            strengthFill.style.backgroundColor = colors[strength - 1] || '#ddd';
-            strengthText.textContent = strengthLevels[strength - 1] || '비밀번호 강도';
-            
-            return strength >= 3;
-        }
-
-        passwordField.addEventListener('input', function() {
-            checkPasswordStrength(this.value);
-        });
-
-        // 전체 동의 체크박스
-        const agreeAll = document.getElementById('agreeAll');
-        const individualCheckboxes = ['agreeTerms', 'agreePrivacy', 'agreeMarketing'];
-
-        agreeAll.addEventListener('change', function() {
-            individualCheckboxes.forEach(id => {
-                document.getElementById(id).checked = this.checked;
-            });
-        });
-
-        individualCheckboxes.forEach(id => {
-            document.getElementById(id).addEventListener('change', function() {
-                const allChecked = individualCheckboxes.every(checkId => 
-                    document.getElementById(checkId).checked
-                );
-                agreeAll.checked = allChecked;
-            });
-        });
-
-        // 회원가입 폼 제출
-        const signupForm = document.getElementById('signupForm');
-        const signupBtn = document.getElementById('signupBtn');
-        const signupLoading = document.getElementById('signupLoading');
-
-        signupForm.addEventListener('submit', async function(e) {
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // 모든 에러 초기화
-            ['userId', 'nickname', 'email', 'password', 'confirmPassword', 'birthDate'].forEach(clearError);
+            // 에러 초기화
+            clearError('id');
+            clearError('password');
+            clearError('confirmPassword');
 
-            const formData = {
-                id: document.getElementById('userId').value.trim(),
-                nickname: document.getElementById('nickname').value.trim(),
-                email: document.getElementById('email').value.trim(),
-                password: document.getElementById('password').value,
-                confirmPassword: document.getElementById('confirmPassword').value,
-                birthDate: document.getElementById('birthDate').value,
-                gender: document.querySelector('input[name="gender"]:checked')?.value || '',
-                agreeTerms: document.getElementById('agreeTerms').checked,
-                agreePrivacy: document.getElementById('agreePrivacy').checked,
-                agreeMarketing: document.getElementById('agreeMarketing').checked
-            };
+            const id = document.getElementById('id').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const signupBtn = document.getElementById('signupBtn');
 
             let isValid = true;
 
-            // 중복체크 확인
-            if (!idChecked || !isIdValid) {
-                showError('userId', '아이디 중복확인을 완료해주세요.');
-                isValid = false;
-            }
-
-            if (!nicknameChecked || !isNicknameValid) {
-                showError('nickname', '닉네임 중복확인을 완료해주세요.');
-                isValid = false;
-            }
-
             // 아이디 검사
-            if (!formData.id) {
-                showError('userId', '아이디를 입력해주세요.');
+            if (!id) {
+                showError('id', '아이디를 입력해주세요.');
                 isValid = false;
-            } else if (!validateUserId(formData.id)) {
-                showError('userId', '4-12자의 영문, 숫자만 사용 가능합니다.');
-                isValid = false;
-            }
-
-            // 닉네임 검사
-            if (!formData.nickname) {
-                showError('nickname', '닉네임을 입력해주세요.');
-                isValid = false;
-            } else if (!validateNickname(formData.nickname)) {
-                showError('nickname', '2-12자의 한글, 영문, 숫자만 사용 가능합니다.');
-                isValid = false;
-            }
-
-            // 이메일 검사
-            if (!formData.email) {
-                showError('email', '이메일을 입력해주세요.');
-                isValid = false;
-            } else if (!validateEmail(formData.email)) {
-                showError('email', '올바른 이메일 형식이 아닙니다.');
+            } else if (id.length > 12) {
+                showError('id', '아이디는 최대 12자까지 입력 가능합니다.');
                 isValid = false;
             }
 
             // 비밀번호 검사
-            if (!formData.password) {
+            if (!password) {
                 showError('password', '비밀번호를 입력해주세요.');
                 isValid = false;
-            } else if (formData.password.length < 6) {
-                showError('password', '비밀번호는 최소 6자 이상이어야 합니다.');
+            } else if (password.length > 12) {
+                showError('password', '비밀번호는 최대 12자까지 입력 가능합니다.');
                 isValid = false;
             }
 
             // 비밀번호 확인 검사
-            if (!formData.confirmPassword) {
-                showError('confirmPassword', '비밀번호 확인을 입력해주세요.');
-                isValid = false;
-            } else if (formData.password !== formData.confirmPassword) {
+            if (password !== confirmPassword) {
                 showError('confirmPassword', '비밀번호가 일치하지 않습니다.');
-                isValid = false;
-            }
-
-            // 생년월일 검사
-            if (formData.birthDate) {
-                const age = calculateAge(formData.birthDate);
-                if (age < 14) {
-                    showError('birthDate', '만 14세 이상만 가입 가능합니다.');
-                    isValid = false;
-                }
-            }
-
-            // 필수 약관 동의 검사
-            if (!formData.agreeTerms) {
-                alert('이용약관에 동의해주세요.');
-                isValid = false;
-            }
-
-            if (!formData.agreePrivacy) {
-                alert('개인정보 수집/이용에 동의해주세요.');
                 isValid = false;
             }
 
             if (!isValid) return;
 
-            // 로딩 상태 표시
+            // 로딩 상태
             signupBtn.disabled = true;
-            signupLoading.style.display = 'block';
+            signupBtn.textContent = '처리중...';
 
             try {
                 const response = await fetch('/api/signup', {
@@ -706,73 +175,30 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        id: formData.id,
-                        nickname: formData.nickname,
-                        email: formData.email,
-                        password: formData.password,
-                        birthDate: formData.birthDate,
-                        gender: formData.gender
-                    })
+                    body: JSON.stringify({ id, password })
                 });
 
                 const result = await response.json();
 
                 if (response.ok) {
-                    alert('회원가입이 완료되었습니다!\n신규 가입 보상이 지급되었습니다.');
-                    window.location.href = '/login';
+                    alert('회원가입이 완료되었습니다!');
+                    window.location.href = 'login.html';
                 } else {
-                    // 서버에서 온 에러 메시지 표시
-                    if (result.error === '이미 존재하는 아이디입니다') {
-                        showError('userId', result.error);
-                        idChecked = false;
-                        isIdValid = false;
-                    } else if (result.error === '이미 존재하는 닉네임입니다') {
-                        showError('nickname', result.error);
-                        nicknameChecked = false;
-                        isNicknameValid = false;
-                    } else {
-                        alert(result.error || '회원가입 중 오류가 발생했습니다.');
-                    }
+                    alert(result.error || '회원가입 중 오류가 발생했습니다.');
                 }
             } catch (error) {
                 console.error('회원가입 오류:', error);
-                alert('서버와의 통신 중 오류가 발생했습니다.');
+                alert('서버 연결 오류가 발생했습니다.');
             } finally {
-                // 로딩 상태 해제
                 signupBtn.disabled = false;
-                signupLoading.style.display = 'none';
+                signupBtn.textContent = '회원가입';
             }
         });
 
-        // 페이지 로드 시 실행
-        document.addEventListener('DOMContentLoaded', function() {
-            // 약관 링크 클릭
-            document.querySelectorAll('.agreement-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    alert('약관 내용을 보여주는 모달이 여기에 표시됩니다.');
-                });
-            });
-
-            // 스크롤 효과
-            window.addEventListener('scroll', function() {
-                const header = document.querySelector('.header');
-                if (window.scrollY > 100) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-            });
-
-            // 입력 필드 포커스 시 에러 제거
-            ['userId', 'nickname', 'email', 'password', 'confirmPassword', 'birthDate'].forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (field) {
-                    field.addEventListener('focus', () => clearError(fieldId));
-                }
-            });
-        });
+        // 입력 필드 포커스 시 에러 제거
+        document.getElementById('id').addEventListener('focus', () => clearError('id'));
+        document.getElementById('password').addEventListener('focus', () => clearError('password'));
+        document.getElementById('confirmPassword').addEventListener('focus', () => clearError('confirmPassword'));
     </script>
 </body>
 </html>

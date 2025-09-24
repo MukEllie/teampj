@@ -93,87 +93,50 @@ const checkPlayer = async () => {
   };
 
   return (
-    <div className="title-wrapper">
+    <div className = "title_screen">
+      {/* 배경 이미지 */}
+      <div className="background" style={{ backgroundImage: `url(${getBackground('title')})` }}></div>
+      <div className = "contents">
+        {/* 버전 정보 */}
+        <div className = "version">demo ver 0.0.1</div>
+        
+        {/* 버튼 */}
+        <div className = "button_group">
+          <div className = "button" onClick = {handleStartGame}>
+            <div className = "button_line"></div>
+            <div className = "button_pink"></div>
+            <div className = "text_pink"> 처음부터 </div>
+          </div>
+          <div className = "button" onClick = {handleLoadGame}>
+            <div className = "button_line"></div>
+            <div className = "button_violet"></div>
+            <div className = "text_violet"> 이어하기 </div>
+          </div>
+          <div className = "button" onClick = {handleSettings}>
+            <div className = "button_line"></div>
+            <div className = "button_blue"></div>
+            <div className = "text_blue"> 스킨 상점 </div>
+          </div>
+        </div>
+      </div>
+
       {/* 뒤로가기 버튼 */}
       <button 
-        className="title-back-to-selector"
-        onClick={handleBackToSelector}
-        aria-label="화면 선택으로 돌아가기"
+        className = "title-back-to-selector"
+        onClick = {handleBackToSelector}
+        aria-label = "화면 선택으로 돌아가기"
       >
-        ← 화면 선택
+        ← 뒤로
       </button>
 
       {/* 플레이어 확인 버튼 (임시) */}
-      <button 
-        onClick={checkPlayer}
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          padding: '5px 10px',
-          background: '#007bff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '3px',
-          fontSize: '12px',
-          zIndex: 1000
-        }}
-      >
-        내 계정 확인
-      </button>
-      
+      <button onClick={checkPlayer}> 내 계정 확인 </button>
       {playerStatus && (
-        <div style={{
-          position: 'absolute',
-          top: '50px',
-          right: '10px',
-          background: 'rgba(0,0,0,0.8)',
-          color: 'white',
-          padding: '5px',
-          borderRadius: '3px',
-          fontSize: '12px',
-          zIndex: 1000
-        }}>
+        <div>
           {playerStatus}
         </div>
       )}
-
-      <div className="title-container">
-        {/* 배경 이미지 */}
-        <div 
-          className="title-background title-background-fixed"
-          style={{
-            backgroundImage: `url(${getBackground('title')})`
-          }}
-        />
         
-        {/* 버튼 그룹 */}
-        <div className="title-button-group">
-          {/* 시작하기 버튼 */}
-          <div className="title-button-wrapper title-start-button" onClick={handleStartGame}>
-            <div className="title-button-line" />
-            <div className="title-button title-button-pink" />
-            <span className="title-button-text">시작하기</span>
-          </div>
-          
-          {/* 이어하기 버튼 */}
-          <div className="title-button-wrapper title-load-button" onClick={handleLoadGame}>
-            <div className="title-button-line" />
-            <div className="title-button title-button-purple" />
-            <span className="title-button-text">이어하기</span>
-          </div>
-          
-          {/* 설정 버튼 */}
-          <div className="title-button-wrapper title-settings-button" onClick={handleSettings}>
-            <div className="title-button-line" />
-            <div className="title-button title-button-blue" />
-            <span className="title-button-text">설정</span>
-          </div>
-        </div>
-        
-        {/* 버전 정보 */}
-        <div className="title-demo-version">demo ver 0.0.1</div>
-      </div>
     </div>
   );
 };

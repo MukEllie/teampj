@@ -47,10 +47,7 @@ const ScreenSelector = ({ onNavigate }) => {
 
   return (
     <div className="selector-container">
-      <div className="selector-header">
-        <h1>River Dice - 화면 선택</h1>
-        <p>개발 중인 화면을 선택하여 테스트하세요</p>
-      </div>
+
       
       <div className="screens-grid">
         {screens.map((screen) => (
@@ -83,12 +80,7 @@ const ScreenSelector = ({ onNavigate }) => {
           </div>
         ))}
       </div>
-      
-      <div className="selector-footer">
-        <p>버전: demo ver 0.0.4</p>
-        <p>구현 완료: 타이틀, 캐릭터 선택, 전투, 스킨 상점, 보상, 카드 인벤토리, 카드 교환, 로비, 클리어, 실패</p>
-        <p>총 10개 화면이 완전히 작동합니다</p>
-      </div>
+
     </div>
   );
 };

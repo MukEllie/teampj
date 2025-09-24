@@ -1,199 +1,143 @@
-/* 타이틀 화면 전용 스타일 - 1280x800 고정 해상도 */
-
-/* 전체 래퍼 */
-.title-wrapper {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #000;
-  position: relative;
-  overflow: hidden;
+@font-face {
+    font-family: 'SeoulNamsan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/SeoulNamsanM.woff') format('woff');
+    font-weight: normal;
+    font-display: swap;
 }
 
-/* 타이틀 화면 뒤로가기 버튼 */
-.title-back-to-selector {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-  padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
 
-.title-back-to-selector:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* 타이틀 컨테이너 - 1280x800 고정 */
-.title-container {
-  position: relative;
+/* 전체 화면 */
+.title_screen {
   width: 1280px;
   height: 800px;
-  background: #000;
+  font-family: 'SeoulNamsan';
+  position: relative;
+  margin: 0 auto;
   overflow: hidden;
 }
 
 /* 타이틀 배경 */
-.title-background {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+.background{
+  height: 800px;
+  width: 1280px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.contents{
+  width: 1240px;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
   z-index: 1;
 }
 
-.title-background-fixed {
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-}
-
-/* 타이틀 버튼 그룹 */
-.title-button-group {
+.version{
+  color: #F5F3FF;
+  font-size: 20px;
   position: absolute;
-  right: 40px;
-  bottom: 64px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 232px;
-  z-index: 100;
+  bottom: 0;
 }
 
-/* 타이틀 버튼 래퍼 */
-.title-button-wrapper {
-  position: relative;
+.button_group{
+  margin-left: auto;
+}
+
+.button{
   width: 232px;
   height: 64px;
+  position: relative;
+  margin-top: 15px;
   cursor: pointer;
-  transition: transform 0.2s ease;
-  margin: 5px 0;
 }
 
-.title-button-wrapper:hover {
-  transform: scale(1.05);
-}
-
-.title-button-wrapper:active {
-  transform: scale(0.98);
-}
-
-/* 타이틀 시작하기 버튼 */
-.title-start-button {
-  margin-top: 0;
-}
-
-/* 타이틀 설정 버튼 */
-.title-settings-button {
-  margin-bottom: 0;
-}
-
-/* 타이틀 버튼 라인 */
-.title-button-line {
-  box-sizing: border-box;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background: #F5F3FF;
+.button_line{
+  width: 232px;
+  height: 64px;
   border: 2px solid #F5F3FF;
-  filter: blur(0.5px);
   border-radius: 15px;
-}
-
-/* 타이틀 버튼 본체 */
-.title-button {
-  box-sizing: border-box;
+  filter: blur(px);
   position: absolute;
-  left: 2px;
-  right: 2px;
-  top: 2px;
-  bottom: 2px;
-  border-radius: 13px;
-}
-
-/* 타이틀 핑크 버튼 (시작하기) */
-.title-button-pink {
-  background: linear-gradient(180deg, #FFA5EF 0%, #FF6EE6 100%);
-  border: 1.5px solid #C040AA;
-}
-
-/* 타이틀 보라 버튼 (이어하기) */
-.title-button-purple {
-  background: linear-gradient(180deg, #B7A6FF 0%, #9480E9 100%);
-  border: 1.5px solid #564AC3;
-}
-
-/* 타이틀 파란 버튼 (설정) */
-.title-button-blue {
-  background: linear-gradient(180deg, #8BD1FF 0%, #6DC5FF 100%);
-  border: 1.5px solid #487FC3;
-}
-
-/* 타이틀 버튼 텍스트 */
-.title-button-text {
-  position: absolute;
-  left: 50%;
-  top: 50%;
   transform: translate(-50%, -50%);
-  font-family: 'SeoulNamsan', 'Malgun Gothic', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 1;
-  text-align: center;
-  letter-spacing: -0.05em;
-  color: #F5F3FF;
-  pointer-events: none;
-  white-space: nowrap;
-  z-index: 2;
+  top: 50%;
+  left: 50%;
 }
 
-/* 타이틀 시작하기 버튼 텍스트 */
-.title-start-button .title-button-text {
-  text-shadow: 0px 1px 0px #C040AA;
-}
-
-/* 타이틀 이어하기 버튼 텍스트 */
-.title-load-button .title-button-text {
-  text-shadow: 0px 1px 0px #6A39D4;
-}
-
-/* 타이틀 설정 버튼 텍스트 */
-.title-settings-button .title-button-text {
-  text-shadow: 0px 1px 0px #487FC3;
-}
-
-/* 타이틀 데모 버전 텍스트 */
-.title-demo-version {
+/* 분홍 버튼 */
+.button_pink {
+  width: 228px;
+  height: 60px;
+  background: linear-gradient(#FFA5EF, #FF6EE6);
+  border: 1.5px solid #C040AA;
+  border-radius: 13px;
   position: absolute;
-  left: 25px;
-  bottom: 16px;
-  font-family: 'SeoulNamsan', 'Malgun Gothic', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 1;
-  text-align: center;
-  letter-spacing: -0.05em;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 분홍 텍스트 */
+.text_pink {
   color: #F5F3FF;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  z-index: 10;
+  font-size: 24px;
+  text-shadow: 1.5px 0 0 #C040AA, -1.5px 0 0 #C040AA, 0 2px 0 #C040AA, 0 -1.5px 0 #C040AA
+              , 1.5px 2px 0 #C040AA, 1.5px -1.5px 0 #C040AA, -1.5px 2px 0 #C040AA, -1.5px -1.5px 0 #C040AA;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 보라 버튼 */
+.button_violet {
+  width: 228px;
+  height: 60px;
+  background: linear-gradient(#B7A6FF, #9480E9);
+  border: 1.5px solid #564AC3;
+  border-radius: 13px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 보라 텍스트 */
+.text_violet {
+  color: #F5F3FF;
+  font-size: 24px;
+  text-shadow: 1.5px 0 0 #564AC3, -1.5px 0 0 #564AC3, 0 2px 0 #564AC3, 0 -1.5px 0 #564AC3
+              , 1.5px 2px 0 #564AC3, 1.5px -1.5px 0 #564AC3, -1.5px 2px 0 #564AC3, -1.5px -1.5px 0 #564AC3;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 파랑 버튼 */
+.button_blue {
+  width: 228px;
+  height: 60px;
+  background: linear-gradient(#8BD1FF, #6DC5FF);
+  border: 1.5px solid #487FC3;
+  border-radius: 13px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 파랑 텍스트 */
+.text_blue {
+  color: #F5F3FF;
+  font-size: 24px;
+  text-shadow: 1.5px 0 0 #487FC3, -1.5px 0 0 #487FC3, 0 2px 0 #487FC3, 0 -1.5px 0 #487FC3
+              , 1.5px 2px 0 #487FC3, 1.5px -1.5px 0 #487FC3, -1.5px 2px 0 #487FC3, -1.5px -1.5px 0 #487FC3;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
 }

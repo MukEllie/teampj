@@ -1,0 +1,23 @@
+#banner{
+    height: 600px;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+#main_1{
+    display: flex;
+}
+
+#announcement{
+    height: auto;
+    width: 844px;
+    background-color: aqua;
+}
+
+#main_1_img{
+    height: auto;
+    width: 408px;
+    display: block;
+    margin-left: auto;
+}
