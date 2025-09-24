@@ -60,7 +60,7 @@ public class StartServiceImpl implements StartService {
 		startMapper.decrementStageClamp0(userId);
 
 		// 4) 캠프로 이동 경로 반환
-		return "forward:/camp?playerId=" + userId;
+		return "forward:/camp?PlayerID=" + userId;
 	}
 
 	/** Warrior, Mage, Thief 순서 반환 */
