@@ -6,11 +6,11 @@ create table UserDB (
 ID varchar(12) primary key not null default 'test',
 Password varchar(12) not null default 'test',
 gold int  not null default 3000,
-Owned_SkinID json
+Owned_SkinID json NOT NULL DEFAULT (JSON_ARRAY(101,201,301,401,501,601))
 );
 drop table UserDB;
-INSERT INTO UserDB (ID, Password, gold, Owned_SkinID) VALUES
-('test', 'test', 3000, JSON_ARRAY());
+INSERT INTO UserDB (ID, Password, gold) VALUES
+('test', 'test', 3000);
 select * from UserDB;
 TRUNCATE TABLE UserDB;
 
@@ -61,12 +61,13 @@ insert into SkinDB (Skin_ID, Skin_name, Job, image_ID) VALUES
 create table PlayerDB (
 Player_ID varchar(12) primary key,
 Using_Character varchar(12),
+Using_Skin INT NOT NULL DEFAULT 0,
 curr_hp int,
 max_hp int,
 atk int,
 luck int,
-WhereSession varchar(20),
-WhereStage int,
+WhereSession varchar(20) NOT NULL DEFAULT('Water'),
+WhereStage int NOT NULL DEFAULT(0),
 EventAtk int,
 EventCurrHp int,
 EventMaxHp int,
@@ -78,13 +79,15 @@ Own_Artifact varchar(500)
 # 임시 테스터 플레이어 데이터를 넣어서 진행해야함. 스킬의 경우 SkillDB 형식에 맞춰서 적당히 넣을 것
 DELETE FROM PlayerDB WHERE Player_ID = 'testPlayer';
 
+DROP TABLE PlayerDB;
+
 select * from PlayerDB;
 INSERT INTO PlayerDB (
-    Player_ID, Using_Character, curr_hp, max_hp, atk, luck,
+    Player_ID, Using_Character,Using_Skin, curr_hp, max_hp, atk, luck,
     WhereSession, WhereStage, EventAtk, EventCurrHp, EventMaxHp,
     Using_Skill, Own_Skill, Own_Artifact
 ) VALUES (
-    'testPlayer', 'warrior', 100, 100, 10, 5,
+    'testPlayer', 'warrior', 101, 100, 100, 10, 5,
     'Fire', 1, 0, 0, 0,
-    '1,2,3,4', '1,2,3,4,5,6', '101,102,103'
+    '11,14,3,4', '1,2,3,4,5,6,11,14', '101,102,103'
 );
