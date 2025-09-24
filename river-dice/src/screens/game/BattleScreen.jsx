@@ -859,7 +859,7 @@ const BattleScreen = ({ onNavigate }) => {
     </div>
   )
 
-  // 전투 상태 디버깅용 함수
+  // 전투 상태 디버깅용 함수. 아직은 사용하지 않음
   const logBattleState = () => {
     console.log('=== 현재 전투 상태 ===');
     console.log('GameState:', gameState);
@@ -870,7 +870,7 @@ const BattleScreen = ({ onNavigate }) => {
     console.log('=====================');
   };
 
-  // 개발자 도구에서 사용할 수 있도록 window에 디버깅 함수 노출
+  // 개발자 도구에서 사용할 수 있도록 window에 디버깅 함수 노출. 아직은 사용하지 않음
   if (typeof window !== 'undefined') {
     window.debugBattle = {
       logState: logBattleState,
