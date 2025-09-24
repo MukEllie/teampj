@@ -45,8 +45,8 @@ public class BattleSession {
 		int attackerAtk = getAttackPower(attacker);
 		// 공격자의 공격력 받아오기
 
-		int totalHitTimes= skill.getHit_time() + getPlayerExtraHitTimes(player);
-		
+		int totalHitTimes = skill.getHit_time() + getPlayerExtraHitTimes(player);
+
 		for (int hitCount = 0; hitCount < totalHitTimes; hitCount++) {
 			executeAttackByType(skill.getHit_target(), validTargets, targetIndex, attacker, skill, attackerAtk, actor,
 					actorJosa, battleState, context);
@@ -103,7 +103,7 @@ public class BattleSession {
 					.collect(Collectors.toList());
 
 			if (!aliveTargets.isEmpty()) {
-				int randomIndex = CommonUtil.Dice(aliveTargets.size());
+				int randomIndex = CommonUtil.Dice(aliveTargets.size()) - 1;
 				BattleUnit target = aliveTargets.get(randomIndex);
 				executeAttackOnTarget(attacker, target, skill, attackerAtk, actor, actorJosa, battleState, context);
 			}
@@ -354,7 +354,7 @@ public class BattleSession {
 
 	private int getPlayerExtraHitTimes(PlayerDto player) {
 		int extra = 0;
-	
+
 		for (PlayerArtifact artifact : player.getArtifacts()) {
 			if (artifact instanceof ShadowDeviceArtifact) {
 				ShadowDeviceArtifact device = (ShadowDeviceArtifact) artifact;
@@ -363,7 +363,7 @@ public class BattleSession {
 		}
 		return extra;
 	}
-	
+
 	private int getMonsterAttackTimes(BattleMonsterUnit monster) {
 		// 몬스터의 공격횟수 불러오기(이 부분은 나중을 생각해서 미리 작성함)
 		String special = monster.getSpecial();

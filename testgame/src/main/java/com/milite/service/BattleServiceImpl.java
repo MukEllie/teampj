@@ -187,6 +187,8 @@ public class BattleServiceImpl implements BattleService {
 			defaultStatus.put("currentUnit", null);
 			defaultStatus.put("playerHp", 0);
 			defaultStatus.put("playerMaxHp", 100);
+			defaultStatus.put("playerAtk", 10);
+			defaultStatus.put("playerLuck", 5);
 			defaultStatus.put("aliveMonsters", new ArrayList<>());
 			return defaultStatus;
 		}
@@ -201,12 +203,74 @@ public class BattleServiceImpl implements BattleService {
 		status.put("currentUnit", currentUnit != null ? currentUnit.getName() : null);
 		status.put("unitType", currentUnit != null ? currentUnit.getUnitType() : null);
 
-		status.put("playerHp", session.getPlayer().getHp());
-		status.put("playerMaxHp", session.getPlayer().getMax_hp());
-		status.put("aliveMonsters", session.getEnemy().stream().filter(BattleUnit::isAlive).map(BattleUnit::getName)
-				.collect(Collectors.toList()));
+		PlayerDto player = session.getPlayer();
+		if (player != null) {
+			status.put("playerHp", session.getPlayer().getHp());
+			status.put("playerMaxHp", session.getPlayer().getMax_hp());
+			status.put("playerAtk", player.getAtk());
+			status.put("playerLuck", player.getLuck());
 
-		System.out.println("✅ 전투 상태 조회 성공: " + status);
+			status.put("playerName", player.getName());
+			status.put("playerCharacter", player.getUsing_Character());
+			status.put("playerSession", player.getWhereSession());
+			status.put("playerStage", player.getWhereStage());
+		} else {
+			status.put("playerHp", 0);
+			status.put("playerMaxHp", 100);
+			status.put("playerAtk", 10);
+			status.put("playerLuck", 5);
+		}
+
+		List<Map<String, Object>> aliveMonsters = new ArrayList<>();
+		if (session.getEnemy() != null) {
+			for (int i = 0; i < session.getEnemy().size(); i++) {
+				BattleMonsterUnit monster = session.getEnemy().get(i);
+				if (monster.isAlive()) {
+					Map<String, Object> monsterInfo = new HashMap<>();
+
+					// 기본 몬스터 정보
+					monsterInfo.put("index", i); // 몬스터 인덱스 (타겟 지정용)
+					monsterInfo.put("id", monster.getID() != null ? monster.getID() : i + 10);
+					monsterInfo.put("name", monster.getName());
+					monsterInfo.put("hp", monster.getHp());
+					monsterInfo.put("maxHp", monster.getMax_hp());
+					monsterInfo.put("alive", monster.isAlive());
+
+					// 추가 몬스터 정보
+					monsterInfo.put("minAtk", monster.getMin_atk());
+					monsterInfo.put("maxAtk", monster.getMax_atk());
+					monsterInfo.put("initiative", monster.getInitiative());
+					monsterInfo.put("element", monster.getElement() != null ? monster.getElement() : "None");
+
+					// 상태이상 정보
+					Map<String, Integer> statusEffects = monster.getStatusEffects();
+					monsterInfo.put("statusEffects", statusEffects != null ? statusEffects : new HashMap<>());
+
+					// 특수 능력 정보 (있는 경우)
+					if (monster.getSpecialAbility() != null) {
+						monsterInfo.put("hasSpecialAbility", true);
+						monsterInfo.put("specialAbilityType", monster.getSpecialAbility().getClass().getSimpleName());
+					} else {
+						monsterInfo.put("hasSpecialAbility", false);
+					}
+
+					aliveMonsters.add(monsterInfo);
+				}
+			}
+		}
+
+		status.put("aliveMonsters", aliveMonsters);
+		
+		// 행동 순서 정보 추가 (디버깅용)
+		List<String> actionOrderNames = new ArrayList<>();
+		if (session.getActionOrder() != null) {
+			for (BattleUnit unit : session.getActionOrder()) {
+				actionOrderNames.add(unit.getName() + "(" + unit.getUnitType() + ")");
+			}
+		}
+		status.put("actionOrder", actionOrderNames);
+
+		System.out.println("✅ 전투 상태 조회 성공 (상세정보 포함): " + status);
 		return status;
 	}
 
