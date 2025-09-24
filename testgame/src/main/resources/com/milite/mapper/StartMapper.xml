@@ -28,6 +28,13 @@
     ORDER BY FIELD(name,'Warrior','Mage','Thief')
   </select>
 
+  <!-- 플레이어 보유 스킬 CSV 저장 -->
+  <update id="updateOwnSkillCsv">
+    UPDATE PlayerDB
+    SET Own_Skill = #{ownSkillCsv}
+    WHERE Player_ID = #{playerId}
+  </update>
+
   <!-- 직업 단건 조회 -->
   <select id="getClassByName" resultType="com.milite.dto.CharacterDto">
     SELECT name, hp, atk, luck

@@ -20,6 +20,9 @@ public interface StartMapper {
 	/** Warrior, Mage, Thief 순서 조회 */
 	List<CharacterDto> getFixedClasses();
 
+	/* 플레이어 보유 스킬 CSV 저장 — UPDATE PlayerDB.Own_Skill */
+	int updateOwnSkillCsv(@Param("playerId") String playerId, @Param("ownSkillCsv") String ownSkillCsv);
+
 	/** 직업 단건 조회 */
 	CharacterDto getClassByName(@Param("name") String name);
 

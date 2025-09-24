@@ -1,6 +1,8 @@
 package com.milite.service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.milite.dto.CharacterDto;
 import com.milite.dto.PlayerDto;
 import com.milite.mapper.CharacterStatusMapper;
+import com.milite.mapper.SkillMapper;
 import com.milite.mapper.StartMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ public class StartServiceImpl implements StartService {
 
 	private final CharacterStatusMapper characterStatusMapper; // 기존 조회 매퍼 재사용
 	private final StartMapper startMapper; // 시작 전용 매퍼
+	private final SkillMapper skillMapper; // 기본 스킬 조회용
 
 	/** 시작 상태 조회 */
 	@Override
@@ -77,10 +81,22 @@ public class StartServiceImpl implements StartService {
 		CharacterDto c = startMapper.getClassByName(className);
 		if (c == null)
 			return "존재하지 않는 직업입니다.";
-		startMapper.insertPlayerBaseStats(userId, // playerId 로 사용 (아래 설명)
+
+		// 기본 세이브 생성(스킨 포함)
+		startMapper.insertPlayerBaseStats(userId, // Player_ID
 				c.getName(), // Using_Character
-				c.getHp(), c.getAtk(), c.getLuck(), skinId // ★ 선택한 스킨 ID 추가
+				c.getHp(), c.getAtk(), c.getLuck(), skinId // Using_Skin
 		);
+
+		// ★ 기본 스킬 CSV 자동 지급: (skill_job='Common' OR 직업명) AND skill_type='Basic' AND
+		// rarity='N'
+		List<Integer> ids = skillMapper.findDefaultSkillIds(c.getName());
+		if (ids != null && !ids.isEmpty()) {
+			String csv = ids.stream().filter(Objects::nonNull).map(String::valueOf).distinct()
+					.collect(Collectors.joining(","));
+			startMapper.updateOwnSkillCsv(userId, csv); // PlayerDB.Own_Skill 에 일괄 세팅
+		}
+
 		return "직업 선택 완료";
 	}
 

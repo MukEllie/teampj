@@ -31,4 +31,13 @@
 		</where>
 		order by RAND()
 	</select>
+	
+	<select id="findDefaultSkillIds" resultType="int">
+    	SELECT s.skill_id
+    	FROM skills s
+    	WHERE s.rarity = 'N'
+    	  AND s.skill_type = 'Basic'
+    	  AND (s.skill_job = #{job} OR s.skill_job = 'Common')
+    	ORDER BY s.skill_id
+  	</select>
 </mapper>
