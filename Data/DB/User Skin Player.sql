@@ -1,7 +1,7 @@
 use testgame;
 
 show tables;
-
+select * from UserDB;
 create table UserDB (
 ID varchar(12) primary key not null default 'test',
 Password varchar(12) not null default 'test',

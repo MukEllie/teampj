@@ -29,7 +29,7 @@ CREATE TABLE MonsterDB (
     Special TEXT,
     Description TEXT
 );
-
+select * from monsterdb;
 -- 데이터 삽입
 INSERT INTO MonsterDB (MonsterID, Name, Session, Type, Element, min_hp, max_hp, min_atk, max_atk, luck, Special, Description) VALUES
 (10, '미공수', 'Fire', 'Boss', 'Fire', 200, 200, 13, 13, 5, 'BraveBite', '공포심이 없는 짐승, 자신을 공격하는 자를 언제나 물어뜯을 준비가 되어있다'),
