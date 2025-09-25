@@ -26,21 +26,20 @@ import artifact120 from '../image/artifact/120.png';
 import artifact121 from '../image/artifact/121.png';
 
 // ===== 배경 이미지 import (정확한 파일명 사용) =====
-import campBackground from '../image/background/camp.png';
+import campBackground from '../image/background/Camp.png';
 import characterSelectBackground from '../image/background/Character_Select.png';
 import eventBackground from '../image/background/Event.png';
 import fireBossBackground from '../image/background/Fire_Boss.png';
-import fireCommonBackground from '../image/background/fire_common.png';
+import fireCommonBackground from '../image/background/Fire.png';
 import fireBackground from '../image/background/Fire.png';
 import gameBackground from '../image/background/Game.png';
 import grassBossBackground from '../image/background/Grass_Boss.png';
-import grassCommonBackground from '../image/background/grass_common.png';
+import grassCommonBackground from '../image/background/Grass.png';
 import grassBackground from '../image/background/Grass.png';
 import skinGachaBackground from '../image/background/Skin_Gacha.png';
-import skinBackground from '../image/background/skin.png';
 import titleBackground from '../image/background/Title.png';
 import waterBossBackground from '../image/background/Water_Boss.png';
-import waterCommonBackground from '../image/background/water_common.png';
+import waterCommonBackground from '../image/background/Water.png';
 import waterBackground from '../image/background/Water.png';
 
 // ===== 캐릭터 이미지 import =====
@@ -237,7 +236,6 @@ const imagePaths = {
     grassCommon: grassCommonBackground,
     grass: grassBackground,
     skinGacha: skinGachaBackground,
-    skin: skinBackground,
     title: titleBackground,
     waterBoss: waterBossBackground,
     waterCommon: waterCommonBackground,
@@ -371,8 +369,8 @@ const getCharacter = (characterType = 'warrior', skinId = '101') => {
   // 캐릭터 타입을 실제 이미지 ID로 변환
   const characterMap = {
     'warrior': { '101': 101, '201': 201 },
-    'mage': { '101': 301, '201': 401 },
-    'thief': { '101': 501, '201': 601 }
+    'thief': { '101': 301, '201': 401 },
+    'mage': { '101': 501, '201': 601 }
   };
   
   const characterId = characterMap[characterType]?.[skinId] || 101;
@@ -384,8 +382,8 @@ const getCharacterSkin = (characterType = 'warrior', skinId = '101') => {
   // 캐릭터 타입을 실제 스킨 이미지 ID로 변환
   const skinMap = {
     'warrior': { '101': 101, '201': 201 },
-    'mage': { '101': 301, '201': 401 },
-    'thief': { '101': 501, '201': 601 }
+    'thief': { '101': 301, '201': 401 },
+    'mage': { '101': 501, '201': 601 }
   };
   
   const skinImageId = skinMap[characterType]?.[skinId] || 101;

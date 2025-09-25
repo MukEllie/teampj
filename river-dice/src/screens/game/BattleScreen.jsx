@@ -31,6 +31,11 @@ const BattleScreen = ({ onNavigate }) => {
     battleLog: ['전투 준비 중...']
   });
 
+  const [artifacts, setArtifacts] = useState([]);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipData, setTooltipData] = useState(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+
   // 이미지 상태 관리
   const [images, setImages] = useState({
     background: null,
@@ -86,6 +91,7 @@ const BattleScreen = ({ onNavigate }) => {
         throw new Error(`예상치 못한 stage : ${data.stage}`);
       }
 
+      await fetchArtifacts();
       await updateGameStateFromAPI(data);
       setbattleStatus(data.battleStatus);
 
@@ -103,6 +109,8 @@ const BattleScreen = ({ onNavigate }) => {
       setIsLoading(false);
     }
   };
+
+
 
   // 플레이어 스킬 목록 API 호출
   const fetchPlayerSkills = async () => {
@@ -135,6 +143,28 @@ const BattleScreen = ({ onNavigate }) => {
     } catch (error) {
       console.error('플레이어 스킬 API 에러 : ', error);
       return null;
+    }
+  };
+
+  // 아티팩트 목록 API 호출
+  const fetchArtifacts = async () => {
+    try {
+      const response = await fetch(`http://localhost:8090/battle/artifacts?PlayerID=${playerID}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('아티팩트 데이터:', data);
+        setArtifacts(data.artifacts || []);
+      } else {
+        console.error('아티팩트 API 응답 오류:', response.status);
+        setArtifacts([]);
+      }
+    } catch (error) {
+      console.error('아티팩트 조회 오류:', error);
+      setArtifacts([]);
     }
   };
 
@@ -341,10 +371,33 @@ const BattleScreen = ({ onNavigate }) => {
 
     if (result && result.battleLog) {
       result.battleLog.forEach(log => {
-        if (log.message) {
-          logMessages.push(log.message);
+        // BattleLogEntry 구조: actorName, actionType, detail, turnNumber
+        let logMessage = '';
+
+        if (log.detail) {
+          // detail 필드에 데미지 정보가 들어있음 (백엔드 구조)
+          logMessage = `[턴 ${log.turnNumber || '?'}] ${log.detail}`;
+        } else if (log.message) {
+          // 혹시 message 필드가 있는 경우 (호환성)
+          logMessage = `[턴 ${log.turnNumber || '?'}] ${log.message}`;
+        } else {
+          // 기본 형태
+          logMessage = `[턴 ${log.turnNumber || '?'}] ${log.actorName}: ${log.actionType}`;
+        }
+
+        if (logMessage.trim()) {
+          logMessages.push(logMessage);
         }
       });
+    }
+
+    // 추가로 BattleResultDto의 damage 정보도 활용
+    if (result && result.damage && result.damage > 0) {
+      logMessages.push(`💥 총 데미지: ${result.damage}`);
+    }
+
+    if (result && result.isHit === false) {
+      logMessages.push(`🎯 공격이 빗나갔습니다!`);
     }
 
     if (updateStatus) {
@@ -447,7 +500,7 @@ const BattleScreen = ({ onNavigate }) => {
           const element = skill.element?.toLowerCase() || 'none';
           return getCard(element);
         }),
-        artifacts: [] // 아티팩트는 별도 API로 로드 필요
+        artifacts: artifacts.map(artifact => getArtifact(artifact.id))
       };
       setImages(loadedImages);
     }
@@ -637,6 +690,31 @@ const BattleScreen = ({ onNavigate }) => {
     }
   };
 
+  const handleArtifactMouseEnter = (event, artifact) => {
+    const rect = event.target.getBoundingClientRect();
+    setTooltipPosition({
+      x: rect.left + rect.width / 2,
+      y: rect.bottom + 10
+    });
+    setTooltipData(artifact);
+    setShowTooltip(true);
+  };
+
+  const handleArtifactMouseLeave = () => {
+    setShowTooltip(false);
+    setTooltipData(null);
+  };
+
+  const getJobKorean = (job) => {
+    switch (job) {
+      case 'Warrior': return '전사';
+      case 'Mage': return '마법사';
+      case 'Thief': return '도적';
+      case 'Common': return '공용';
+      default: return job;
+    }
+  };
+
   const handleMonsterClick = (monsterIndex) => {
     const monster = gameState.monsters[monsterIndex];
     if (!monster || !monster.alive) {
@@ -709,56 +787,125 @@ const BattleScreen = ({ onNavigate }) => {
   return (
     <div className="game-container">
       <div className="battle-background" style={backgroundStyle}>
-        {/* 아티팩트 바 - 현재는 빈 상태 */}
         <div className="artifact-bar">
-          {/* 추후 API에서 아티팩트 로드하도록 수정*/}
+          {artifacts.map((artifact) => (
+            <div
+              key={artifact.id}
+              className="artifact-item"
+              style={{
+                backgroundImage: `url(${getArtifact(artifact.id)})`,
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                cursor: 'pointer',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: '4px'
+              }}
+              onMouseEnter={(e) => handleArtifactMouseEnter(e, artifact)}
+              onMouseLeave={handleArtifactMouseLeave}
+              title={artifact.name}
+            />
+          ))}
         </div>
 
-        {/* 나가기 버튼 */}
-        <div className="exit-button" onClick={handleExit}>
-          나가기
-        </div>
+        {Array.from({ length: Math.max(0, 6 - artifacts.length) }).map((_, index) => (
+          <div
+            key={`empty-${index}`}
+            className="artifact-item empty-artifact"
+            style={{
+              border: '2px dashed rgba(255, 255, 255, 0)',
+              backgroundColor: 'rgba(255, 255, 255, 0)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'rgba(255, 255, 255, 0)',
+              fontSize: '16px',
+              fontWeight: 'bold'
+            }}
+          >
 
-        {/* 플레이어 캐릭터 */}
-        <div className="player-character">
-          {images.player && (
-            <img src={images.player} alt="플레이어" />
-          )}
-        </div>
-
-        {/* 플레이어 스탯 */}
-        <div className="player-stats">
-          <div className="stat-item">
-            <span className="stat-label">스테이지</span>
-            <span className="stat-value">{gameState.stage || '?'} ({gameState.element || '?'})</span>
           </div>
-          <div className="stat-item">
-            <span className="stat-label">공격력</span>
-            <span className="stat-value">{gameState.playerStats.attack}</span>
+        ))}
+
+        {showTooltip && tooltipData && (
+          <div
+            className="artifact-tooltip"
+            style={{
+              position: 'fixed',
+              left: tooltipPosition.x,
+              top: tooltipPosition.y,
+              transform: 'translateX(-50%)',
+              zIndex: 1000,
+              background: 'rgba(0, 0, 0, 0.9)',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              borderRadius: '6px',
+              padding: '8px 12px',
+              maxWidth: '250px',
+              fontSize: '12px',
+              color: 'white'
+            }}
+          >
+            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+              {tooltipData.name}
+              <span style={{ float: 'right', fontSize: '11px', opacity: 0.7 }}>
+                {getJobKorean(tooltipData.job)}
+              </span>
+            </div>
+            <div style={{ marginBottom: '6px' }}>
+              <strong style={{ color: '#4CAF50' }}>효과:</strong> {tooltipData.effect}
+            </div>
+            <div style={{ fontSize: '11px', fontStyle: 'italic', opacity: 0.6 }}>
+              "{tooltipData.description}"
+            </div>
           </div>
-          <div className="stat-item">
-            <span className="stat-label">행운</span>
-            <span className="stat-value">{gameState.playerStats.luck}</span>
-          </div>
+        )}
+      </div>
+
+      {/* 나가기 버튼 */}
+      <div className="exit-button" onClick={handleExit}>
+        나가기
+      </div>
+
+      {/* 플레이어 캐릭터 */}
+      <div className="player-character">
+        {images.player && (
+          <img src={images.player} alt="플레이어" />
+        )}
+      </div>
+
+      {/* 플레이어 스탯 */}
+      <div className="player-stats">
+        <div className="stat-item">
+          <span className="stat-label">스테이지</span>
+          <span className="stat-value">{gameState.stage || '?'} ({gameState.element || '?'})</span>
         </div>
-
-        {/* 플레이어 체력바 */}
-        <div className="player-health-bar">
-          <div className="hp-icon" />
-          <span className="hp-text">
-            {gameState.playerStats.health} / {gameState.playerStats.maxHealth}
-          </span>
-          <div className="status-icons">
-            <div className="status-icon" />
-            <div className="status-icon" />
-          </div>
+        <div className="stat-item">
+          <span className="stat-label">공격력</span>
+          <span className="stat-value">{gameState.playerStats.attack}</span>
         </div>
+        <div className="stat-item">
+          <span className="stat-label">행운</span>
+          <span className="stat-value">{gameState.playerStats.luck}</span>
+        </div>
+      </div>
 
-        {/* 몬스터 렌더링 */}
-        {renderMonsters()}
+      {/* 플레이어 체력바 */}
+      <div className="player-health-bar">
+        <div className="hp-icon" />
+        <span className="hp-text">
+          {gameState.playerStats.health} / {gameState.playerStats.maxHealth}
+        </span>
+        <div className="status-icons">
+          <div className="status-icon" />
+          <div className="status-icon" />
+        </div>
+      </div>
 
-        {/* 타겟 선택 모드 UI */}
-        {targetSelectionMode && (
+      {/* 몬스터 렌더링 */}
+      {renderMonsters()}
+
+      {/* 타겟 선택 모드 UI */}
+      {
+        targetSelectionMode && (
           <div style={{
             position: 'absolute',
             top: '50%',
@@ -788,75 +935,74 @@ const BattleScreen = ({ onNavigate }) => {
               취소
             </button>
           </div>
-        )}
+        )
+      }
 
-        {/* 카드들 */}
-        <div className="cards-container">
-          {currentCardData.map((card, index) => (
-            <div
-              key={index}
-              className={`card card-${card.type} ${targetSelectionMode ? 'card-disabled' : ''}`}
-              onClick={() => !targetSelectionMode && handleCardClick(index)}
-              style={{
-                opacity: targetSelectionMode ? 0.5 : 1,
-                cursor: targetSelectionMode ? 'not-allowed' : 'pointer'
-              }}
-            >
-              <div className="card-border-1" />
-              <div className="card-border-2" />
-              <div className="card-icon" />
-              <div className="card-title">{card.title}</div>
-              <div className="card-rank">
-                <span className="card-rank-text">{card.rank}</span>
-              </div>
-              {images.cards[index] && (
-                <img
-                  src={images.cards[index]}
-                  alt={card.title}
-                  style={{
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    opacity: 0.1,
-                    pointerEvents: 'none'
-                  }}
-                />
-              )}
-              {/* 스킬 데미지 정보 표시 */}
-              {card.damage && card.damage !== '0~0' && (
-                <div style={{
-                  position: 'absolute',
-                  bottom: '25px',
-                  right: '5px',
-                  fontSize: '10px',
-                  color: 'white',
-                  background: 'rgba(0,0,0,0.7)',
-                  padding: '2px 4px',
-                  borderRadius: '3px'
-                }}>
-                  {card.damage}
-                </div>
-              )}
+      {/* 카드들 */}
+      <div className="cards-container">
+        {currentCardData.map((card, index) => (
+          <div
+            key={index}
+            className={`card card-${card.type} ${targetSelectionMode ? 'card-disabled' : ''}`}
+            onClick={() => !targetSelectionMode && handleCardClick(index)}
+            style={{
+              opacity: targetSelectionMode ? 0.5 : 1,
+              cursor: targetSelectionMode ? 'not-allowed' : 'pointer'
+            }}
+          >
+            <div className="card-border-1" />
+            <div className="card-border-2" />
+            <div className="card-icon" />
+            <div className="card-title">{card.title}</div>
+            <div className="card-rank">
+              <span className="card-rank-text">{card.rank}</span>
             </div>
-          ))}
-        </div>
-
-        {/* 전투 로그 */}
-        <div className="battle-log">
-          <div className="log-content">
-            {gameState.battleLog.map((log, index) => (
-              <p key={index} style={{ margin: '5px 0' }}>{log}</p>
-            ))}
-            <p style={{ margin: '5px 0', fontSize: '12px', opacity: 0.7 }}>
-              PlayerID: {playerID}
-              {apiError ? ' (오류 발생)' : ' (온라인)'}
-            </p>
+            {images.cards[index] && (
+              <img
+                src={images.cards[index]}
+                alt={card.title}
+                style={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  opacity: 0.1,
+                  pointerEvents: 'none'
+                }}
+              />
+            )}
+            {/* 스킬 데미지 정보 표시 */}
+            {card.damage && card.damage !== '0~0' && (
+              <div style={{
+                position: 'absolute',
+                bottom: '25px',
+                right: '5px',
+                fontSize: '10px',
+                color: 'white',
+                background: 'rgba(0,0,0,0.7)',
+                padding: '2px 4px',
+                borderRadius: '3px'
+              }}>
+                {card.damage}
+              </div>
+            )}
           </div>
-        </div>
-
+        ))}
       </div>
-    </div>
+
+      {/* 전투 로그 */}
+      <div className="battle-log">
+        <div className="log-content">
+          {gameState.battleLog.map((log, index) => (
+            <p key={index} style={{ margin: '5px 0' }}>{log}</p>
+          ))}
+          <p style={{ margin: '5px 0', fontSize: '12px', opacity: 0.7 }}>
+            PlayerID: {playerID}
+            {apiError ? ' (오류 발생)' : ' (온라인)'}
+          </p>
+        </div>
+      </div>
+    </div >
   )
 
   // 전투 상태 디버깅용 함수. 아직은 사용하지 않음

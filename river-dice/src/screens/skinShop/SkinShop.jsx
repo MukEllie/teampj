@@ -91,7 +91,7 @@ const SkinShop = ({ onNavigate }) => {
 
   // 뒤로가기
   const handleBack = () => {
-    onNavigate('characterSelect');
+    onNavigate('title');
   };
 
   // 메인 버튼 클릭 (임시로 뒤로가기)

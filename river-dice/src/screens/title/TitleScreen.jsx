@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { getBackground } from '../../utils/ImageManager';
 import './TitleScreen.css';
+import '../common_style.css';
 import { getStartState, continueRun } from '../../api/client';
 
 // 응답 키 표기 불일치 방어용 헬퍼
@@ -27,7 +28,6 @@ const TitleScreen = ({ onNavigate }) => {
     }
   };
 */
-  // 로그인된 사용자 기준 확인 (백엔드 /start/state 사용)
   // 로그인된 사용자 기준 확인 (백엔드 /start/state 사용)
 const checkPlayer = async () => {
   const userId = getLoggedInUserId();
@@ -93,9 +93,9 @@ const checkPlayer = async () => {
   };
 
   return (
-    <div className = "title_screen">
+    <div className = "screen">
       {/* 배경 이미지 */}
-      <div className="background" style={{ backgroundImage: `url(${getBackground('title')})` }}></div>
+      <div className = "background" style = {{ backgroundImage: `url(${getBackground('title')})`}}></div>
       <div className = "contents">
         {/* 버전 정보 */}
         <div className = "version">demo ver 0.0.1</div>
@@ -118,25 +118,7 @@ const checkPlayer = async () => {
             <div className = "text_blue"> 스킨 상점 </div>
           </div>
         </div>
-      </div>
-
-      {/* 뒤로가기 버튼 */}
-      <button 
-        className = "title-back-to-selector"
-        onClick = {handleBackToSelector}
-        aria-label = "화면 선택으로 돌아가기"
-      >
-        ← 뒤로
-      </button>
-
-      {/* 플레이어 확인 버튼 (임시) */}
-      <button onClick={checkPlayer}> 내 계정 확인 </button>
-      {playerStatus && (
-        <div>
-          {playerStatus}
-        </div>
-      )}
-        
+      </div>        
     </div>
   );
 };

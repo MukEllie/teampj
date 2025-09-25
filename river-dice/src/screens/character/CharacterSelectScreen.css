@@ -1,397 +1,105 @@
-/* CharacterSelectScreen.css - 1280x800 비율 유지 반응형 레이아웃 */
-
-/* 전체 래퍼 */
-.char-select-wrapper {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #000;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 메인 컨테이너 - 1280x800 비율 유지하면서 반응형 */
-.char-select-container {
-  position: relative;
-  width: 1280px;
-  height: 800px;
-  background: #FFFFFF;
-  overflow: hidden;
-  transform-origin: center;
-  
-  /* 화면 크기에 맞춰 자동 스케일링 */
-  transform: scale(
-    min(
-      calc(100vw / 1280),
-      calc(100vh / 800)
-    )
-  );
-}
-
-/* 배경 이미지 */
-.char-select-background {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-/* 뒤로가기 버튼 - 좌상단 (20, 20 위치) */
-.char-select-back-button {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  left: 20px;
-  top: 20px;
-  z-index: 20;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  padding: 0;
-}
-
-.char-back-button-1 {
-  position: absolute;
-  left: 0%;
-  right: 0%;
-  top: 0%;
-  bottom: 0%;
-  background: #EEEFF2;
-  border-radius: 10px;
-}
-
-.char-back-button-2 {
-  box-sizing: border-box;
-  position: absolute;
-  left: 0%;
-  right: 0%;
-  top: 0%;
-  bottom: 0%;
-  border: 5px solid #C4C9D6;
-  border-radius: 10px;
-}
-
-.char-back-button-3 {
-  box-sizing: border-box;
-  position: absolute;
-  left: 0%;
-  right: 0%;
-  top: 0%;
-  bottom: 0%;
-  border: 1.5px solid #9480E9;
-  border-radius: 10px;
-}
-
-.char-back-arrow {
+.contents{
+  width: 1240px;
+  height: 758px;
+  display: block;
   position: absolute;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  color: #9480E9;
-  font-size: 24px;
-  font-weight: bold;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 1;
 }
 
-/* 우측 정보 패널 - 우측 20px 위치 */
-.char-info-panel {
-  position: absolute;
-  width: 232px;
-  height: 440px;
-  right: 20px;
-  top: 20px;
-  background: #17181A;
-  opacity: 0.9;
-  box-shadow: 0px 0px 6px #17181A;
-  border-radius: 7px;
-  z-index: 10;
-}
-
-/* 캐릭터 이름 - 패널 내부 좌표 */
-.char-character-name {
-  position: absolute;
-  left: 22px;
-  top: 20px;
-  font-family: 'SeoulNamsan', 'Malgun Gothic', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 22px;
-  letter-spacing: -0.05em;
-  color: #F5F3FF;
-  text-shadow: 0px 0px 6px #17181A, 0px 0px 4px #17181A, 0px 0px 10px #17181A;
-}
-
-/* 스킨 이름 */
-.char-skin-name {
-  position: absolute;
-  left: 22px;
-  top: 47px;
-  font-family: 'SeoulNamsan', 'Malgun Gothic', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 22px;
-  letter-spacing: -0.05em;
-  color: #F5F3FF;
-  text-shadow: 0px 0px 6px #17181A, 0px 0px 4px #17181A, 0px 0px 10px #17181A;
-}
-
-/* 스탯 컨테이너 */
-.char-stats-container {
-  position: absolute;
-  left: 22px;
-  top: 89px;
-  width: 188px;
-}
-
-/* 스탯 행 */
-.char-stat-row {
+.content_top{
+  width: 1240px;
+  height: 519px;
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
 }
 
-/* 스탯 라벨 */
-.char-stat-label {
-  font-family: 'SeoulNamsan', 'Malgun Gothic', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 22px;
-  letter-spacing: -0.05em;
-  color: #F5F3FF;
-  text-shadow: 0px 0px 6px #17181A, 0px 0px 4px #17181A, 0px 0px 10px #17181A;
-}
-
-/* 스탯 값 */
-.char-stat-value {
-  font-family: 'SeoulNamsan', 'Malgun Gothic', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 22px;
-  text-align: right;
-  letter-spacing: -0.05em;
-  color: #F5F3FF;
-  text-shadow: 0px 0px 6px #17181A, 0px 0px 4px #17181A, 0px 0px 10px #17181A;
-}
-
-/* 스킨 미리보기 - 패널 내부 */
-.char-skin-preview {
-  position: absolute;
-  width: 133px;
-  height: 179px;
-  left: 50px;
-  top: 211px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.char-skin-preview img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-/* 시작 버튼 - 하단 패널과 캐릭터 사이의 파란색 영역에 위치 */
-.char-select-start-button {
-  position: absolute;
-  width: 232px;
-  height: 64px;
-  right: 20px;
-  bottom: 250px;
-  cursor: pointer;
-  z-index: 11;
-}
-
-/* 버튼 라인 */
-.char-button-line {
-  box-sizing: border-box;
-  position: absolute;
-  left: 0%;
-  right: 0%;
-  top: 0%;
-  bottom: 0%;
-  background: #F5F3FF;
-  border: 2px solid #F5F3FF;
-  filter: blur(0.5px);
-  border-radius: 15px;
-}
-
-/* 버튼 본체 */
-.char-button {
-  box-sizing: border-box;
-  position: absolute;
-  left: 0.86%;
-  right: 0.86%;
-  top: 3.12%;
-  bottom: 3.12%;
-  border-radius: 13px;
-}
-
-/* 핑크 버튼 */
-.char-button-pink {
-  background: linear-gradient(180deg, #FFA5EF 0%, #FF6EE6 100%);
-  border: 1.5px solid #C040AA;
-}
-
-/* 시작 버튼 텍스트 */
-.char-select-start-button .char-button-text {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'SeoulNamsan', 'Malgun Gothic', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 22px;
-  line-height: 1;
-  text-align: center;
-  letter-spacing: 0.2em;
-  color: #F5F3FF;
-  text-shadow: 0px 1px 0px #C040AA;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-/* 캐릭터 선택 버튼들 - 원래 위치 복원 */
-.char-class-buttons-container {
-  position: absolute;
-  left: 40px;
-  top: 220px;
+.top_1{
+  margin-right: 100px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  z-index: 15;
+  justify-content: space-between;
 }
 
-.char-class-button {
-  width: 160px;
-  height: 55px;
-  padding: 0;
-  background: linear-gradient(180deg, #F5F3FF 0%, #C4C9D6 100%);
-  border: 2px solid #7C808A;
-  border-radius: 12px;
-  color: #17181A;
-  font-family: 'SeoulNamsan', 'Malgun Gothic', sans-serif;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+.button_s{
+  margin-top: 12px;
+}
+
+.job_button {
+  width: 126px;
+  height: 46px;
+  color: #F5F3FF;
+  font-size: 20px;
   text-align: center;
+  text-shadow: 1.5px 0 0 #7C808A, -1.5px 0 0 #7C808A, 0 2px 0 #7C808A, 0 -1.5px 0 #7C808A
+  , 1.5px 2px 0 #7C808A, 1.5px -1.5px 0 #7C808A, -1.5px 2px 0 #7C808A, -1.5px -1.5px 0 #7C808A;
+  background: linear-gradient(#F5F3FF, #C4C9D6);
+  border: 1.5px solid #7C808A;
+  border-radius: 13px;
+  position: relative;
+  position: absolute;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
 }
 
-.char-class-button:hover {
-  transform: scale(1.05) translateX(5px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.char-class-button.active {
+.job_button.active {
   background: linear-gradient(180deg, #B7A6FF 0%, #9480E9 100%);
   border: 1.5px solid #564AC3;
-  color: #F5F3FF;
-  text-shadow: 0px 1px 0px #6A39D4;
-  transform: scale(1.08) translateX(8px);
+  text-shadow: 1.5px 0 0 #564AC3, -1.5px 0 0 #564AC3, 0 2px 0 #564AC3, 0 -1.5px 0 #564AC3
+  , 1.5px 2px 0 #564AC3, 1.5px -1.5px 0 #564AC3, -1.5px 2px 0 #564AC3, -1.5px -1.5px 0 #564AC3;
 }
 
-/* 중앙 캐릭터 디스플레이 - 원래 위치 복원 */
-.char-character-display {
-  position: absolute;
-  width: 500px;
-  height: 600px;
-  left: 50%;
-  top: 40%;
-  transform: translate(-50%, -50%);
+.top_2{
+}
+
+.skin{
+  width: 400px;
+  height: 500px;
+}
+
+.top_3{
+  margin-left: auto;
+}
+
+.info{
+  width: 232px;
+  height: 440px;
+  opacity: 0.9;
+  background-color: #17181A;
+  border-radius: 7px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 5;
-}
-
-.char-main-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
-}
-
-/* 하단 선택 패널 - 3번 이미지와 일치하는 높이 */
-.char-selection-panel {
-  position: absolute;
-  width: calc(100% - 60px);
-  height: 180px;
-  left: 30px;
-  right: 30px;
-  bottom: 20px;
-  background: #17181A;
-  opacity: 0.95;
-  box-shadow: 0px 0px 6px #17181A;
-  border-radius: 10px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  padding: 20px 30px;
-  overflow: hidden;
-}
-
-/* 스킨 갤러리 - 왼쪽 정렬 */
-.char-skin-gallery {
-  display: flex;
-  gap: 20px;
+  flex-direction: column;
   align-items: center;
 }
 
-/* 스킨 아이템 - 원래 크기 복원 */
-.char-skin-item {
-  width: 140px;
-  height: 140px;
-  border: 3px solid #564AC3;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  overflow: hidden;
+.info_text{
+  width: 188px;
+  height: 145px;
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+.job_text{
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+.stats_text{
+  width: 188px;
+  font-size: 15px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
-.char-skin-item:hover {
-  transform: scale(1.05);
-  border-color: #FFA5EF;
-}
-
-.char-skin-item.active {
-  border-color: #FFA5EF;
-  background: rgba(255, 165, 239, 0.15);
-  box-shadow: 0 0 20px rgba(255, 165, 239, 0.5);
-  transform: scale(1.08);
-}
-
-.char-skin-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* 작은 화면에서 최소 크기 보장 */
-@media (max-width: 640px) {
-  .char-select-container {
-    transform: scale(0.4);
-  }
-}
-
-@media (max-height: 480px) {
-  .char-select-container {
-    transform: scale(0.4);
-  }
+.my_skin{
+  width: 1240px;
+  height: 218px;
+  opacity: 0.9;
+  background-color: #17181A;
+  margin-top: 20px;
+  border-radius: 7px;
 }

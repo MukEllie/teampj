@@ -47,8 +47,6 @@ const ScreenSelector = ({ onNavigate }) => {
 
   return (
     <div className="selector-container">
-
-      
       <div className="screens-grid">
         {screens.map((screen) => (
           <div 

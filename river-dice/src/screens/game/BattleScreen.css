@@ -1,7 +1,8 @@
 /* BattleScreen.css - 1280x800 비율 최적화 버전 */
 
 /* 기본 초기화 */
-body, html {
+body,
+html {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -21,14 +22,10 @@ body, html {
     overflow: hidden;
     margin: 0 auto;
     transform-origin: center;
-    
+
     /* 화면 크기에 맞춰 자동 스케일링 */
-    transform: scale(
-        min(
-            calc(100vw / 1280),
-            calc(100vh / 800)
-        )
-    );
+    transform: scale(min(calc(100vw / 1280),
+                calc(100vh / 800)));
 }
 
 /* 배경 이미지 */
@@ -57,6 +54,12 @@ body, html {
     padding: 0px;
     gap: 5px;
     z-index: 10;
+}
+
+.artifact-item:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+    border-color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .artifact-item {

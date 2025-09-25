@@ -10,6 +10,7 @@ import com.milite.battle.artifacts.PhoenixFeatherArtifact;
 import com.milite.battle.artifacts.PlayerArtifact;
 import com.milite.constants.BattleConstants;
 import com.milite.dto.*;
+import com.milite.mapper.ArtifactMapper;
 import com.milite.mapper.CharacterStatusMapper;
 import com.milite.service.BattleService;
 import com.milite.service.RewardService;
@@ -44,6 +45,9 @@ public class BattleController {
 
 	@Setter(onMethod_ = @Autowired)
 	private CharacterStatusMapper mapper;
+
+	@Setter(onMethod_ = @Autowired)
+	private ArtifactMapper artifactMapper;
 
 	private final Map<String, Long> recentBattleEnds = new ConcurrentHashMap<>();
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -114,6 +118,57 @@ public class BattleController {
 			Map<String, Object> errorMap = new HashMap<>();
 			errorMap.put("error", "전투용 스킬 조회 중 오류 발생: " + e.getMessage());
 			return ResponseEntity.badRequest().body(errorMap);
+		}
+	}
+
+	@GetMapping("/artifacts")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> getPlayerArtifacts(@RequestParam("PlayerID") String PlayerID) {
+		try {
+			PlayerDto player = mapper.getPlayerInfo(PlayerID);
+			if (player == null) {
+				Map<String, Object> errorMap = new HashMap<>();
+				errorMap.put("error", "플레이어 정보 없음");
+				errorMap.put("artifacts", new ArrayList<>());
+				return ResponseEntity.ok(errorMap);
+			}
+
+			List<String> ownedArtifactIDs = player.getOwnArtifactList();
+			List<Map<String, Object>> artifactList = new ArrayList<>();
+
+			for (String artifactIDStr : ownedArtifactIDs) {
+				try {
+					int artifactID = Integer.parseInt(artifactIDStr);
+					ArtifactDto artifact = artifactMapper.getArtifactByID(artifactID);
+
+					if (artifact != null) {
+						Map<String, Object> artifactInfo = new HashMap<>();
+						artifactInfo.put("id", artifact.getArtifactID());
+						artifactInfo.put("name", artifact.getArtifactName());
+						artifactInfo.put("job", artifact.getArtifactJob());
+						artifactInfo.put("session", artifact.getArtifactSession());
+						artifactInfo.put("effect", artifact.getArtifactEffect());
+						artifactInfo.put("description", artifact.getArtifactText());
+
+						artifactList.add(artifactInfo);
+					}
+				} catch (NumberFormatException e) {
+					System.err.println("잘못된 아티팩트 ID : " + artifactIDStr);
+				}
+			}
+			
+			Map<String, Object> response = new HashMap<>();
+			response.put("success", true);
+			response.put("artifacts", artifactList);
+			response.put("count", artifactList.size());
+			
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Map<String, Object> errorMap = new HashMap<>();
+			errorMap.put("error", "조회 실패");
+			errorMap.put("artifacts", new ArrayList<>());
+			return ResponseEntity.ok(errorMap);
 		}
 	}
 

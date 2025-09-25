@@ -1,0 +1,216 @@
+@font-face {
+    font-family: 'SeoulNamsan';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/SeoulNamsanM.woff') format('woff');
+    font-weight: normal;
+    font-display: swap;
+}
+
+/* 전체 화면 */
+.screen {
+  width: 1280px;
+  height: 800px;
+  font-family: 'SeoulNamsan';
+  position: relative;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* 타이틀 배경 */
+.background{
+  height: 800px;
+  width: 1280px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.button{
+  width: 232px;
+  height: 64px;
+  position: relative;
+  cursor: pointer;
+}
+
+.button_line{
+  width: 232px;
+  height: 64px;
+  border: 2px solid #F5F3FF;
+  border-radius: 15px;
+  filter: blur(px);
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 분홍 버튼 */
+.button_pink {
+  width: 228px;
+  height: 60px;
+  background: linear-gradient(#FFA5EF, #FF6EE6);
+  border: 1.5px solid #C040AA;
+  border-radius: 13px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 분홍 텍스트 */
+.text_pink {
+  color: #F5F3FF;
+  font-size: 24px;
+  text-shadow: 1.5px 0 0 #C040AA, -1.5px 0 0 #C040AA, 0 2px 0 #C040AA, 0 -1.5px 0 #C040AA
+              , 1.5px 2px 0 #C040AA, 1.5px -1.5px 0 #C040AA, -1.5px 2px 0 #C040AA, -1.5px -1.5px 0 #C040AA;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 보라 버튼 */
+.button_violet {
+  width: 228px;
+  height: 60px;
+  background: linear-gradient(#B7A6FF, #9480E9);
+  border: 1.5px solid #564AC3;
+  border-radius: 13px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 보라 텍스트 */
+.text_violet {
+  color: #F5F3FF;
+  font-size: 24px;
+  text-shadow: 1.5px 0 0 #564AC3, -1.5px 0 0 #564AC3, 0 2px 0 #564AC3, 0 -1.5px 0 #564AC3
+              , 1.5px 2px 0 #564AC3, 1.5px -1.5px 0 #564AC3, -1.5px 2px 0 #564AC3, -1.5px -1.5px 0 #564AC3;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 파랑 버튼 */
+.button_blue {
+  width: 228px;
+  height: 60px;
+  background: linear-gradient(#8BD1FF, #6DC5FF);
+  border: 1.5px solid #487FC3;
+  border-radius: 13px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 파랑 텍스트 */
+.text_blue {
+  color: #F5F3FF;
+  font-size: 24px;
+  text-shadow: 1.5px 0 0 #487FC3, -1.5px 0 0 #487FC3, 0 2px 0 #487FC3, 0 -1.5px 0 #487FC3
+              , 1.5px 2px 0 #487FC3, 1.5px -1.5px 0 #487FC3, -1.5px 2px 0 #487FC3, -1.5px -1.5px 0 #487FC3;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+
+
+
+.button_s{
+  width: 130px;
+  height: 50px;
+  position: relative;
+  cursor: pointer;
+}
+
+.button_line_s{
+  width: 130px;
+  height: 50px;
+  border: 2px solid #F5F3FF;
+  border-radius: 15px;
+  filter: blur(px);
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 분홍 버튼 */
+.button_pink_s {
+  width: 126px;
+  height: 46px;
+  background: linear-gradient(#FFA5EF, #FF6EE6);
+  border: 1.5px solid #C040AA;
+  border-radius: 13px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 분홍 텍스트 */
+.text_pink_s {
+  color: #F5F3FF;
+  font-size: 24px;
+  text-shadow: 1.5px 0 0 #C040AA, -1.5px 0 0 #C040AA, 0 2px 0 #C040AA, 0 -1.5px 0 #C040AA
+              , 1.5px 2px 0 #C040AA, 1.5px -1.5px 0 #C040AA, -1.5px 2px 0 #C040AA, -1.5px -1.5px 0 #C040AA;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 보라 버튼 */
+.button_violet_s {
+  width: 228px;
+  height: 60px;
+  background: linear-gradient(#B7A6FF, #9480E9);
+  border: 1.5px solid #564AC3;
+  border-radius: 13px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 보라 텍스트 */
+.text_violet_s {
+  color: #F5F3FF;
+  font-size: 24px;
+  text-shadow: 1.5px 0 0 #564AC3, -1.5px 0 0 #564AC3, 0 2px 0 #564AC3, 0 -1.5px 0 #564AC3
+              , 1.5px 2px 0 #564AC3, 1.5px -1.5px 0 #564AC3, -1.5px 2px 0 #564AC3, -1.5px -1.5px 0 #564AC3;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 파랑 버튼 */
+.button_blue_s {
+  width: 228px;
+  height: 60px;
+  background: linear-gradient(#8BD1FF, #6DC5FF);
+  border: 1.5px solid #487FC3;
+  border-radius: 13px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+/* 파랑 텍스트 */
+.text_blue_s {
+  color: #F5F3FF;
+  font-size: 24px;
+  text-shadow: 1.5px 0 0 #487FC3, -1.5px 0 0 #487FC3, 0 2px 0 #487FC3, 0 -1.5px 0 #487FC3
+              , 1.5px 2px 0 #487FC3, 1.5px -1.5px 0 #487FC3, -1.5px 2px 0 #487FC3, -1.5px -1.5px 0 #487FC3;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}

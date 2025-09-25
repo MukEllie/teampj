@@ -1,4 +1,55 @@
-/* 보상 화면 전용 스타일 - 1280x800 고정 해상도 - 피그마 디자인 */
+.contents{
+  width: 1240px;
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  z-index: 1;
+  background-color: #666;
+}
+
+.rewards{
+  width: 870px;
+  margin: 0 auto;
+  display: flex;
+  background-color: #564AC3;
+}
+
+.rewards_1{
+  width: 270px;
+  height: 360px;
+  opacity: 0.7;
+  background: #17181A;
+  border-radius: 10px;
+  margin-right: 30px;
+  position: relative;
+}
+
+.rewards_2{
+  width: 270px;
+  height: 360px;
+  opacity: 0.7;
+  background: #17181A;
+  border-radius: 10px;
+  position: relative;
+}
+
+.rewards_3{
+  width: 270px;
+  height: 360px;
+  opacity: 0.7;
+  background: #17181A;
+  border-radius: 10px;
+  margin-left: 30px;
+  position: relative;
+}
+
+.rewards_icon{
+  width: 146px;
+  height: 171px;
+  position: absolute;
+}
+
 
 /* 전체 래퍼 */
 .reward-wrapper {

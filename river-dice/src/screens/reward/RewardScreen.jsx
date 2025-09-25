@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getBackground, getCard, getArtifact, getSkill } from '../../utils/ImageManager';
 import './RewardScreen.css';
+import '../common_style.css';
 
 const RewardScreen = ({ onNavigate }) => {
   const [selectedCard, setSelectedCard] = useState(null);
@@ -367,207 +368,59 @@ const RewardScreen = ({ onNavigate }) => {
 
   // 메인 보상 선택 화면
   return (
-    <div className="reward-wrapper">
-      <div className="reward-container">
-        {/* 배경 이미지 */}
-        <div 
-          className="reward-background"
-          style={{ 
-            backgroundImage: `url(${getBackground('game')})`
-          }}
-        />
-
-        {/* 화면 선택으로 돌아가기 버튼 */}
-        <button 
-          className="reward-back-to-selector"
-          onClick={handleBackToSelector}
-        >
-          River Dice - 화면 선택
-        </button>
-
-        {/* 왼쪽 카드 */}
-        <div 
-          className={`card-box-left ${selectedCard === availableRewards[0]?.id ? 'selected' : ''}`}
-          onClick={() => handleCardSelect(availableRewards[0]?.id)}
-        >
-          {/* 카드 내부 이미지 (있는 경우) */}
-          {availableRewards[0]?.image && (
-            <div 
-              style={{
-                position: 'absolute',
-                width: '146px',
-                height: '171px',
-                left: '62px',
-                top: '50px',
-                backgroundImage: `url(${getRewardImage(availableRewards[0])})`,
-                backgroundSize: 'contain',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                pointerEvents: 'none'
-              }}
-            />
-          )}
-        </div>
-        
-        {/* 중앙 카드 */}
-        <div 
-          className={`card-box-center ${selectedCard === availableRewards[1]?.id ? 'selected' : ''}`}
-          onClick={() => handleCardSelect(availableRewards[1]?.id)}
-        >
-          {/* 카드 내부 이미지 (있는 경우) */}
-          {availableRewards[1]?.image && (
-            <div 
-              style={{
-                position: 'absolute',
-                width: '146px',
-                height: '171px',
-                left: '62px',
-                top: '50px',
-                backgroundImage: `url(${getRewardImage(availableRewards[1])})`,
-                backgroundSize: 'contain',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                pointerEvents: 'none'
-              }}
-            />
-          )}
-        </div>
-
-        {/* 우측 카드 (아티팩트 30% 확률) */}
-        {availableRewards[2] && (
-          <div 
-            className={`card-box-right ${selectedCard === availableRewards[2]?.id ? 'selected' : ''}`}
-            onClick={() => handleCardSelect(availableRewards[2]?.id)}
-          >
-            {/* 카드 내부 이미지 (있는 경우) */}
-            {availableRewards[2]?.image && (
-              <div 
-                style={{
-                  position: 'absolute',
-                  width: '146px',
-                  height: '171px',
-                  left: '62px',
-                  top: '50px',
-                  backgroundImage: `url(${getRewardImage(availableRewards[2])})`,
-                  backgroundSize: 'contain',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                  pointerEvents: 'none'
-                }}
-              />
-            )}
-          </div>
-        )}
-
-        {/* 텍스트 위치 - 각 카드 하단 중앙 */}
-        <div 
-          style={{
-            position: 'absolute',
-            width: '270px',
-            left: 'calc(50% - 270px/2 - 300px)',
-            top: 'calc(50% + 200px)',
-            textAlign: 'center',
-            pointerEvents: 'none',
-            zIndex: 10
-          }}
-        >
-          <div style={{ 
-            fontFamily: 'SeoulNamsan', 
-            fontSize: '22px', 
-            color: '#EEEFF2', 
-            textShadow: '0px 0px 5px #17181A',
-            marginBottom: '8px'
-          }}>
-            {availableRewards[0]?.title}
-          </div>
-          <div style={{ 
-            fontFamily: 'SeoulNamsan', 
-            fontSize: '16px', 
-            color: '#EEEFF2',
-            textShadow: '0px 0px 3px #17181A'
-          }}>
-            {availableRewards[0]?.description}
-          </div>
-        </div>
-
-        <div 
-          style={{
-            position: 'absolute',
-            width: '270px',
-            left: '505px',
-            top: 'calc(50% + 200px)',
-            textAlign: 'center',
-            pointerEvents: 'none',
-            zIndex: 10
-          }}
-        >
-          <div style={{ 
-            fontFamily: 'SeoulNamsan', 
-            fontSize: '22px', 
-            color: '#EEEFF2', 
-            textShadow: '0px 0px 5px #17181A',
-            marginBottom: '8px'
-          }}>
-            {availableRewards[1]?.title}
-          </div>
-          <div style={{ 
-            fontFamily: 'SeoulNamsan', 
-            fontSize: '16px', 
-            color: '#EEEFF2',
-            textShadow: '0px 0px 3px #17181A'
-          }}>
-            {availableRewards[1]?.description}
-          </div>
-        </div>
-
-        {availableRewards[2] && (
-          <div 
-            style={{
-              position: 'absolute',
-              width: '270px',
-              left: '805px',
-              top: 'calc(50% + 200px)',
-              textAlign: 'center',
-              pointerEvents: 'none',
-              zIndex: 10
-            }}
-          >
-            <div style={{ 
-              fontFamily: 'SeoulNamsan', 
-              fontSize: '22px', 
-              color: '#EEEFF2', 
-              textShadow: '0px 0px 5px #17181A',
-              marginBottom: '8px'
-            }}>
-              {availableRewards[2]?.title}
-            </div>
-            <div style={{ 
-              fontFamily: 'SeoulNamsan', 
-              fontSize: '16px', 
-              color: '#EEEFF2',
-              textShadow: '0px 0px 3px #17181A'
-            }}>
-              {availableRewards[2]?.description}
+    <div className = "screen">
+      {/* 배경 이미지 */}
+      <div className = "background" style = {{backgroundImage: `url(${getBackground('game')})`}}></div>
+      <div className = "contents">
+        <div className = "rewards">  
+          
+          {/* 왼쪽 카드 */}
+          <div className = {`rewards_1 ${selectedCard === availableRewards[0]?.id ? 'selected' : ''}`}
+              onClick={() => handleCardSelect(availableRewards[0]?.id)}>
+            {/* 카드 내부 이미지 */}
+            {availableRewards[0]?.image && (
+            <img className="rewards_icon" src={getRewardImage(availableRewards[0])} alt="reward icon"/>)}
+            <div>
+              <div>{availableRewards[0]?.title}</div>
+              <div>{availableRewards[0]?.description}</div>
             </div>
           </div>
-        )}
 
+          {/* 중앙 카드 */}
+          <div className = {`rewards_2 ${selectedCard === availableRewards[1]?.id ? 'selected' : ''}`}
+              onClick={() => handleCardSelect(availableRewards[1]?.id)}>
+            {/* 카드 내부 이미지 */}
+            {availableRewards[1]?.image && (
+            <img className="rewards_icon" src={getRewardImage(availableRewards[1])} alt="reward icon"/>)}
+            <div>
+              <div>{availableRewards[1]?.title}</div>
+              <div>{availableRewards[1]?.description}</div>
+            </div>
+          </div>
+
+          {/* 우측 카드 */}
+          {availableRewards[2] && (
+            <div className={`rewards_3 ${selectedCard === availableRewards[2]?.id ? 'selected' : ''}`}
+                onClick={() => handleCardSelect(availableRewards[2]?.id)}>
+              {/* 카드 내부 이미지*/}
+              {availableRewards[2]?.image && (
+                <img className="rewards_icon" src={getRewardImage(availableRewards[2])} alt="reward icon"/>)}
+              {availableRewards[2] && (
+                <div>
+                  <div>{availableRewards[2]?.title}</div>
+                  <div>{availableRewards[2]?.description}</div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         {/* 리롤 버튼 */}
-        <button 
-          className="reward-reroll-button"
-          onClick={handleReroll}
-          disabled={selectedCard !== null}
-        >
-          다시 뽑기
-        </button>
-
-        {/* 하단 버튼 - 피그마 스타일 */}
-        <div className="reward-button" onClick={handleContinue}>
-          <div className="reward-button-line" />
-          <div className="reward-button-body" />
-          <div className="reward-button-text">
-            {selectedCard ? '계속하기' : '보상 선택'}
-          </div>
+        <button onClick={handleReroll} disabled={selectedCard !== null}> 다시 뽑기 </button>
+        {/* 확인 버튼 */}
+        <div className = "button" onClick = {handleContinue}>
+            <div className = "button_line"></div>
+            <div className = "button_violet"></div>
+            <div className = "text_violet"> {selectedCard ? '계속하기' : '보상 선택'} </div>
         </div>
       </div>
     </div>

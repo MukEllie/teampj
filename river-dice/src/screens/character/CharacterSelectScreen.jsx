@@ -3,19 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { getBackground, getCharacter, getCharacterSkin } from '../../utils/ImageManager';
 import { getStartOptions, continueRun, chooseClass, getUserSkins } from '../../api/client';
 import './CharacterSelectScreen.css';
+import '../common_style.css';
 
 const CharacterSelectScreen = ({ onNavigate }) => {
   const [selectedCharacter, setSelectedCharacter] = useState('warrior');
-  const [selectedSkin, setSelectedSkin] = useState('101');
+  const [selectedSkin, setSelectedSkin] = useState('101'); // 글로벌 스킨ID(101/201/301/401/501/601)
 
-  // UI 구조 유지: name / skins / stats만 채움
+  // 직업별 이름/보유스킨/스탯 상태 보관
   const [characters, setCharacters] = useState({
     warrior: { name: '전사', skins: [], stats: { health: '-', attack: '-', luck: '-' } },
     thief:   { name: '도적', skins: [], stats: { health: '-', attack: '-', luck: '-' } },
     mage:    { name: '마법사', skins: [], stats: { health: '-', attack: '-', luck: '-' } },
   });
 
-  // 어떤 응답이 와도 배열로 강제 변환(JSON/문자열/JSON5 대응)
+  // 응답 배열 입력
   const toArray = (payload) => {
     if (Array.isArray(payload)) return payload;
     if (payload && typeof payload === 'object' && Array.isArray(payload.data)) return payload.data;
@@ -26,12 +27,12 @@ const CharacterSelectScreen = ({ onNavigate }) => {
         const j = JSON.parse(fixedQuotes);
         if (Array.isArray(j)) return j;
         if (j && typeof j === 'object' && Array.isArray(j.data)) return j.data;
-      } catch { /* ignore */ }
+      } catch {}
     }
     return [];
   };
 
-  // B버전: [{name, hp, atk, luck}]만 가정(영문/한글 이름 모두 허용)
+  // 시작 옵션 파싱 입력
   const parseOptions = (arr) => {
     const out = {};
     (arr || []).forEach(({ name, hp, atk, luck }) => {
@@ -47,11 +48,11 @@ const CharacterSelectScreen = ({ onNavigate }) => {
     return out;
   };
 
-  // /start/options → stats 채우기
+  // 시작 옵션으로 스탯 입력
   useEffect(() => {
     (async () => {
       try {
-        const raw = await getStartOptions(); // 문자열일 수도 있음
+        const raw = await getStartOptions();
         const arr = toArray(raw);
         const mapped = parseOptions(arr);
         console.log('[start/options] mapped:', mapped);
@@ -66,17 +67,24 @@ const CharacterSelectScreen = ({ onNavigate }) => {
     })();
   }, []);
 
-  // 스킨 ID → 직업 키 (1/2 전사, 3/4 도적, 5/6 마법사)
+  // 스킨ID로 직업 분류
   const jobFromSkinId = (id) => {
-    const s = String(id || '');
-    const f = s[0];
-    if (f === '1' || f === '2') return 'warrior';
-    if (f === '3' || f === '4') return 'thief';
-    if (f === '5' || f === '6') return 'mage';
+    const first = String(id || '').trim()[0];
+    if (first === '1' || first === '2') return 'warrior';
+    if (first === '3' || first === '4') return 'thief';
+    if (first === '5' || first === '6') return 'mage';
     return '';
   };
 
-  // /SkinGacha/ViewUserSkin → skins 채우기
+  // 글로벌→로컬 스킨ID 변환(직업 내부 키: 101/201)
+  const localSkinId = (globalId) => {
+    const f = String(globalId || '').trim()[0];
+    if (f === '1' || f === '3' || f === '5') return '101';
+    if (f === '2' || f === '4' || f === '6') return '201';
+    return '101';
+  };
+
+  // 보유 스킨 불러와 분류
   useEffect(() => {
     const userId = localStorage.getItem('userId')?.trim() || '';
     if (!userId) return;
@@ -85,6 +93,8 @@ const CharacterSelectScreen = ({ onNavigate }) => {
       try {
         const raw = await getUserSkins(userId);
         const list = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : [];
+        console.log('[getUserSkins raw]:', raw);
+        console.log('[getUserSkins list]:', list);
         if (!list.length) return;
 
         const byKey = { warrior: [], thief: [], mage: [] };
@@ -93,8 +103,9 @@ const CharacterSelectScreen = ({ onNavigate }) => {
           if (id == null) continue;
           const key = jobFromSkinId(id);
           if (!key) continue;
-          byKey[key].push({ id: String(id), name: row?.Skin_Name ?? row?.name ?? String(id) });
+          byKey[key].push({ id: String(id), name: row?.Skin_Name ?? row?.skinName ?? row?.name ?? String(id) });
         }
+        console.log('[byKey after classify]:', byKey);
 
         const uniqSort = (arr) => {
           const seen = new Set();
@@ -110,8 +121,11 @@ const CharacterSelectScreen = ({ onNavigate }) => {
           thief:   { ...prev.thief,   skins: uniqSort(byKey.thief) },
           mage:    { ...prev.mage,    skins: uniqSort(byKey.mage) },
         }));
+        console.log(
+          '[characters.skins lengths] warrior:',
+          byKey.warrior.length, 'thief:', byKey.thief.length, 'mage:', byKey.mage.length
+        );
 
-        // 현재 직업 스킨에 선택값 없으면 첫 번째로 보정
         const currentList = (byKey[selectedCharacter]) || [];
         if (!currentList.find(s => s.id === selectedSkin)) {
           const first = currentList[0]?.id;
@@ -124,14 +138,17 @@ const CharacterSelectScreen = ({ onNavigate }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 직업 선택
   const handleCharacterSelect = (character) => {
     setSelectedCharacter(character);
     const first = characters[character]?.skins?.[0]?.id;
-    if (first) setSelectedSkin(first);
+    setSelectedSkin(first || '');
   };
 
+  // 스킨 선택
   const handleSkinSelect = (skinId) => setSelectedSkin(skinId);
 
+  // 세이브 생성 요청
   const handleStartGame = async () => {
     const userId = localStorage.getItem('userId')?.trim() || '';
     if (!userId) { alert('로그인이 필요합니다.'); return; }
@@ -140,7 +157,7 @@ const CharacterSelectScreen = ({ onNavigate }) => {
     const className = classNameMap[selectedCharacter];
 
     try {
-      await chooseClass(userId, className, Number(selectedSkin)); // 원본 client.js 시그니처
+      await chooseClass(userId, className, Number(selectedSkin));
       const next = await continueRun(userId);
 
       localStorage.setItem('selectedCharacter', JSON.stringify({
@@ -156,113 +173,132 @@ const CharacterSelectScreen = ({ onNavigate }) => {
     }
   };
 
-  const handleBack = () => onNavigate('title');
+  // 타이틀 이동
+  const handleBack = () => { onNavigate('title'); };
 
-  // 화면 바인딩용
+  // 현재 직업/스킨 계산
   const currentCharacter = characters[selectedCharacter] || {};
   const currentSkinData =
     (currentCharacter.skins || []).find(s => s.id === selectedSkin) ||
     (currentCharacter.skins || [])[0] || { id: selectedSkin, name: '' };
 
+  // 렌더용 로컬 스킨ID(101/201)
+  const skinLocal = localSkinId(selectedSkin);
+
   return (
-    <div className="char-select-wrapper">
-      <div className="char-select-container">
-        <div
-          className="char-select-background"
-          style={{ backgroundImage: `url(${getBackground('characterSelect')})` }}
-        />
+    <div className="screen">
+      {/* 선택 배경 표시 */}
+      <div
+        className="background"
+        style={{ backgroundImage: `url(${getBackground('characterSelect')})` }}
+      ></div>
 
-        {/* 뒤로가기 버튼(원본 클래스/구조) */}
-        <button className="char-select-back-button" onClick={handleBack}>
-          <div className="char-back-button-1"></div>
-          <div className="char-back-button-2"></div>
-          <div className="char-back-button-3"></div>
-          <div className="char-back-arrow">←</div>
-        </button>
+      <div className="contents">
+        <div className="content_top">
 
-        {/* 우측 정보 패널 */}
-        <div className="char-info-panel">
-          <div className="char-character-name">{currentCharacter.name}</div>
-          <div className="char-skin-name">{currentSkinData.name}</div>
-
-          <div className="char-stats-container">
-            <div className="char-stat-row">
-              <span className="char-stat-label">공격력</span>
-              <span className="char-stat-value">{currentCharacter?.stats?.attack ?? '-'}</span>
-            </div>
-            <div className="char-stat-row">
-              <span className="char-stat-label">체력</span>
-              <span className="char-stat-value">{currentCharacter?.stats?.health ?? '-'}</span>
-            </div>
-            <div className="char-stat-row">
-              <span className="char-stat-label">행운</span>
-              <span className="char-stat-value">{currentCharacter?.stats?.luck ?? '-'}</span>
+          {/* 뒤로가기/직업 선택 */}
+          <div className="top_1">
+            <button onClick={handleBack}> 뒤로</button>
+            <div>
+              <div className="select_job">
+                <div className="button_s">
+                  <div className="button_line_s"></div>
+                  <button
+                    className={`job_button ${selectedCharacter === 'warrior' ? 'active' : ''}`}
+                    onClick={() => handleCharacterSelect('warrior')}
+                  >
+                    전사
+                  </button>
+                </div>
+                <div className="button_s">
+                  <div className="button_line_s"></div>
+                  <button
+                    className={`job_button ${selectedCharacter === 'mage' ? 'active' : ''}`}
+                    onClick={() => handleCharacterSelect('mage')}
+                  >
+                    마법사
+                  </button>
+                </div>
+                <div className="button_s">
+                  <div className="button_line_s"></div>
+                  <button
+                    className={`job_button ${selectedCharacter === 'thief' ? 'active' : ''}`}
+                    onClick={() => handleCharacterSelect('thief')}
+                  >
+                    도적
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* 스킨 미리보기 */}
-          <div className="char-skin-preview">
+          {/* 중앙 전신샷 표시 */}
+          <div className="top_2">
             <img
-              src={getCharacterSkin(selectedCharacter, selectedSkin)}
-              alt={`${currentCharacter.name} 스킨`}
+              className="skin"
+              src={getCharacter(selectedCharacter, skinLocal)}
+              alt={currentCharacter.name}
             />
           </div>
-        </div>
 
-        {/* 좌측 직업 버튼 영역 */}
-        <div className="char-class-buttons-container">
-          <button
-            className={`char-class-button ${selectedCharacter === 'warrior' ? 'active' : ''}`}
-            onClick={() => handleCharacterSelect('warrior')}
-          >
-            전사
-          </button>
-          <button
-            className={`char-class-button ${selectedCharacter === 'thief' ? 'active' : ''}`}
-            onClick={() => handleCharacterSelect('thief')}
-          >
-            도적
-          </button>
-          <button
-            className={`char-class-button ${selectedCharacter === 'mage' ? 'active' : ''}`}
-            onClick={() => handleCharacterSelect('mage')}
-          >
-            마법사
-          </button>
-        </div>
+          {/* 스탯/선택 스킨 카드 */}
+          <div className="top_3">
+            <div className="info">
+              <div className="info_text">
+                <div className="job_text">{currentCharacter.name}</div>
+                <div>
+                  <div className="stats_text">
+                    <p>공격력</p>
+                    <p>{currentCharacter?.stats?.attack ?? '-'}</p>
+                  </div>
+                  <div className="stats_text">
+                    <span>체력</span>
+                    <span>{currentCharacter?.stats?.health ?? '-'}</span>
+                  </div>
+                  <div className="stats_text">
+                    <span>행운</span>
+                    <span>{currentCharacter?.stats?.luck ?? '-'}</span>
+                  </div>
+                </div>
+              </div>
 
-        {/* 중앙 캐릭터 디스플레이 */}
-        <div className="char-character-display">
-          <img
-            src={getCharacter(selectedCharacter)}
-            alt={currentCharacter.name}
-            className="char-main-image"
-          />
-        </div>
-
-        {/* 하단 선택 패널 */}
-        <div className="char-selection-panel">
-          <div className="char-skin-gallery">
-            {(currentCharacter.skins || []).map((skin) => (
-              <div
-                key={skin.id}
-                className={`char-skin-item ${selectedSkin === skin.id ? 'active' : ''}`}
-                onClick={() => handleSkinSelect(skin.id)}
-              >
+              {/* 선택 스킨 카드 */}
+              <div>
                 <img
-                  src={getCharacterSkin(selectedCharacter, skin.id)}
-                  alt={skin.name}
+                  src={getCharacterSkin(selectedCharacter, skinLocal)}
+                  alt={`${currentCharacter.name} 스킨`}
                 />
               </div>
-            ))}
+            </div>
+
+            {/* 시작 버튼 */}
+            <div className="button" onClick={handleStartGame}>
+              <div className="button_line"></div>
+              <div className="button_pink"></div>
+              <div className="text_pink"> 시작 </div>
+            </div>
           </div>
         </div>
 
-        {/* 시작 버튼 */}
-        <div className="char-select-start-button" onClick={handleStartGame}>
-          <div className="char-button-line" />
-          <div className="char-button char-button-pink" />
-          <span className="char-button-text">시작</span>
+        {/* 보유 스킨 썸네일 */}
+        <div className="my_skin">
+          <div>
+            {(currentCharacter.skins || []).map((skin) => {
+              const thumbLocal = localSkinId(skin.id);
+              return (
+                <div
+                  key={skin.id}
+                  className={`char-skin-item ${selectedSkin === skin.id ? 'active' : ''}`}
+                  onClick={() => handleSkinSelect(skin.id)}
+                >
+                  <img
+                    src={getCharacterSkin(selectedCharacter, thumbLocal)}
+                    alt={skin.name}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
