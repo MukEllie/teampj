@@ -183,6 +183,16 @@
                     
                     // 사용자 정보 저장
                     localStorage.setItem('currentUser', JSON.stringify(result.user));
+
+                    // 사용자 정보 저장 후에 이어서
+                    const uid =
+                        (result?.user?.userId)
+                        ?? (result?.user?.username)
+                        ?? (result?.user?.id)
+                        ?? id;
+                    if (uid) {
+                        localStorage.setItem('userId', String(uid));
+                    }
                     
                     alert('로그인 성공!');
                     window.location.href = '/'; // 메인 페이지로 이동

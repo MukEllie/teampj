@@ -184,11 +184,9 @@ app.post('/api/admin/login', (req, res) => {
 // 전체 사용자 목록 조회
 app.get('/api/admin/users', (req, res) => {
   const query = `
-    SELECT u.ID, u.nickname, u.email, u.gold, u.Owned_SkinID, u.join_date,
-           p.Using_Character, p.WhereSession, p.WhereStage, p.curr_hp, p.max_hp, p.atk, p.luck
-    FROM UserDB u
-    LEFT JOIN PlayerDB p ON u.ID = p.Player_ID
-    ORDER BY u.join_date DESC
+    SELECT ID, nickname, email, gold, Owned_SkinID, join_date
+    FROM UserDB
+    ORDER BY join_date DESC
   `;
 
   db.query(query, (err, results) => {
@@ -198,9 +196,15 @@ app.get('/api/admin/users', (req, res) => {
 
     const processedResults = results.map(user => {
       try {
-        user.Owned_SkinID = user.Owned_SkinID ? JSON.parse(user.Owned_SkinID) : [];
+        if (user.Owned_SkinID && user.Owned_SkinID !== null) {
+          if (typeof user.Owned_SkinID === 'string') {
+            user.Owned_SkinID = JSON.parse(user.Owned_SkinID);
+          }
+        } else {
+          user.Owned_SkinID = [101, 201, 301, 401, 501, 601];
+        }
       } catch (e) {
-        user.Owned_SkinID = [];
+        user.Owned_SkinID = [101, 201, 301, 401, 501, 601];
       }
       return user;
     });
@@ -215,7 +219,7 @@ app.put('/api/admin/users/:id', (req, res) => {
   const { nickname, email, gold, Owned_SkinID } = req.body;
 
   const query = 'UPDATE UserDB SET nickname = ?, email = ?, gold = ?, Owned_SkinID = ? WHERE ID = ?';
-  const skinIds = JSON.stringify(Owned_SkinID || []);
+  const skinIds = JSON.stringify(Owned_SkinID || [101, 201, 301, 401, 501, 601]);
 
   db.query(query, [nickname, email, gold, skinIds, id], (err, result) => {
     if (err) {
@@ -234,24 +238,17 @@ app.put('/api/admin/users/:id', (req, res) => {
 app.delete('/api/admin/users/:id', (req, res) => {
   const { id } = req.params;
 
-  // PlayerDB에서 먼저 삭제 (외래키 제약조건 때문)
-  db.query('DELETE FROM PlayerDB WHERE Player_ID = ?', [id], (err) => {
+  // UserDB에서 직접 삭제 (PlayerDB 관련 코드 제거)
+  db.query('DELETE FROM UserDB WHERE ID = ?', [id], (err, result) => {
     if (err) {
-      console.error('PlayerDB 삭제 오류:', err);
+      return res.status(500).json({ error: '사용자 삭제 실패', details: err.message });
     }
 
-    // UserDB에서 삭제
-    db.query('DELETE FROM UserDB WHERE ID = ?', [id], (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: '사용자 삭제 실패', details: err.message });
-      }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: '사용자를 찾을 수 없습니다' });
+    }
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: '사용자를 찾을 수 없습니다' });
-      }
-
-      res.json({ message: '사용자가 삭제되었습니다' });
-    });
+    res.json({ message: '사용자가 삭제되었습니다' });
   });
 });
 
@@ -961,14 +958,22 @@ app.get('/api/users/:id', (req, res) => {
     const user = results[0];
     let ownedSkins;
     try {
-      ownedSkins = JSON.parse(user.Owned_SkinID);
+      if (user.Owned_SkinID && user.Owned_SkinID !== null) {
+        if (typeof user.Owned_SkinID === 'string') {
+          ownedSkins = JSON.parse(user.Owned_SkinID);
+        } else {
+          ownedSkins = user.Owned_SkinID;
+        }
+      } else {
+        ownedSkins = [101, 201, 301, 401, 501, 601];
+      }
     } catch (e) {
-      ownedSkins = ['SKIN_001'];
+      ownedSkins = [101, 201, 301, 401, 501, 601];
     }
 
     res.json({
       id: user.ID,
-      gold: user.gold,
+      gold: user.gold || 0,
       ownedSkins: ownedSkins
     });
   });
@@ -1016,8 +1021,8 @@ app.post('/api/check-nickname', (req, res) => {
   });
 });
 
-// 회원가입 API (UserDB 기본 구조만 사용)
-app.post('/api/signup', (req, res) => {
+// 회원가입 API (PlayerDB 관련 코드 제거)
+app.post('/api/signup', async (req, res) => {
   const { id, password } = req.body;
 
   if (!id || !password) {
@@ -1026,38 +1031,68 @@ app.post('/api/signup', (req, res) => {
     });
   }
 
-  // 아이디 중복 체크
-  db.query('SELECT ID FROM UserDB WHERE ID = ?', [id], (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: '서버 오류' });
-    }
+  // 아이디 길이 제한 확인 (12자 이하)
+  if (id.length > 12) {
+    return res.status(400).json({
+      error: '아이디는 12자 이하로 입력해주세요'
+    });
+  }
 
-    if (results.length > 0) {
+  // 비밀번호 길이 제한 확인 (12자 이하)
+  if (password.length > 12) {
+    return res.status(400).json({
+      error: '비밀번호는 12자 이하로 입력해주세요'
+    });
+  }
+
+  try {
+    // 아이디 중복 체크
+    const checkIdQuery = 'SELECT ID FROM UserDB WHERE ID = ?';
+    const idResults = await new Promise((resolve, reject) => {
+      db.query(checkIdQuery, [id], (err, results) => {
+        if (err) reject(err);
+        else resolve(results);
+      });
+    });
+
+    if (idResults.length > 0) {
       return res.status(409).json({ error: '이미 존재하는 아이디입니다' });
     }
 
-    // UserDB에 저장 (기본 구조만)
-    const insertQuery = 'INSERT INTO UserDB (ID, Password, gold, Owned_SkinID) VALUES (?, ?, ?, ?)';
-    const initialSkins = JSON.stringify(['SKIN_001']);
+    // UserDB에 사용자 추가 (평문 비밀번호 저장)
+    const insertUserQuery = `
+      INSERT INTO UserDB (ID, Password, gold, Owned_SkinID) 
+      VALUES (?, ?, ?, ?)
+    `;
+    const initialGold = 3000;
+    const initialSkins = JSON.stringify([101, 201, 301, 401, 501, 601]);
 
-    db.query(insertQuery, [id, password, 1000, initialSkins], (err) => {
-      if (err) {
-        console.error('회원가입 오류:', err);
-        return res.status(500).json({ error: '회원가입 실패' });
-      }
-
-      res.status(201).json({ 
-        message: '회원가입 성공',
-        user: {
-          id: id,
-          gold: 1000
-        }
+    const userResult = await new Promise((resolve, reject) => {
+      db.query(insertUserQuery, [id, password, initialGold, initialSkins], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
       });
     });
-  });
+
+    res.status(201).json({ 
+      message: '회원가입 성공',
+      user: {
+        id: id,
+        gold: initialGold,
+        ownedSkins: [101, 201, 301, 401, 501, 601]
+      }
+    });
+
+  } catch (error) {
+    console.error('회원가입 오류:', error);
+    res.status(500).json({
+      error: '회원가입 실패',
+      details: error.message
+    });
+  }
 });
 
-// 로그인 API (ID 기반, 평문 비밀번호)
+// 로그인 API (PlayerDB 관련 코드 제거)
 app.post('/api/login', (req, res) => {
   const { id, password } = req.body;
 
@@ -1093,28 +1128,47 @@ app.post('/api/login', (req, res) => {
       });
     }
 
-    let ownedSkins;
-    try {
-      ownedSkins = JSON.parse(user.Owned_SkinID);
-    } catch (e) {
-      // JSON이 아닌 경우 기본값 설정
-      ownedSkins = ['SKIN_001'];
+    // Owned_SkinID 파싱
+    let ownedSkins = [];
+    
+    if (user.Owned_SkinID !== null && user.Owned_SkinID !== undefined && user.Owned_SkinID !== '') {
+      try {
+        if (typeof user.Owned_SkinID === 'string') {
+          ownedSkins = JSON.parse(user.Owned_SkinID);
+        } else if (Array.isArray(user.Owned_SkinID)) {
+          ownedSkins = user.Owned_SkinID;
+        } else {
+          ownedSkins = [101, 201, 301, 401, 501, 601];
+        }
+      } catch (e) {
+        console.error('JSON 파싱 오류:', e);
+        ownedSkins = [101, 201, 301, 401, 501, 601];
+      }
+    } else {
+      ownedSkins = [101, 201, 301, 401, 501, 601];
     }
 
-    res.json({
+    // 빈 배열인 경우에도 기본값 설정
+    if (Array.isArray(ownedSkins) && ownedSkins.length === 0) {
+      ownedSkins = [101, 201, 301, 401, 501, 601];
+    }
+
+    const responseData = {
       message: '로그인 성공',
       user: {
         id: user.ID,
-        gold: user.gold,
+        gold: user.gold || 0,
         ownedSkins: ownedSkins
       }
-    });
+    };
+
+    res.json(responseData);
   });
 });
 
 // ===== 커뮤니티 API =====
 
-// 게시글 카테고리별 통계 조회 API (누락된 API 추가)
+// 게시글 카테고리별 통계 조회 API
 app.get('/api/posts/stats/categories', (req, res) => {
   const query = `
     SELECT 
@@ -1137,7 +1191,7 @@ app.get('/api/posts/stats/categories', (req, res) => {
   });
 });
 
-// 인기 게시글 조회 API (누락된 API 추가)
+// 인기 게시글 조회 API
 app.get('/api/posts/popular', (req, res) => {
   const { limit = 5 } = req.query;
 
@@ -1161,7 +1215,7 @@ app.get('/api/posts/popular', (req, res) => {
   });
 });
 
-// 게시글 목록 조회 API (수정됨)
+// 게시글 목록 조회 API
 app.get('/api/posts', (req, res) => {
   const { category, page = 1, limit = 10 } = req.query;
   const offset = (page - 1) * limit;
@@ -1301,7 +1355,7 @@ app.get('/api/posts/:id', (req, res) => {
   });
 });
 
-// 게시글 좋아요 토글 API (누락된 API 추가)
+// 게시글 좋아요 토글 API
 app.post('/api/posts/:id/like', (req, res) => {
   const { id } = req.params;
   const { user_id } = req.body;
@@ -1365,7 +1419,7 @@ app.post('/api/posts/:id/like', (req, res) => {
   });
 });
 
-// 좋아요 상태 확인 API (누락된 API 추가)
+// 좋아요 상태 확인 API
 app.get('/api/posts/:id/like/status', (req, res) => {
   const { id } = req.params;
   const { user_id } = req.query;
@@ -1503,7 +1557,7 @@ app.get('/api/media/items', (req, res) => {
         item.tags = [];
       }
 
-      // file_url이 없으면 자동 생성 (핵심 수정 부분)
+      // file_url이 없으면 자동 생성
       if (!item.file_url && item.file_name) {
         item.file_url = `/uploads/media/${item.file_name}`;
       }
@@ -1517,7 +1571,6 @@ app.get('/api/media/items', (req, res) => {
 
       return item;
     });
-
 
     console.log(`미디어 아이템 조회 성공: ${processedResults.length}개`);
     res.json(processedResults);
@@ -1775,7 +1828,7 @@ app.post('/api/media/upload', upload.single('media'), (req, res) => {
     description,
     file.filename,
     file.path,
-    fileUrl, // 추가
+    fileUrl,
     file.size,
     fileType,
     file.mimetype,
@@ -1802,7 +1855,7 @@ app.post('/api/media/upload', upload.single('media'), (req, res) => {
   });
 });
 
-// 수정된 URL로 미디어 업로드 API
+// URL로 미디어 업로드 API
 app.post('/api/media/upload-url', async (req, res) => {
   const { url, category_id, title, description, tags = [], user_id } = req.body;
 
@@ -1952,7 +2005,7 @@ app.post('/api/media/upload-url', async (req, res) => {
   }
 });
 
-// 1. 사용자별 미디어 조회 API
+// 사용자별 미디어 조회 API
 app.get('/api/media/user/:userId', (req, res) => {
   const { userId } = req.params;
 
@@ -1990,7 +2043,7 @@ app.get('/api/media/user/:userId', (req, res) => {
   });
 });
 
-// 2. 미디어 수정 API
+// 미디어 수정 API
 app.put('/api/media/items/:id', (req, res) => {
   const { id } = req.params;
   const { title, description, tags, user_id } = req.body;
@@ -2029,7 +2082,7 @@ app.put('/api/media/items/:id', (req, res) => {
   });
 });
 
-// 3. 미디어 삭제 API
+// 미디어 삭제 API
 app.delete('/api/media/items/:id', (req, res) => {
   const { id } = req.params;
   const { user_id } = req.body;
@@ -2277,6 +2330,7 @@ app.listen(PORT, () => {
   console.log(`=================================`);
   console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
   console.log(`http://localhost:${PORT} 에서 확인할 수 있습니다.`);
+  console.log(`PlayerDB 관련 코드가 제거된 수정된 서버 버전`);
   console.log(`정적 파일 경로: ${__dirname}`);
   console.log(`미디어 업로드 경로: ${uploadDir}`);
   console.log(`=================================`);

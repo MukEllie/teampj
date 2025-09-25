@@ -1,0 +1,139 @@
+#game_screen{
+    width: 1280px;
+    height: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+
+
+
+        .game-frame {
+    width: 1280px;
+    height: 800px;
+            border: none;
+            display: block;
+        }
+
+        /* 로딩 화면 - styles.css의 gradient-primary 클래스 활용 */
+        .game-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            z-index: 10;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .loading-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* 에러 화면 - styles.css의 gradient-warning 클래스 활용 */
+        .game-error {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .error-message {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            max-width: 500px;
+        }
+
+        .retry-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .game-container {
+                height: calc(100vh - 80px);
+                margin-top: 80px;
+            }
+            
+            .error-message {
+                font-size: 0.9rem;
+                padding: 0 1rem;
+            }
+            
+            .loading-text {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-icon {
+                font-size: 3rem;
+            }
+            
+            .error-title {
+                font-size: 1.3rem;
+            }
+            
+            .retry-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
